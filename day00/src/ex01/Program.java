@@ -12,8 +12,8 @@ public class Program {
         System.out.println("Введите число для проверки");
         int num = scanner.nextInt();
         if (num <= 1) {
-            System.out.println("IllegalArgument");
-
+            System.err.println("IllegalArgument");
+            System.exit(-1);
         } else {
             for (int i = 2; i < num; i++) {
                 ++count;
