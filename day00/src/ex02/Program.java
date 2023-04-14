@@ -10,7 +10,6 @@ public class Program {
         int count = 0;
         int num = 0;
         System.out.println("Кофе хочешь?");
-
         while (num != 42) {
             if (!(scanner.hasNext() && scanner.hasNextInt())) {
                 scanner.close();
@@ -19,7 +18,6 @@ public class Program {
             }
             num = scanner.nextInt();
             if (isSimple(sumOfDigits(num))) {
-//                System.out.println("isSimple");
                 count++;
             }
         }
@@ -31,8 +29,8 @@ public class Program {
     static int sumOfDigits (int num) {
         int sum = 0;
         while (num != 0) {
-            sum += num % 10; // добавляем к сумме последнюю цифру числа
-            num /= 10; // удаляем последнюю цифру числа
+            sum += num % 10;
+            num /= 10;
         }
         return sum;
     }
@@ -54,10 +52,3 @@ public class Program {
         return isSimple;
     }
 }
-
-/*
-198131
-12901212
-11122
-42
-* */
