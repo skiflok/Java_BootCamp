@@ -10,29 +10,17 @@ public class Program {
         int weekCount = 0;
         String week;
         long data = 0;
-        byte num;
-        byte minScore = 10;
 
         while (!(week = scanner.nextLine()).equals("42") && ++weekCount <= 18) {
             if (!week.equals("w " + weekCount)) {
                 exitApp(scanner);
             }
+            data = data * 10 + getMinScore(scanner);
 
-            for (int i = 0; i < 5; i++) {
-                num = scanner.nextByte();
-                if (num < 1 || num > 9) {
-                    exitApp(scanner);
-                }
-                if (num < minScore) {
-                    minScore = num;
-                }
-
-            }
-            data = data * 10 + minScore;
-
-            System.out.println(minScore);
+            System.out.println(data);
             scanner.nextLine();
         }
+
         System.out.println(data);
 
         long reverseData = reserveData(data, weekCount);
@@ -43,11 +31,11 @@ public class Program {
 
     public static byte getMinScore (Scanner scanner) {
         byte num = 0;
-        byte minScore = 0;
+        byte minScore = 10;
         for (int i = 0; i < 5; i++) {
 
             num = scanner.nextByte();
-            if (num < 1 || num > 9) {
+            if (isNumValid(num)) {
                 exitApp(scanner);
             }
             if (num < minScore) {
@@ -55,7 +43,11 @@ public class Program {
             }
         }
 
-        return num;
+        return minScore;
+    }
+
+    public static boolean isNumValid(byte num){
+        return (num < 1 || num > 9);
     }
 
     public static void printResult(long reverseData, int weekCount) {
