@@ -12,16 +12,13 @@ public class Program {
         long data = 0;
 
         while (!(week = scanner.nextLine()).equals("42") && ++weekCount <= 18) {
-            if (!week.equals("w " + weekCount)) {
+            if (!week.equals("Week " + weekCount)) {
                 exitApp(scanner);
             }
             data = data * 10 + getMinScore(scanner);
 
-            System.out.println(data);
             scanner.nextLine();
         }
-
-        System.out.println(data);
 
         long reverseData = reserveData(data, weekCount);
 
