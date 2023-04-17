@@ -11,21 +11,22 @@ public class Program {
         String week;
         long data = 0;
         byte num;
-        byte minScore;
-
+        byte minScore = 10;
 
         while (!(week = scanner.nextLine()).equals("42") && ++weekCount <= 18) {
-//            System.out.println(week);
-//            System.out.println(weekCount);
             if (!week.equals("w " + weekCount)) {
                 exitApp(scanner);
             }
-            minScore = scanner.nextByte();
-            for (int i = 0; i < 4; i++) {
+
+            for (int i = 0; i < 5; i++) {
                 num = scanner.nextByte();
+                if (num < 1 || num > 9) {
+                    exitApp(scanner);
+                }
                 if (num < minScore) {
                     minScore = num;
                 }
+
             }
             data = data * 10 + minScore;
 
@@ -34,13 +35,30 @@ public class Program {
         }
         System.out.println(data);
 
-        long reverseData = 0;
-        for (int i = 0; i < weekCount; i++) {
-            reverseData *= 10;
-            reverseData += data % 10;
-            data /= 10;
+        long reverseData = reserveData(data, weekCount);
+
+        printResult(reverseData, weekCount);
+
+    }
+
+    public static byte getMinScore (Scanner scanner) {
+        byte num = 0;
+        byte minScore = 0;
+        for (int i = 0; i < 5; i++) {
+
+            num = scanner.nextByte();
+            if (num < 1 || num > 9) {
+                exitApp(scanner);
+            }
+            if (num < minScore) {
+                minScore = num;
+            }
         }
 
+        return num;
+    }
+
+    public static void printResult(long reverseData, int weekCount) {
         for (int i = 1; i <= weekCount; i++) {
             System.out.print("week " + i);
             for (int j = 0; j < reverseData % 10; j++) {
@@ -49,10 +67,19 @@ public class Program {
             System.out.println(">");
             reverseData /= 10;
         }
-
     }
 
-    public static void exitApp (Scanner scanner) {
+    public static long reserveData(long data, int weekCount) {
+        long reverseData = 0;
+        for (int i = 0; i < weekCount; i++) {
+            reverseData *= 10;
+            reverseData += data % 10;
+            data /= 10;
+        }
+        return reverseData;
+    }
+
+    public static void exitApp(Scanner scanner) {
         scanner.close();
         System.err.print("Illegal Argument");
         System.exit(-1);
