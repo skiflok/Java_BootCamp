@@ -46,62 +46,45 @@ public class Program {
             }
         }
 
-        int outCountString = 10;
+
+
+
+
 
         for (int i = 0; i < charCount; i++) {
             System.out.printf("%c: %d\n", res[i][0], res[i][1]);
         }
 
 
-//        for (int i = 0; i < frequencies.length; i++) {
-//            if (frequencies[i] != 0) {
-//                System.out.printf("%c: %d\n", i, frequencies[i]);
+        int height = 10;
+        int max = res[0][1];
+//        for (int i = 0; i < charCount; i++) {
+//            for (int j = 0; j < height; j++) {
+//                if (res[charCount][1] == max) {
+//                    System.out.printf("%d", res[i][1]);
+//                } else {
+//                    System.out.printf("#");
+//                }
+//                System.out.println();
 //            }
 //        }
 
-
-    }
-
-    public static byte getMinScore (Scanner scanner) {
-        byte num = 0;
-        byte minScore = 10;
-        for (int i = 0; i < 5; i++) {
-
-            num = scanner.nextByte();
-            if (isNumValid(num)) {
-                exitApp(scanner);
+        for (int i = 1; i <= height; i++) {
+            for (int j = 0; j < charCount; j++) {
+                if (res[j][1] == max / i) {
+                    System.out.printf("%d", res[i][1]);
+                } else  {
+                    System.out.print("#");
+                }
             }
-            if (num < minScore) {
-                minScore = num;
-            }
+            System.out.println();
         }
 
-        return minScore;
-    }
-
-    public static boolean isNumValid(byte num){
-        return (num < 1 || num > 9);
-    }
-
-    public static void printResult(long reverseData, int weekCount) {
-        for (int i = 1; i <= weekCount; i++) {
-            System.out.print("week " + i);
-            for (int j = 0; j < reverseData % 10; j++) {
-                System.out.print("=");
-            }
-            System.out.println(">");
-            reverseData /= 10;
+        System.out.println();
+        for (int i = 0; i < charCount; i++) {
+            System.out.printf("%c", res[i][0]);
         }
-    }
 
-    public static long reserveData(long data, int weekCount) {
-        long reverseData = 0;
-        for (int i = 0; i < weekCount; i++) {
-            reverseData *= 10;
-            reverseData += data % 10;
-            data /= 10;
-        }
-        return reverseData;
     }
 
     public static void exitApp(Scanner scanner) {
