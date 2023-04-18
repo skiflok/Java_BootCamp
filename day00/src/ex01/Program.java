@@ -6,27 +6,23 @@ public class Program {
 
     public static void main(String[] args) {
 
-        int count = 0;
+        int count = 1;
         boolean isSimple = true;
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Введите число для проверки");
         int num = scanner.nextInt();
         if (num <= 1) {
             System.err.println("IllegalArgument");
             System.exit(-1);
         } else {
-            for (int i = 2; i < num; i++) {
-                ++count;
+            for (int i = 2; i * i < num; i++) {
                 if (num % i == 0) {
                     isSimple = false;
                     break;
                 }
+                ++count;
             }
-            System.out.println("Количество иттераций = " + count);
-            System.out.println(isSimple);
+            System.out.println(isSimple + " " + count);
         }
-
         scanner.close();
-
     }
 }
