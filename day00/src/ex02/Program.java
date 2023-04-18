@@ -9,7 +9,6 @@ public class Program {
 
         int count = 0;
         int num = 0;
-        System.out.println("Кофе хочешь?");
         while (num != 42) {
             if (!(scanner.hasNext() && scanner.hasNextInt())) {
                 scanner.close();
@@ -42,7 +41,7 @@ public class Program {
             System.err.print("Illegal Argument");
             System.exit(-1);
         } else {
-            for (int i = 2; i < num; i++) {
+            for (int i = 2; i * i < num; i++) {
                 if (num % i == 0) {
                     isSimple = false;
                     break;
