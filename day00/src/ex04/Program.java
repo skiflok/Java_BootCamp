@@ -1,19 +1,10 @@
 package ex04;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.Scanner;
 
 public class Program {
 
     public static void main(String[] args) {
-
-        String testString = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASSSSSSSSSSSSSSS" +
-                "SSSSSSSSSDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDWEWWKFK" +
-                "KDKKDSKAKLSLDKSKALLLLLLLLLLRTRTETWTWWWWWWW" +
-                "WWWOOOOOOO42";
-        InputStream is = new ByteArrayInputStream(testString.getBytes());
-        System.setIn(is);
 
         Scanner scanner = new Scanner(System.in);
         if (!scanner.hasNext()) {
