@@ -1,5 +1,6 @@
 package ex05;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -9,7 +10,7 @@ public class Program {
 
     static {
         String testString =
-                "John\nMike\n.\n2 MO\n2 WE\n.\nMike 2 28 NOT_HERE\nJohn 4 9 HERE\nMike 4 9 HERE\n.\n";
+                "John\nMike\n.\n2 MO\n4 WE\n.\nMike 2 28 NOT_HERE\nJohn 4 9 HERE\nMike 4 9 HERE\n.\n";
         InputStream is = new ByteArrayInputStream(testString.getBytes());
         System.setIn(is);
     }
@@ -21,6 +22,10 @@ public class Program {
         if (!scanner.hasNext()) {
             exitApp();
         }
+
+        int dayInSeptember = 30;
+        int numberOfHours = 5;
+        int dayOfWeek = 7;
 
         String[] students = getStringArrayFromInput();
         String[] schedule = getStringArrayFromInput();
@@ -39,7 +44,7 @@ public class Program {
         }
 
         // заполнение дней недели
-        int weekDayCode = 3; //mo == 1
+        int weekDayCode = 2; //mo == 1
         for (int i = 1; i < calendar.length; i++) {
             if (weekDayCode > 7) {
                 weekDayCode = 1;
@@ -60,23 +65,19 @@ public class Program {
             }
         }
 
-        System.out.println("clCount = " + clCount);
+        boolean[][] tableClass = new boolean[dayOfWeek + 1][numberOfHours + 1];
 
-        boolean[][] tableClass = new boolean[7 + 1][5 + 1];
-
-        int week = 0;
-        int hour = 0;
+        int week;
+        int hour;
         for (int i = 0; i < clCount; i++) {
             String[] temp = split(schedule[i], ' ');
             week = getIndexWeek(temp[1]);
             hour = getIndexHour(temp[0]);
             tableClass[week][hour] = true;
-            System.out.println(week + " " + hour);
-            System.out.println(Arrays.toString(temp));
         }
 
-        for (int i = 0; i < tableClass.length; i++) {
-            for (int j = 0; j < tableClass[0].length; j++) {
+        for (int i = 1; i < tableClass.length; i++) {
+            for (int j = 1; j < tableClass[0].length; j++) {
                 if (tableClass[i][j]) {
                     System.out.print("x");
                 } else {
@@ -89,48 +90,114 @@ public class Program {
         System.out.println("----Parsing schedule----");
 
 
-        //y  x
-        int[][] result = new int[31][15];
-        // заполнение дат 0 пусто
-        for (int i = 0; i < result.length; i++) {
-            result[i][0] = i;
-        }
-        // заполнение дней недели
-        for (int i = 1; i < result.length; i++) {
-            if (weekDayCode > 7) {
-                weekDayCode = 1;
+        System.out.println("----Parsing attendance----");
+
+
+        int studentCount = 0;
+        for (String str : students) {
+            if (str != null) {
+                studentCount++;
+            } else {
+                break;
             }
-            result[i][1] = weekDayCode++;
         }
 
+
+        int attendanceCount = 0;
+        for (String str : attendance) {
+            if (str != null) {
+                attendanceCount++;
+            } else {
+                break;
+            }
+        }
+
+        int[][][] studentsVisiting = new int[studentCount][dayInSeptember + 1][numberOfHours + 1];
+
+        int day;
+        int nane;
+        int status;
+        for (int i = 0; i < attendanceCount; i++) {
+            String[] temp = split(attendance[i], ' ');
+            nane = getIndexName(students, temp[0]);
+            hour = getIndexHour(temp[1]);
+            day = Integer.parseInt(temp[2]);
+            status = getStatus(temp[3]);
+            studentsVisiting[nane][day][hour] = status;
+        }
+
+
+        System.out.println("----Parsing attendance----");
+
+
+//        //y  x
+//        int[][] result = new int[31][15];
+//        // заполнение дат 0 пусто
+//        for (int i = 0; i < result.length; i++) {
+//            result[i][0] = i;
+//        }
+//        // заполнение дней недели
+//        for (int i = 1; i < result.length; i++) {
+//            if (weekDayCode > 7) {
+//                weekDayCode = 1;
+//            }
+//            result[i][1] = weekDayCode++;
+//        }
 
         // OUTPUT
-        int testCount = 0;
-        for (int y = 0; y < result[0].length; y++) {
-            if (y == 0) {
-                for (int x = 0; x < result.length; x++) {
-                    if (x == 0) {
+
+        System.out.println("----OUTPUT----");
+
+        for (int line = 0; line < studentCount + 1; line++) {
+            if (line == 0) {
+                for (int day_ = 0; day_ < dayInSeptember + 1; day_++) {
+                    if (day_ == 0) {
                         System.out.printf("%10s", "");
                         continue;
                     }
-                    if (testCount > 10) break;
-                    System.out.printf("%4s %2s %2s|", "time", getWeekDay(result[x][1]), result[x][0]);
-                    testCount++;
+                    for (int hour_ = 1; hour_ < numberOfHours; hour_++) {
+                        if (tableClass[calendar[day_][1]][hour_]) {
+                            System.out.printf("%4s %2s %2s|", hour_, getWeekDay(calendar[day_][1]), day_);
+                        }
+                    }
                 }
-                System.out.println();
             }
-
-            if (y > 3) {
-//                System.out.printf("%4s\n", result[0][y]);
-            }
-
+            System.out.println();
         }
 
+        System.out.println("----OUTPUT----");
+
+//        for (int dayInS = 0; dayInS < dayInSeptember; dayInS++) {
+//            if (dayInS == 0) {
+//
+//            }
+//
+//        }
+
+
+//        int testCount = 0;
+//        for (int y = 0; y < result[0].length; y++) {
+//            if (y == 0) {
+//                for (int x = 0; x < result.length; x++) {
+//                    if (x == 0) {
+//                        System.out.printf("%10s", "");
+//                        continue;
+//                    }
+//                    if (testCount > 10) break;
+//                    System.out.printf("%4s %2s %2s|", "time", getWeekDay(result[x][1]), result[x][0]);
+//                    testCount++;
+//                }
+//                System.out.println();
+//            }
+//
+//            if (y > 3) {
+////                System.out.printf("%4s\n", result[0][y]);
+//            }
+//
+//        }
 
         scanner.close();
     }
-
-    // 1 = tue
 
 //    Monday (понедельник) - Mo
 //    Tuesday (вторник) - Tu
@@ -145,6 +212,30 @@ public class Program {
         scanner.close();
         System.err.print("Illegal Argument");
         System.exit(-1);
+    }
+
+    public static int getStatus(String status) {
+        int indexStatus = 0;
+        switch (status) {
+            case "HERE":
+                indexStatus = 1;
+                break;
+            case "NOT_HERE":
+                indexStatus = 2;
+                break;
+        }
+        return indexStatus;
+    }
+
+    public static int getIndexName(String[] students, String name) {
+        int indexName = 0;
+        for (int i = 0; i < students.length; i++) {
+            if (students[i].equals(name)) {
+                indexName = i;
+                break;
+            }
+        }
+        return indexName;
     }
 
     public static int getIndexHour(String week) {
