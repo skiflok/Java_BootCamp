@@ -2,6 +2,7 @@ package ex05;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Program {
@@ -12,6 +13,7 @@ public class Program {
         InputStream is = new ByteArrayInputStream(testString.getBytes());
         System.setIn(is);
     }
+
     public static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
@@ -29,15 +31,71 @@ public class Program {
         printStringArray(schedule);
         printStringArray(attendance);
 
-                                //x  y
+
+        int[][] calendar = new int[31][2];
+        // заполнение дат 0 пусто
+        for (int i = 0; i < calendar.length; i++) {
+            calendar[i][0] = i;
+        }
+
+        // заполнение дней недели
+        int weekDayCode = 3; //mo == 1
+        for (int i = 1; i < calendar.length; i++) {
+            if (weekDayCode > 7) {
+                weekDayCode = 1;
+            }
+            calendar[i][1] = weekDayCode++;
+        }
+
+        System.out.println("############################");
+
+        System.out.println("----Parsing schedule----");
+
+        int clCount = 0;
+        for (String str : schedule) {
+            if (str != null) {
+                clCount++;
+            } else {
+                break;
+            }
+        }
+
+        System.out.println("clCount = " + clCount);
+
+        boolean[][] tableClass = new boolean[7 + 1][5 + 1];
+
+        int week = 0;
+        int hour = 0;
+        for (int i = 0; i < clCount; i++) {
+            String[] temp = split(schedule[i], ' ');
+            week = getIndexWeek(temp[1]);
+            hour = getIndexHour(temp[0]);
+            tableClass[week][hour] = true;
+            System.out.println(week + " " + hour);
+            System.out.println(Arrays.toString(temp));
+        }
+
+        for (int i = 0; i < tableClass.length; i++) {
+            for (int j = 0; j < tableClass[0].length; j++) {
+                if (tableClass[i][j]) {
+                    System.out.print("x");
+                } else {
+                    System.out.print("o");
+                }
+            }
+            System.out.println();
+        }
+
+        System.out.println("----Parsing schedule----");
+
+
+        //y  x
         int[][] result = new int[31][15];
         // заполнение дат 0 пусто
         for (int i = 0; i < result.length; i++) {
             result[i][0] = i;
         }
-
         // заполнение дней недели
-        int weekDayCode = 3; //mo == 1
         for (int i = 1; i < result.length; i++) {
             if (weekDayCode > 7) {
                 weekDayCode = 1;
@@ -62,8 +120,8 @@ public class Program {
                 System.out.println();
             }
 
-            if (y > 3){
-                System.out.printf("%4s\n", result[0][y]);
+            if (y > 3) {
+//                System.out.printf("%4s\n", result[0][y]);
             }
 
         }
@@ -87,6 +145,58 @@ public class Program {
         scanner.close();
         System.err.print("Illegal Argument");
         System.exit(-1);
+    }
+
+    public static int getIndexHour(String week) {
+        int indexHour = 0;
+        switch (week) {
+            case "1":
+                indexHour = 1;
+                break;
+            case "2":
+                indexHour = 2;
+                break;
+            case "3":
+                indexHour = 3;
+                break;
+            case "4":
+                indexHour = 4;
+                break;
+            case "5":
+                indexHour = 5;
+                break;
+        }
+        return indexHour;
+    }
+
+    public static int getIndexWeek(String week) {
+        int indexWeek = 0;
+        switch (week) {
+            case "MO":
+                indexWeek = 1;
+                break;
+            case "TU":
+                indexWeek = 2;
+                break;
+            case "WE":
+                indexWeek = 3;
+                break;
+            case "TH":
+                indexWeek = 4;
+                break;
+            case "FR":
+                indexWeek = 5;
+                break;
+            case "SA":
+                indexWeek = 6;
+                break;
+            case "SU":
+                indexWeek = 7;
+                break;
+        }
+
+
+        return indexWeek;
     }
 
     public static String getWeekDay(int nun) {
