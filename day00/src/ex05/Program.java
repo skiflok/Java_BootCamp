@@ -29,21 +29,15 @@ public class Program {
         String[] schedule = getStringArrayFromInput();
         String[] attendance = getStringArrayFromInput();
 
-        int[][] calendar = new int[31][2];
-        // заполнение дат 0 пусто
-        for (int i = 0; i < calendar.length; i++) {
-            calendar[i][0] = i;
-        }
+        int[] calendar = new int[31];
 
-        // заполнение дней недели
-        int weekDayCode = 2; //mo == 1
+        int weekDayCode = 2;
         for (int i = 1; i < calendar.length; i++) {
             if (weekDayCode > 7) {
                 weekDayCode = 1;
             }
-            calendar[i][1] = weekDayCode++;
+            calendar[i] = weekDayCode++;
         }
-
 
         int clCount = 0;
         for (String str : schedule) {
@@ -82,7 +76,6 @@ public class Program {
                 break;
             }
         }
-
         int[][][] studentsVisiting = new int[studentCount][dayInSeptember + 1][numberOfHours + 1];
 
         int day;
@@ -106,9 +99,9 @@ public class Program {
                     System.out.printf("%10s", students[line - 1]);
                 }
                 for (int hour_ = 1; hour_ < numberOfHours; hour_++) {
-                    if (tableClass[calendar[day_][1]][hour_]) {
+                    if (tableClass[calendar[day_]][hour_]) {
                         if (line == 0) {
-                            System.out.printf("%4s %2s %2s|", hour_ + ":00", getWeekDay(calendar[day_][1]), day_);
+                            System.out.printf("%4s %2s %2s|", hour_ + ":00", getWeekDay(calendar[day_]), day_);
                         } else {
                             if (studentsVisiting[line - 1][day_][hour_] == 0) {
                                 System.out.printf("%10s|", "");
