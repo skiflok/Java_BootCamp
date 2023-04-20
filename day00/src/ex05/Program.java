@@ -1,18 +1,16 @@
 package ex05;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.Scanner;
 
 public class Program {
 
-    static {
-        String testString =
-                "John\nMike\n.\n2 MO\n4 WE\n.\nMike 2 28 NOT_HERE\nJohn 4 9 HERE\nMike 4 9 HERE\n.\n";
-        InputStream is = new ByteArrayInputStream(testString.getBytes());
-        System.setIn(is);
-    }
-
+//    static {
+//        String testString =
+//                "John\nMike\n.\n2 MO\n4 WE\n.\nMike 2 28 NOT_HERE\nJohn 4 9 HERE\nMike 4 9 HERE\n.\n";
+//        InputStream is = new ByteArrayInputStream(testString.getBytes());
+//        System.setIn(is);
+//    }
+//
     public static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
@@ -31,82 +29,33 @@ public class Program {
 
         int[] calendar = new int[31];
 
-        int weekDayCode = 2;
-        for (int i = 1; i < calendar.length; i++) {
-            if (weekDayCode > 7) {
-                weekDayCode = 1;
-            }
-            calendar[i] = weekDayCode++;
-        }
-
-        int clCount = 0;
-        for (String str : schedule) {
-            if (str != null) {
-                clCount++;
-            } else {
-                break;
-            }
-        }
+        fillCalendar(calendar);
 
         boolean[][] tableClass = new boolean[dayOfWeek + 1][numberOfHours + 1];
 
-        int week;
-        int hour;
-        for (int i = 0; i < clCount; i++) {
-            String[] temp = split(schedule[i], ' ');
-            week = getIndexWeek(temp[1]);
-            hour = getIndexHour(temp[0]);
-            tableClass[week][hour] = true;
-        }
+        fillTableClass(tableClass, schedule);
 
-        int studentCount = 0;
-        for (String str : students) {
-            if (str != null) {
-                studentCount++;
-            } else {
-                break;
-            }
-        }
+        int[][][] studentsVisiting = new int[sizeOfArray(students)][dayInSeptember + 1][numberOfHours + 1];
 
-        int attendanceCount = 0;
-        for (String str : attendance) {
-            if (str != null) {
-                attendanceCount++;
-            } else {
-                break;
-            }
-        }
-        int[][][] studentsVisiting = new int[studentCount][dayInSeptember + 1][numberOfHours + 1];
+        fillStudentsVisiting(studentsVisiting, attendance, students);
 
-        int day;
-        int nane;
-        int status;
-        for (int i = 0; i < attendanceCount; i++) {
-            String[] temp = split(attendance[i], ' ');
-            nane = getIndexName(students, temp[0]);
-            hour = getIndexHour(temp[1]);
-            day = Integer.parseInt(temp[2]);
-            status = getStatus(temp[3]);
-            studentsVisiting[nane][day][hour] = status;
-        }
-
-        for (int line = 0; line < studentCount + 1; line++) {
-            for (int day_ = 0; day_ < dayInSeptember + 1; day_++) {
-                if (line == 0 && day_ == 0) {
+        for (int line = 0; line < sizeOfArray(students) + 1; line++) {
+            for (int day = 0; day < dayInSeptember + 1; day++) {
+                if (line == 0 && day == 0) {
                     System.out.printf("%10s", "");
                     continue;
-                } else if (day_ == 0) {
+                } else if (day == 0) {
                     System.out.printf("%10s", students[line - 1]);
                 }
-                for (int hour_ = 1; hour_ < numberOfHours; hour_++) {
-                    if (tableClass[calendar[day_]][hour_]) {
+                for (int hour = 1; hour < numberOfHours; hour++) {
+                    if (tableClass[calendar[day]][hour]) {
                         if (line == 0) {
-                            System.out.printf("%4s %2s %2s|", hour_ + ":00", getWeekDay(calendar[day_]), day_);
+                            System.out.printf("%4s %2s %2s|", hour + ":00", getWeekDay(calendar[day]), day);
                         } else {
-                            if (studentsVisiting[line - 1][day_][hour_] == 0) {
+                            if (studentsVisiting[line - 1][day][hour] == 0) {
                                 System.out.printf("%10s|", "");
                             } else {
-                                System.out.printf("%10s|", studentsVisiting[line - 1][day_][hour_]);
+                                System.out.printf("%10s|", studentsVisiting[line - 1][day][hour]);
                             }
                         }
                     }
@@ -116,13 +65,58 @@ public class Program {
         }
         scanner.close();
     }
-    public static void exitApp() {
+
+    private static void fillStudentsVisiting(int[][][] studentsVisiting, String[] attendance, String[] students) {
+
+        int day;
+        int nane;
+        int status;
+        int hour;
+        for (int i = 0; i < sizeOfArray(attendance); i++) {
+            String[] temp = split(attendance[i], ' ');
+            nane = getIndexName(students, temp[0]);
+            hour = getIndexHour(temp[1]);
+            day = Integer.parseInt(temp[2]);
+            status = getStatus(temp[3]);
+            studentsVisiting[nane][day][hour] = status;
+        }
+    }
+    private static void fillTableClass (boolean[][] tableClass, String [] schedule) {
+        int week;
+        int hour;
+        for (int i = 0; i < sizeOfArray(schedule); i++) {
+            String[] temp = split(schedule[i], ' ');
+            week = getIndexWeek(temp[1]);
+            hour = getIndexHour(temp[0]);
+            tableClass[week][hour] = true;
+        }
+    }
+    private static void fillCalendar (int [] calendar) {
+        int weekDayCode = 2;
+        for (int i = 1; i < calendar.length; i++) {
+            if (weekDayCode > 7) {
+                weekDayCode = 1;
+            }
+            calendar[i] = weekDayCode++;
+        }
+    }
+    private static int sizeOfArray (String [] arr) {
+        int count = 0;
+        for (String str : arr) {
+            if (str != null) {
+                count++;
+            } else {
+                break;
+            }
+        }
+        return count;
+    }
+    private static void exitApp() {
         scanner.close();
         System.err.print("Illegal Argument");
         System.exit(-1);
     }
-
-    public static int getStatus(String status) {
+    private static int getStatus(String status) {
         int indexStatus = 0;
         switch (status) {
             case "HERE":
@@ -134,8 +128,7 @@ public class Program {
         }
         return indexStatus;
     }
-
-    public static int getIndexName(String[] students, String name) {
+    private static int getIndexName(String[] students, String name) {
         int indexName = 0;
         for (int i = 0; i < students.length; i++) {
             if (students[i].equals(name)) {
@@ -145,8 +138,7 @@ public class Program {
         }
         return indexName;
     }
-
-    public static int getIndexHour(String week) {
+    private static int getIndexHour(String week) {
         int indexHour = 0;
         switch (week) {
             case "1":
@@ -167,8 +159,7 @@ public class Program {
         }
         return indexHour;
     }
-
-    public static int getIndexWeek(String week) {
+    private static int getIndexWeek(String week) {
         int indexWeek = 0;
         switch (week) {
             case "MO":
@@ -195,8 +186,7 @@ public class Program {
         }
         return indexWeek;
     }
-
-    public static String getWeekDay(int nun) {
+    private static String getWeekDay(int nun) {
         String res = null;
         switch (nun) {
             case 1:
@@ -223,8 +213,7 @@ public class Program {
         }
         return res;
     }
-
-    public static String[] getStringArrayFromInput() {
+    private static String[] getStringArrayFromInput() {
         String input;
         byte count = 0;
         String[] temp = new String[10];
@@ -237,8 +226,7 @@ public class Program {
         }
         return temp;
     }
-
-    public static String[] split(String str, char delimiter) {
+    private static String[] split(String str, char delimiter) {
         int delimiterCount = 0;
         char[] chars = str.toCharArray();
         for (char ch : chars) {
