@@ -29,12 +29,6 @@ public class Program {
         String[] schedule = getStringArrayFromInput();
         String[] attendance = getStringArrayFromInput();
 
-        // TODO
-        printStringArray(students);
-        printStringArray(schedule);
-        printStringArray(attendance);
-
-
         int[][] calendar = new int[31][2];
         // заполнение дат 0 пусто
         for (int i = 0; i < calendar.length; i++) {
@@ -50,9 +44,6 @@ public class Program {
             calendar[i][1] = weekDayCode++;
         }
 
-        System.out.println("############################");
-
-        System.out.println("----Parsing schedule----");
 
         int clCount = 0;
         for (String str : schedule) {
@@ -73,23 +64,6 @@ public class Program {
             hour = getIndexHour(temp[0]);
             tableClass[week][hour] = true;
         }
-
-        for (int i = 1; i < tableClass.length; i++) {
-            for (int j = 1; j < tableClass[0].length; j++) {
-                if (tableClass[i][j]) {
-                    System.out.print("x");
-                } else {
-                    System.out.print("o");
-                }
-            }
-            System.out.println();
-        }
-
-        System.out.println("----Parsing schedule----");
-
-
-        System.out.println("----Parsing attendance----");
-
 
         int studentCount = 0;
         for (String str : students) {
@@ -123,11 +97,6 @@ public class Program {
             studentsVisiting[nane][day][hour] = status;
         }
 
-
-        System.out.println("----Parsing attendance----");
-
-        System.out.println("----OUTPUT----");
-
         for (int line = 0; line < studentCount + 1; line++) {
             for (int day_ = 0; day_ < dayInSeptember + 1; day_++) {
                 if (line == 0 && day_ == 0) {
@@ -152,21 +121,8 @@ public class Program {
             }
             System.out.println();
         }
-
-        System.out.println("----OUTPUT----");
-
         scanner.close();
     }
-
-//    Monday (понедельник) - Mo
-//    Tuesday (вторник) - Tu
-//    Wednesday (среда) - We
-//    Thursday (четверг) - Th
-//    Friday (пятница) - Fr
-//    Saturday (суббота) - Sa
-//    Sunday (воскресенье) - Su
-
-
     public static void exitApp() {
         scanner.close();
         System.err.print("Illegal Argument");
@@ -244,8 +200,6 @@ public class Program {
                 indexWeek = 7;
                 break;
         }
-
-
         return indexWeek;
     }
 
@@ -277,15 +231,6 @@ public class Program {
         return res;
     }
 
-
-    public static void printStringArray(String[] arr) {
-        for (String str : arr) {
-            if (str != null) {
-                System.out.println(str);
-            }
-        }
-    }
-
     public static String[] getStringArrayFromInput() {
         String input;
         byte count = 0;
@@ -304,7 +249,7 @@ public class Program {
         int delimiterCount = 0;
         char[] chars = str.toCharArray();
         for (char ch : chars) {
-            if (ch == ' ') {
+            if (ch == delimiter) {
                 delimiterCount++;
             }
         }
