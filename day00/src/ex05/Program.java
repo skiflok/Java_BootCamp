@@ -1,9 +1,7 @@
 package ex05;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class Program {
@@ -102,7 +100,6 @@ public class Program {
             }
         }
 
-
         int attendanceCount = 0;
         for (String str : attendance) {
             if (str != null) {
@@ -129,35 +126,26 @@ public class Program {
 
         System.out.println("----Parsing attendance----");
 
-
-//        //y  x
-//        int[][] result = new int[31][15];
-//        // заполнение дат 0 пусто
-//        for (int i = 0; i < result.length; i++) {
-//            result[i][0] = i;
-//        }
-//        // заполнение дней недели
-//        for (int i = 1; i < result.length; i++) {
-//            if (weekDayCode > 7) {
-//                weekDayCode = 1;
-//            }
-//            result[i][1] = weekDayCode++;
-//        }
-
-        // OUTPUT
-
         System.out.println("----OUTPUT----");
 
         for (int line = 0; line < studentCount + 1; line++) {
-            if (line == 0) {
-                for (int day_ = 0; day_ < dayInSeptember + 1; day_++) {
-                    if (day_ == 0) {
-                        System.out.printf("%10s", "");
-                        continue;
-                    }
-                    for (int hour_ = 1; hour_ < numberOfHours; hour_++) {
-                        if (tableClass[calendar[day_][1]][hour_]) {
-                            System.out.printf("%4s %2s %2s|", hour_, getWeekDay(calendar[day_][1]), day_);
+            for (int day_ = 0; day_ < dayInSeptember + 1; day_++) {
+                if (line == 0 && day_ == 0) {
+                    System.out.printf("%10s", "");
+                    continue;
+                } else if (day_ == 0) {
+                    System.out.printf("%10s", students[line - 1]);
+                }
+                for (int hour_ = 1; hour_ < numberOfHours; hour_++) {
+                    if (tableClass[calendar[day_][1]][hour_]) {
+                        if (line == 0) {
+                            System.out.printf("%4s %2s %2s|", hour_ + ":00", getWeekDay(calendar[day_][1]), day_);
+                        } else {
+                            if (studentsVisiting[line - 1][day_][hour_] == 0) {
+                                System.out.printf("%10s|", "");
+                            } else {
+                                System.out.printf("%10s|", studentsVisiting[line - 1][day_][hour_]);
+                            }
                         }
                     }
                 }
@@ -166,35 +154,6 @@ public class Program {
         }
 
         System.out.println("----OUTPUT----");
-
-//        for (int dayInS = 0; dayInS < dayInSeptember; dayInS++) {
-//            if (dayInS == 0) {
-//
-//            }
-//
-//        }
-
-
-//        int testCount = 0;
-//        for (int y = 0; y < result[0].length; y++) {
-//            if (y == 0) {
-//                for (int x = 0; x < result.length; x++) {
-//                    if (x == 0) {
-//                        System.out.printf("%10s", "");
-//                        continue;
-//                    }
-//                    if (testCount > 10) break;
-//                    System.out.printf("%4s %2s %2s|", "time", getWeekDay(result[x][1]), result[x][0]);
-//                    testCount++;
-//                }
-//                System.out.println();
-//            }
-//
-//            if (y > 3) {
-////                System.out.printf("%4s\n", result[0][y]);
-//            }
-//
-//        }
 
         scanner.close();
     }
@@ -221,7 +180,7 @@ public class Program {
                 indexStatus = 1;
                 break;
             case "NOT_HERE":
-                indexStatus = 2;
+                indexStatus = -1;
                 break;
         }
         return indexStatus;
