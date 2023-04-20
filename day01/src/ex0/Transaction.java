@@ -16,6 +16,10 @@ public class Transaction {
     }
 
     public Transaction(User recipient, User sender, Category transferCategory, double transferAmount) {
+        if ((transferAmount > 0 && transferCategory == Category.CREDIT) ||
+                (transferAmount < 0 && transferCategory == Category.DEBIT)) {
+            System.err.println("");
+        }
         this.identifier = UUID.randomUUID();
         this.recipient = recipient;
         this.sender = sender;
