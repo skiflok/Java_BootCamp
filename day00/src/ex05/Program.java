@@ -1,16 +1,18 @@
 package ex05;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.Scanner;
 
 public class Program {
 
-//    static {
-//        String testString =
-//                "John\nMike\n.\n2 MO\n4 WE\n.\nMike 2 28 NOT_HERE\nJohn 4 9 HERE\nMike 4 9 HERE\n.\n";
-//        InputStream is = new ByteArrayInputStream(testString.getBytes());
-//        System.setIn(is);
-//    }
-//
+    static {
+        String testString =
+                "John\nMike\n.\n2 MO\n4 WE\n.\nMike 2 28 NOT_HERE\nJohn 4 9 HERE\nMike 4 9 HERE\n.\n";
+        InputStream is = new ByteArrayInputStream(testString.getBytes());
+        System.setIn(is);
+    }
+
     public static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
@@ -50,12 +52,12 @@ public class Program {
                 for (int hour = 1; hour < numberOfHours; hour++) {
                     if (tableClass[calendar[day]][hour]) {
                         if (line == 0) {
-                            System.out.printf("%4s %2s %2s|", hour + ":00", getWeekDay(calendar[day]), day);
+                            System.out.printf("%1d:00%3s%3d|", hour, getWeekDay(calendar[day]), day);
                         } else {
                             if (studentsVisiting[line - 1][day][hour] == 0) {
                                 System.out.printf("%10s|", "");
                             } else {
-                                System.out.printf("%10s|", studentsVisiting[line - 1][day][hour]);
+                                System.out.printf("%10d|", studentsVisiting[line - 1][day][hour]);
                             }
                         }
                     }
