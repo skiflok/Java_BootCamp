@@ -26,4 +26,21 @@ public class User {
     public double getBalance() {
         return balance;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
+
+    @Override
+    public String toString() {
+         return String.format("ID = %d name = %s balance = %.2f",
+                 identifier,
+                 name,
+                 balance
+         );
+    }
 }
