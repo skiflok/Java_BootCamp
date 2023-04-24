@@ -26,18 +26,43 @@ public class TransactionLinkedList implements TransactionList {
     @Override
     public void remove(UUID uuid) {
         if (size == 0) {
-            throw new TransactionNotFoundException("Пользователь не найден");
+            throw new TransactionNotFoundException("Транзакция не найдена");
         }
-        Node temp = first;
-        while (temp != null) {
 
-            if (temp.transaction.getIdentifier().equals(uuid)) {
+        if (uuid == null) {
+            throw new TransactionNotFoundException("Передан null в качестве ID");
+        }
 
+        for (Node x = first; x != null; x = x.next) {
+            if (uuid.equals(x.transaction.getIdentifier())) {
+                unlink(x);
+                return;
             }
-
-            temp = temp.next;
         }
         throw new TransactionNotFoundException("Пользователь не найден");
+    }
+
+    private void unlink(Node x) {
+
+        final Node next = x.next;
+        final Node prev = x.prev;
+
+        if (prev == null) {
+            first = next;
+        } else {
+            prev.next = next;
+            x.prev = null;
+        }
+
+        if (next == null) {
+            last = prev;
+        } else {
+            next.prev = prev;
+            x.next = null;
+        }
+
+        x.transaction = null;
+        size--;
     }
 
     @Override
@@ -45,20 +70,19 @@ public class TransactionLinkedList implements TransactionList {
         Transaction[] transactions = new Transaction[size];
         Node temp = first;
         for (int i = 0; i < size; i++) {
-            transactions[0] = temp.transaction;
+            transactions[i] = temp.transaction;
             temp = temp.next;
         }
-
         return transactions;
     }
 
     private class Node {
-        Node pref;
+        Node prev;
         Node next;
         Transaction transaction;
 
-        public Node(Node pref, Transaction transaction, Node next) {
-            this.pref = pref;
+        public Node(Node prev, Transaction transaction, Node next) {
+            this.prev = prev;
             this.next = next;
             this.transaction = transaction;
         }
