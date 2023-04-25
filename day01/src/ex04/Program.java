@@ -1,64 +1,70 @@
 package ex04;
 
 import ex04.service.transaction.Transaction;
-import ex04.service.transaction.TransactionLinkedList;
-import ex04.service.transaction.TransactionList;
 import ex04.user.User;
+import ex04.service.TransactionsService;
 import ex04.user.UserNotFoundException;
-import ex04.user.UsersArrayList;
-import ex04.user.UsersList;
 
 import java.util.Arrays;
 
 public class Program {
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args)  {
 
-        UsersList usersList = new UsersArrayList();
-        TransactionList transactionList = new TransactionLinkedList();
+        TransactionsService transactionsService = new TransactionsService();
 
-        for (int i = 0; i < 15; i++) {
-            usersList.addUser(new User("user" + i, 1000d));
-        }
+        User user1 = new User("user_1", 1000_000);
+        User user2 = new User("user_2", 500_000);
 
-        System.out.println(usersList.get(0));
-        System.out.println(usersList.get(1));
-
-        Transaction t1 = null;
-        Transaction t2 = null;
+        transactionsService.addUser(user1);
+        transactionsService.addUser(user2);
 
         try {
-            t1 = new Transaction(usersList.get(0), usersList.get(1), Transaction.Category.DEBIT, 100);
-            t2  = new Transaction(usersList.get(0), usersList.get(1), Transaction.Category.CREDIT, -150);
-        } catch (Exception e) {
-            System.out.println("Transaction error");
-        }
-
-        transactionList.add(t1);
-        transactionList.add(t2);
-        System.out.println(t1);
-        System.out.println(t2);
-
-
-        System.out.println(Arrays.toString(transactionList.toArray()));
-
-        try {
-            transactionList.remove(transactionList.toArray()[0].getIdentifier());
+            transactionsService.transactionExecution(user1.getIdentifier(), user2.getIdentifier(), 1000);
+            transactionsService.transactionExecution(user1.getIdentifier(), user2.getIdentifier(), 500);
+            transactionsService.transactionExecution(user2.getIdentifier(), user1.getIdentifier(), 10_000);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
 
-        System.out.println(Arrays.toString(transactionList.toArray()));
-
         try {
-            System.out.println(usersList.getByID(0));
-            System.out.println(usersList.getByID(20));
-        } catch (UserNotFoundException exception) {
-            System.out.println(exception.getMessage());
+            transactionsService.transactionExecution(user1.getIdentifier(), user2.getIdentifier(), -500);
+        } catch (Exception e) {
+            System.out.println("Ощибка выполнения транзакции");
         }
 
-        System.out.println(usersList.size());
+        try {
+            transactionsService.transactionExecution(user2.getIdentifier(), user2.getIdentifier(), 10_000);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        try {
+            transactionsService.transactionExecution(user2.getIdentifier(), user2.getIdentifier(), 10_000_000);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        Transaction [] transactions;
+
+        try {
+            transactions = transactionsService.getUserTransaction(user1.getIdentifier());
+        } catch (UserNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        System.out.println(Arrays.toString(transactions));
+
+        try {
+            transactionsService.removeTransaction(transactions[0].getIdentifier(), user1.getIdentifier());
+        } catch (UserNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        Transaction [] invalidTransactionArray = transactionsService.getInvalidTransactionArray();
+
+        System.out.println(Arrays.toString(invalidTransactionArray));
 
 
     }

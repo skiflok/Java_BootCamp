@@ -17,27 +17,23 @@ public class Transaction {
         CREDIT
     }
 
-    public Transaction(User recipient, User sender, Category transferCategory, double transferAmount) throws Exception {
+    public Transaction(User recipient, User sender, Category transferCategory, double transferAmount) {
+        this(UUID.randomUUID(), recipient, sender ,transferCategory, transferAmount);
+    }
+
+    public Transaction(UUID identifier, User recipient, User sender, Category transferCategory, double transferAmount)  {
         switch (transferCategory) {
             case DEBIT:
                 if (transferAmount < 0 || sender.getBalance() < transferAmount) {
-                    throw new Exception();
-            }
+                    throw new RuntimeException();
+                }
                 break;
             case CREDIT:
                 if (transferAmount > 0 || sender.getBalance() < -transferAmount) {
-                    throw new Exception();
+                    throw new RuntimeException();
                 }
                 break;
         }
-        this.identifier = UUID.randomUUID();
-        this.recipient = recipient;
-        this.sender = sender;
-        this.transferCategory = transferCategory;
-        this.transferAmount = transferAmount;
-    }
-
-    public Transaction(UUID identifier, User recipient, User sender, Category transferCategory, double transferAmount) {
         this.identifier = identifier;
         this.recipient = recipient;
         this.sender = sender;
