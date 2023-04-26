@@ -20,8 +20,16 @@ public class TransactionsService {
         usersList.addUser(user);
     }
 
+    public UsersList getUsersList() {
+        return usersList;
+    }
+
     public double getUserBalance(User user) {
         return user.getBalance();
+    }
+
+    public double getUserBalance(int ID) throws UserNotFoundException {
+        return usersList.getByID(ID).getBalance();
     }
 
     public void transactionExecution(int recipientID, int senderID, double transactionAmount) throws Exception {
