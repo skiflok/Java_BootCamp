@@ -23,7 +23,7 @@ public class Menu {
         performTransfer = new PerformTransfer(service);
         viewAllTransactionsForSpecificUser = new ViewAllTransactionsForSpecificUser(service);
         devRemoveTransferByID = new DevRemoveTransferByID(service);
-        devCheckTransferValidity = new DevCheckTransferValidity();
+        devCheckTransferValidity = new DevCheckTransferValidity(service);
         this.dev = dev;
     }
 
@@ -90,6 +90,7 @@ public class Menu {
                 execution(responseRequest());
             } catch (IllegalArgumentException e) {
                 ConsoleHelper.writeMessage(e.getMessage());
+                e.printStackTrace();
             }
             System.out.println("---------------------------------------------------------");
         }
