@@ -28,6 +28,7 @@ public class PerformTransfer implements Command {
             recipientID = Integer.parseInt(input[1]);
             transferAmount = Double.parseDouble(input[2]);
             service.transactionExecution(recipientID, senderID, transferAmount);
+            ConsoleHelper.writeMessage("The transfer is completed");
         } catch (NumberFormatException e) {
             ConsoleHelper.writeMessage("Некоректный ввод");
         } catch (Exception e) {

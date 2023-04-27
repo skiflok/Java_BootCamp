@@ -21,8 +21,8 @@ public class Menu {
         addUser = new AddUser(service);
         viewUserBalance = new ViewUserBalance(service);
         performTransfer = new PerformTransfer(service);
-        viewAllTransactionsForSpecificUser = new ViewAllTransactionsForSpecificUser();
-        devRemoveTransferByID = new DevRemoveTransferByID();
+        viewAllTransactionsForSpecificUser = new ViewAllTransactionsForSpecificUser(service);
+        devRemoveTransferByID = new DevRemoveTransferByID(service);
         devCheckTransferValidity = new DevCheckTransferValidity();
         this.dev = dev;
     }
@@ -91,6 +91,7 @@ public class Menu {
             } catch (IllegalArgumentException e) {
                 ConsoleHelper.writeMessage(e.getMessage());
             }
+            System.out.println("---------------------------------------------------------");
         }
     }
 }

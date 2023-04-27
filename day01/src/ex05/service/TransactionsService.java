@@ -57,8 +57,8 @@ public class TransactionsService {
         return usersList.getByID(userID).getTransactionList().toArray();
     }
 
-    public void removeTransaction (UUID transactionID, int userID) throws UserNotFoundException {
-        usersList.getByID(userID).getTransactionList().remove(transactionID);
+    public Transaction removeTransaction (UUID transactionID, int userID) throws UserNotFoundException {
+        return usersList.getByID(userID).getTransactionList().remove(transactionID);
     }
 
     public Transaction[] getInvalidTransactionArray() {

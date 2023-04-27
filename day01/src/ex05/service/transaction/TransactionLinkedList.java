@@ -23,7 +23,8 @@ public class TransactionLinkedList implements TransactionList {
     }
 
     @Override
-    public void remove(UUID uuid) {
+    public Transaction remove(UUID uuid) {
+        Transaction transaction;
         if (size == 0) {
             throw new TransactionNotFoundException("Транзакция не найдена");
         }
@@ -34,8 +35,9 @@ public class TransactionLinkedList implements TransactionList {
 
         for (Node x = first; x != null; x = x.next) {
             if (uuid.equals(x.transaction.getIdentifier())) {
+                transaction = x.transaction;
                 unlink(x);
-                return;
+                return transaction;
             }
         }
         throw new TransactionNotFoundException("Пользователь не найден");
