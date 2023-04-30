@@ -9,13 +9,12 @@ import java.util.Scanner;
 public class FileSignatureDictionary {
     private final Map<String, String> fileSignatureDictionary = new HashMap<>();
 
-    FileSignatureDictionary () {
-        fillSignatureDictionary();
+    FileSignatureDictionary() {
     }
     private int maxLengthSignature;
 
-    private void fillSignatureDictionary() {
-        String path = "day02/src/ex00/signatures.txt";
+    public void fillSignatureDictionary(String path) {
+
         try (Scanner readSignatures = new Scanner(new FileInputStream(path))) {
             String [] tempDictionaryArray;
             while (readSignatures.hasNext()) {
@@ -29,9 +28,6 @@ public class FileSignatureDictionary {
         } catch (FileNotFoundException e) {
             System.err.println("Файл не найдет");
         }
-//        for (Map.Entry<String, String> signature : fileSignatureDictionary.entrySet()) {
-//            System.out.println(signature);
-//        }
     }
 
     public Map<String, String> getFileSignatureDictionary() {

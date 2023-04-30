@@ -1,40 +1,60 @@
 package ex00;
 
 import java.io.*;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Scanner;
+
 
 public class Program {
 
-//    static Map<String, String>   fileSignatureDictionary = new HashMap<>();
     public static void main(String[] args) {
 
-        String currentDirectory = System.getProperty("user.dir"); //del
-        System.out.println("Текущая директория: " + currentDirectory); //del
+
+        Scanner scanner = new Scanner(System.in);
+        String signatureFilePath = "day02/src/ex00/signatures.txt";
+        String resultPath = "day02/src/ex00/result.txt";
 
         FileSignatureDictionary fileSignatureDictionary = new FileSignatureDictionary();
+        fileSignatureDictionary.fillSignatureDictionary(signatureFilePath);
 
-        int maxLength = fileSignatureDictionary.getMaxLengthSignature();
-        System.out.println(maxLength);
+        String filePath;
+        int maxLength;
+        String startFileBytes;
+        String result;
+        while (!(filePath = scanner.nextLine()).equals("42")) {
+            result = null;
+            try {
+                maxLength = fileSignatureDictionary.getMaxLengthSignature();
+                startFileBytes = getStartByteFileToString(filePath, maxLength);
+                result = defineContentType(fileSignatureDictionary, startFileBytes);
+            } catch (Exception ignore) {
+            }
+            if (result == null) {
+                System.out.println("UNDEFINED");
+            } else {
+                writeResult(resultPath, result);
+                System.out.println("PROCESSED");
+            }
 
-        String startFileBytes = getStartByteToString(maxLength);
+        }
+        scanner.close();
+    }
 
-        System.out.println(startFileBytes);
 
-
+    private static String defineContentType (FileSignatureDictionary fileSignatureDictionary, String startFileBytes) {
         String result = null;
         for (Map.Entry<String, String> mapEntry:
-             fileSignatureDictionary.getFileSignatureDictionary().entrySet()) {
+                fileSignatureDictionary.getFileSignatureDictionary().entrySet()) {
             if (startFileBytes.startsWith(mapEntry.getValue())) {
                 System.out.println(mapEntry.getKey());
                 result = mapEntry.getKey() + "\n";
             }
         }
+        return result;
+    }
 
-        try (FileOutputStream fos = new FileOutputStream("day02/src/ex00/result.txt", true)) {
-            assert result != null;
+    private static void writeResult(String resultPath, String result) {
+        try (FileOutputStream fos = new FileOutputStream(resultPath, true)) {
             byte[] bytes = result.getBytes();
             fos.write(bytes);
         } catch (IOException e) {
@@ -42,9 +62,8 @@ public class Program {
         }
     }
 
-
-    private static String getStartByteToString(int maxLength) {
-        File file = new File("day02/src/ex00/test.png");
+    private static String getStartByteFileToString(String filePath, int maxLength) {
+        File file = new File(filePath);
         String startFileBytes = null;
         try (FileInputStream fis = new FileInputStream(file)) {
             StringBuilder stringBuilder = new StringBuilder();
@@ -57,8 +76,10 @@ public class Program {
             }
             startFileBytes = stringBuilder.toString().trim();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("File not found");
         }
         return startFileBytes;
     }
 }
+
+// "day02/src/ex00/test.png"
