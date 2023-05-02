@@ -1,8 +1,6 @@
 package ex01;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -20,22 +18,38 @@ public class Program {
 
             String file1 = fr0.lines().collect(Collectors.joining(" "));
             String file2 = fr1.lines().collect(Collectors.joining(" "));
-            String[] wordsFile1 = file1.split("\\p{Punct}?[\\s]+");
-            String[] wordsFile2 = file2.split("\\p{Punct}?[\\s]+");
+            String[] wordsFile1 = file1.split("\\W+");
+            String[] wordsFile2 = file2.split("\\W+");
 
             LinkedHashSet<String> dictionary = Arrays.stream(wordsFile1).collect(Collectors.toCollection(LinkedHashSet::new));
             dictionary.addAll(Arrays.stream(wordsFile2).collect(Collectors.toSet()));
+
+            createDictionaryFile(dictionary);
 
             int[] A = frequencyAnalysisOfDictionary(dictionary, wordsFile1);
             int[] B = frequencyAnalysisOfDictionary(dictionary, wordsFile2);
 
             double similarity = scalarMultiplicationVectors(A, B) / (euclideanNormVector(A) * euclideanNormVector(B));
 
-
             similarity = ((int) (similarity * 100)) / 100.0;
 
             System.out.printf("Similarity = %.2f%n", similarity);
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    private static void createDictionaryFile (Set<String> dictionary) {
+
+        File outputFile = new File("day02/src/ex01/dictionary.txt");
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile))) {
+            for (String word : dictionary) {
+                writer.write(word);
+                writer.newLine();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
