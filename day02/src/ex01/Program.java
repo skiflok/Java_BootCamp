@@ -89,5 +89,4 @@ public class Program {
         }
         return frequency;
     }
-
 }
