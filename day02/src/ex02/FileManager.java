@@ -18,8 +18,8 @@ public class FileManager {
     public void mv() {
 
     }
-    public void ls(Path path) {
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(path)) {
+    public void ls() {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(currentDirectory)) {
             for (Path file : stream) {
                 if (Files.isDirectory(file)) {
                     System.out.printf("%s %d KB\n", file.getFileName(), getDirectorySize(file) / 1024);

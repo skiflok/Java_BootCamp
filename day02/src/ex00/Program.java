@@ -4,15 +4,13 @@ import java.io.*;
 import java.util.Map;
 import java.util.Scanner;
 
-
 public class Program {
 
     public static void main(String[] args) {
 
-
         Scanner scanner = new Scanner(System.in);
-        String signatureFilePath = "day02/src/ex00/signatures.txt";
-        String resultPath = "day02/src/ex00/result.txt";
+        String signatureFilePath = "./signatures.txt";
+        String resultPath = "./result.txt";
 
         FileSignatureDictionary fileSignatureDictionary = new FileSignatureDictionary();
         fileSignatureDictionary.fillSignatureDictionary(signatureFilePath);

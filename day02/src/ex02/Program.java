@@ -21,46 +21,35 @@ public class Program {
             return;
         }
 
-        BufferedReader bis = new BufferedReader(new InputStreamReader(System.in));
+        String path = args[0];
+        Path directoryPath = Paths.get(path);
+//        Path directoryPath = Paths.get("/Users/violator/");
+        FileManager fileManager = new FileManager(path);
 
         String input;
-        String [] inputToArray;
-        while (true) {
-            try {
-                if ((input = bis.readLine()).equals("exit")) break;
+        String[] inputToArray;
+
+        try (BufferedReader bis = new BufferedReader(new InputStreamReader(System.in))) {
+            while (!(input = bis.readLine()).equals("exit")) {
                 inputToArray = input.split(" ");
                 switch (inputToArray[0]) {
-                    case "mv" :
+                    case "mv":
+                        fileManager.mv();
                         break;
-                    case "ls" :
+                    case "ls":
+                        fileManager.ls();
                         break;
-                    case "cd" :
+                    case "cd":
+                        fileManager.cd();
                         break;
                     default:
                         System.err.println("Неверная команда");
                 }
-
-
-            } catch (IOException e) {
-                throw new RuntimeException(e);
             }
-
-        }
-
-        String path = args[0];
-        Path directoryPath = Paths.get("/Users/violator/");
-//        Path directoryPath = Paths.get(path);
-
-        FileManager fileManager = new FileManager(path);
-
-        fileManager.ls(directoryPath);
-
-
-        try {
-            bis.close();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
+
     }
 }
 
