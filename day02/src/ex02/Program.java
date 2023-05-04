@@ -3,9 +3,8 @@ package ex02;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
+import java.nio.file.FileSystemException;
+import java.nio.file.NoSuchFileException;
 
 public class Program {
 
@@ -16,7 +15,12 @@ public class Program {
             return;
         }
 
-        String path = args[0];
+        String [] inputParam = args[0].split("=");
+        if (inputParam.length != 2 || !inputParam[0].equals("--current-folder")) {
+            System.out.println("Неизвестнные параметры ввода");
+            System.exit(-1);
+        }
+        String path = inputParam[1];
         FileManager fileManager = new FileManager(path);
         String input;
         String[] inputToArray;
@@ -39,7 +43,11 @@ public class Program {
                             System.err.println("Неверная команда");
                     }
                 } catch (IllegalArgumentException e) {
-                    System.out.println(e.getMessage());
+                    System.err.println(e.getMessage());
+                } catch (NoSuchFileException e) {
+                    System.err.printf("Файл %s не найден\n", e.getMessage());
+                } catch (FileSystemException e) {
+                    System.out.println("Ошибка " + e.getMessage());
                 }
             }
         } catch (IOException e) {

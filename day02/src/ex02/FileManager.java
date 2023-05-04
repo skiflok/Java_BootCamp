@@ -1,10 +1,7 @@
 package ex02;
 
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 
 public class FileManager {
     private Path currentDirectory;
@@ -12,22 +9,28 @@ public class FileManager {
     public FileManager(String path) {
         Path p = Paths.get(path);
         if (Files.exists(p) && Files.isDirectory(p)) {
-            this.currentDirectory = p;
+            this.currentDirectory = p.toAbsolutePath().normalize();
         } else {
             System.err.println("Введенная директория не валидна");
             System.exit(-1);
         }
     }
-    public Path getCurrentDirectory() {
-        return currentDirectory;
-    }
-    public void mv(String[] inputToArray) {
-        if (inputToArray.length != 3) throw new IllegalArgumentException("Неверное количество аргументов для команды mv");
 
-
+    public void mv(String[] inputToArray) throws IOException {
+        if (inputToArray.length != 3)
+            throw new IllegalArgumentException("Неверное количество аргументов для команды mv");
+        Path source = currentDirectory.resolve(Paths.get(inputToArray[1]));
+        Path target = currentDirectory.resolve(Paths.get(inputToArray[2]));
+        if (Files.isDirectory(target)) {
+            Files.move(source, target.resolve(source.getFileName()));
+        } else {
+            Files.move(source, target);
+        }
     }
+
     public void ls(String[] inputToArray) {
-        if (inputToArray.length != 1) throw new IllegalArgumentException("Неверное количество аргументов для команды ls");
+        if (inputToArray.length != 1)
+            throw new IllegalArgumentException("Неверное количество аргументов для команды ls");
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(currentDirectory)) {
             for (Path file : stream) {
                 if (Files.isDirectory(file)) {
@@ -37,11 +40,16 @@ public class FileManager {
                 }
             }
         } catch (IOException e) {
-            System.err.printf("Ошибка обращения к дериктории %s \n",e.getMessage());
+            System.err.printf("Ошибка обращения к дериктории %s \n", e.getMessage());
         }
     }
-    public void cd(String[] inputToArray) {
-        if (inputToArray.length != 2) throw new IllegalArgumentException("Неверное количество аргументов для команды cd");
+
+    public void cd(String[] inputToArray) throws NotDirectoryException {
+        if (inputToArray.length != 2)
+            throw new IllegalArgumentException("Неверное количество аргументов для команды cd");
+        if (!Files.isDirectory(currentDirectory.resolve(Paths.get(inputToArray[1])))) throw new NotDirectoryException("Неверная директория");
+        currentDirectory = currentDirectory.resolve(Paths.get(inputToArray[1])).normalize();
+        System.out.println(currentDirectory);
     }
 
     public long getDirectorySize(Path path) {
