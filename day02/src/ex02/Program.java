@@ -2,7 +2,6 @@ package ex02;
 
 import ex02.command.Command;
 import ex02.command.MvCommand;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -55,4 +54,3 @@ public class Program {
         }
     }
 }
-
