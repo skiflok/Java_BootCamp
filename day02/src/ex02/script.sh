@@ -4,5 +4,5 @@ if [ $# -ne 1 ]; then
   exit 1
 fi
 # shellcheck disable=SC2035
-javac -d bin *.java
+javac -d bin *.java command/*.java
 java -classpath bin ex02.Program "$1"

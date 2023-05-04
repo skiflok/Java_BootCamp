@@ -1,8 +1,6 @@
 package ex02;
 
-import ex02.command.CdCommand;
 import ex02.command.Command;
-import ex02.command.LSCommand;
 import ex02.command.MvCommand;
 
 import java.io.BufferedReader;
@@ -31,32 +29,20 @@ public class Program {
         String[] inputToArray;
 
         Command mv = new MvCommand(fileManager);
-        Command ls = new LSCommand(fileManager);
-        Command cd = new CdCommand(fileManager);
+        Command ls = (stringArr) -> fileManager.ls(stringArr);
+        Command cd = fileManager::cd;
 
-        Switch mySwitch = new Switch();
-        mySwitch.register("mv" , mv);
-        mySwitch.register("ls" , ls);
-        mySwitch.register("cd" , cd);
+        FileManagerCommandExecutor commandExecutor = new FileManagerCommandExecutor();
+        commandExecutor.register("mv" , mv);
+        commandExecutor.register("ls" , ls);
+        commandExecutor.register("cd" , cd);
 
         try (BufferedReader bis = new BufferedReader(new InputStreamReader(System.in))) {
             while (!(input = bis.readLine()).equals("exit")) {
                 try {
                     inputToArray = input.split(" ");
-                    switch (inputToArray[0]) {
-                        case "mv":
-                            fileManager.mv(inputToArray);
-                            break;
-                        case "ls":
-                            fileManager.ls(inputToArray);
-                            break;
-                        case "cd":
-                            fileManager.cd(inputToArray);
-                            break;
-                        default:
-                            System.err.println("Неверная команда");
-                    }
-                } catch (IllegalArgumentException e) {
+                    commandExecutor.exec(inputToArray[0], inputToArray);
+                } catch (IllegalArgumentException | IllegalStateException e) {
                     System.err.println(e.getMessage());
                 } catch (NoSuchFileException e) {
                     System.err.printf("Файл %s не найден\n", e.getMessage());
@@ -65,7 +51,7 @@ public class Program {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
         }
 
     }
