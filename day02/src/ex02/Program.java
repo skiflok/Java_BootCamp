@@ -1,5 +1,10 @@
 package ex02;
 
+import ex02.command.CdCommand;
+import ex02.command.Command;
+import ex02.command.LSCommand;
+import ex02.command.MvCommand;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -24,6 +29,15 @@ public class Program {
         FileManager fileManager = new FileManager(path);
         String input;
         String[] inputToArray;
+
+        Command mv = new MvCommand(fileManager);
+        Command ls = new LSCommand(fileManager);
+        Command cd = new CdCommand(fileManager);
+
+        Switch mySwitch = new Switch();
+        mySwitch.register("mv" , mv);
+        mySwitch.register("ls" , ls);
+        mySwitch.register("cd" , cd);
 
         try (BufferedReader bis = new BufferedReader(new InputStreamReader(System.in))) {
             while (!(input = bis.readLine()).equals("exit")) {
