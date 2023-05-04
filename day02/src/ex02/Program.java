@@ -1,7 +1,7 @@
 package ex02;
 
-import ex02.command.Command;
 import ex02.command.MvCommand;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,29 +14,25 @@ public class Program {
 
         if (args.length != 1) {
             System.out.println("Неверное количество аргументов");
-            return;
+            System.exit(-1);
         }
 
-        String [] inputParam = args[0].split("=");
+        String[] inputParam = args[0].split("=");
         if (inputParam.length != 2 || !inputParam[0].equals("--current-folder")) {
             System.out.println("Неизвестнные параметры ввода");
             System.exit(-1);
         }
-        String path = inputParam[1];
-        FileManager fileManager = new FileManager(path);
-        String input;
-        String[] inputToArray;
 
-        Command mv = new MvCommand(fileManager);
-        Command ls = (stringArr) -> fileManager.ls(stringArr);
-        Command cd = fileManager::cd;
-
+        FileManager fileManager = new FileManager(inputParam[1]);
         FileManagerCommandExecutor commandExecutor = new FileManagerCommandExecutor();
-        commandExecutor.register("mv" , mv);
-        commandExecutor.register("ls" , ls);
-        commandExecutor.register("cd" , cd);
+
+        commandExecutor.register("mv", new MvCommand(fileManager));
+        commandExecutor.register("ls", (stringArr) -> fileManager.ls(stringArr));
+        commandExecutor.register("cd", fileManager::cd);
 
         try (BufferedReader bis = new BufferedReader(new InputStreamReader(System.in))) {
+            String input;
+            String[] inputToArray;
             while (!(input = bis.readLine()).equals("exit")) {
                 try {
                     inputToArray = input.split(" ");
