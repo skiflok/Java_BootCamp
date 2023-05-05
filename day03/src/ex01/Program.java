@@ -4,7 +4,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class Program {
 
-    final static LinkedBlockingQueue<Boolean> block = new LinkedBlockingQueue<>(1);
+    final static LinkedBlockingQueue<Integer> block = new LinkedBlockingQueue<>(1);
+    final static Object monitor = new Object();
 
     public static void main(String[] args) {
         try {
@@ -18,10 +19,32 @@ public class Program {
     }
 
     private static void run(int count) throws InterruptedException {
-        Egg egg = new Egg(count);
-        Hen hen = new Hen(count);
-        egg.start();
-        hen.start();
+//        Egg egg = new Egg(count);
+//        Hen hen = new Hen(count);
+//        egg.start();
+//        hen.start();
+
+        Printer printer = new Printer(5);
+        Runnable egg = () -> {
+            for (int i = 0; i < printer.count; i++) {
+                printer.print("Egg");
+            }
+        };
+        Runnable hen = () -> {
+            for (int i = 0; i < printer.count; i++) {
+                printer.print("Hen");
+            }
+        };
+
+        Thread eggThread = new Thread(egg);
+        Thread henThread = new Thread(hen);
+
+        eggThread.start();
+        henThread.start();
+        eggThread.join();
+        henThread.join();
+
+
     }
 
     public static int checkAndGetParam(String[] args) {
