@@ -1,23 +1,33 @@
 package ex01;
 
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-public class Printer {
+public class Printer extends  Thread{
+    private final int count;
 
-    final Lock lock = new ReentrantLock();
+    private final Object monitor;
 
-    final int count;
+    private final String printString;
 
-    public Printer(int count) {
+    public Printer(int count, Object monitor, String printString) {
         this.count = count;
+        this.monitor = monitor;
+        this.printString = printString;
     }
 
-    public void print(String str) {
-        lock.lock();
-        try {
-            System.out.println(str);
-        } finally {
-            lock.unlock();
+
+    @Override
+    public void run() {
+        for (int i = 0; i < count; i++) {
+            synchronized (monitor) {
+                monitor.notify();
+                System.out.println(printString);
+                try {
+                    if (i != count - 1) {
+                        monitor.wait();
+                    }
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
     }
 }

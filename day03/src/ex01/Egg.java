@@ -3,39 +3,27 @@ package ex01;
 public class Egg extends Thread {
     private final int count;
 
-    public Egg(int count) {
+    private final Object monitor;
+
+    public Egg(int count, Object monitor) {
         this.count = count;
+        this.monitor = monitor;
     }
 
     @Override
     public void run() {
-
-        synchronized (Program.monitor) {
-            try {
-                for (int i = 0; i < count; i++) {
-                    System.out.println("Egg" + i);
-                    Program.monitor.notify();
+        for (int i = 0; i < count; i++) {
+            synchronized (monitor) {
+                monitor.notify();
+                System.out.println("Egg");
+                try {
                     if (i != count - 1) {
-                        Program.monitor.wait();
+                        monitor.wait();
                     }
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
                 }
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            finally {
-                Program.monitor.notify();
             }
         }
-//        int breakCount = 3;
-//        while (breakCount < count) {
-//            try {
-////                Thread.sleep(1000);
-//                Program.block.put(breakCount);
-//                System.out.println("Egg put " + breakCount);
-//                breakCount++;
-//            } catch (InterruptedException e) {
-//                throw new RuntimeException(e);
-//            }
-//        }
     }
 }
