@@ -1,10 +1,6 @@
 package ex01;
 
-import java.util.concurrent.LinkedBlockingQueue;
-
 public class Program {
-
-    final static LinkedBlockingQueue<Integer> block = new LinkedBlockingQueue<>(1);
 
     public static void main(String[] args) {
         try {
@@ -19,8 +15,6 @@ public class Program {
 
     private static void run(int count) {
         final Object monitor = new Object();
-//        Egg egg = new Egg(count, monitor);
-//        Hen hen = new Hen(count, monitor);
         Printer egg = new Printer(count, monitor, "Egg");
         Printer hen = new Printer(count, monitor, "Hen");
         egg.start();

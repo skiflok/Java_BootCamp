@@ -1,6 +1,6 @@
 package ex01;
 
-public class Printer extends  Thread{
+public class Printer extends Thread {
     private final int count;
 
     private final Object monitor;
