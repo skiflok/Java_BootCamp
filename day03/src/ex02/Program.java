@@ -1,10 +1,10 @@
 package ex02;
 
-
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class Program {
 
@@ -15,10 +15,36 @@ public class Program {
             int arraySize = CommandLineArguments.getParamValue("--arraySize");
             int threadCount = CommandLineArguments.getParamValue("--threadsCount");
 
-            System.out.println(arraySize);
-            System.out.println(threadCount);
+            if (arraySize > 2_000_000 || threadCount > arraySize) {
+                throw new RuntimeException("количество потоков больше количества элементов массива или\n" +
+                        "максимальное количество элементов массива больше 2 000 000.");
+            }
 
+            int[] arr = new Random().ints(arraySize, 1, 2).toArray();
 
+            int min = Arrays.stream(arr).min().getAsInt();
+            int max = Arrays.stream(arr).max().getAsInt();
+
+            long start = System.nanoTime();
+            long sum = Arrays.stream(arr).sum();
+            long end = System.nanoTime();
+            System.out.println("Время выполнения: " + (end - start) + " нс");
+
+            System.out.println(min);
+            System.out.println(max);
+            System.out.println(sum);
+
+//
+//            for (int i = 0; i < threadCount; i++) {
+//
+//            }
+
+            ExecutorService service = Executors.newFixedThreadPool(threadCount);
+            Future<Integer> task = service.submit(new Calculator(arr));
+
+            service.shutdown();
+
+            System.out.println(task.get());
 
 //            run(count);
         } catch (NumberFormatException e) {
