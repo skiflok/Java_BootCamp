@@ -17,7 +17,7 @@ public class Program {
             int arraySize = CommandLineArguments.getParamValue("--arraySize");
             int threadCount = CommandLineArguments.getParamValue("--threadsCount");
 
-            if (arraySize > 2_000_000 || threadCount > arraySize) {
+            if (arraySize > 2_000_000000 || threadCount > arraySize) {
                 throw new RuntimeException("количество потоков больше количества элементов массива или\n" +
                         "максимальное количество элементов массива больше 2 000 000.");
             }
@@ -26,14 +26,14 @@ public class Program {
 
 //            int min = Arrays.stream(arr).min().getAsInt();
 //            int max = Arrays.stream(arr).max().getAsInt();
-
-            long start = System.nanoTime();
-            long sum = Arrays.stream(arr).sum();
-            long end = System.nanoTime();
-            System.out.println("Время выполнения: " + (end - start) + " нс");
-
 //            System.out.println("min = " + min);
 //            System.out.println("max = " + max);
+
+            long start = System.currentTimeMillis();
+            long sum = Arrays.stream(arr).sum();
+            long end = System.currentTimeMillis();
+            System.out.println("Время выполнения: " + (end - start) + " мс");
+
             System.out.println("Sum = " + sum);
 
             ExecutorService service = Executors.newFixedThreadPool(threadCount);
@@ -41,6 +41,8 @@ public class Program {
             int elementInArray = arraySize / threadCount;
             int startIndex;
             int endIndex = 0;
+
+            start = System.currentTimeMillis();
 
             for (int i = 0; i < threadCount; i++) {
                 if (i != threadCount - 1) {
@@ -66,6 +68,9 @@ public class Program {
             for (Future<Integer> task : tasks) {
                 sum += task.get();
             }
+
+            end = System.currentTimeMillis();
+            System.out.println("Время выполнения: " + (end - start) + " мс");
 
             System.out.println("sum by threads = " + sum);
 
