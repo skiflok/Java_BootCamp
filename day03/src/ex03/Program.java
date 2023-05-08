@@ -7,6 +7,7 @@ public class Program {
         try {
             CommandLineArguments.fiiArguments(args);
             int threadsCount = CommandLineArguments.getParamValue("--threadsCount");
+
             run(threadsCount);
 
         } catch (NumberFormatException e) {
