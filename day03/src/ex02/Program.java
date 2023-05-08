@@ -1,6 +1,8 @@
 package ex02;
 
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -30,21 +32,36 @@ public class Program {
             long end = System.nanoTime();
             System.out.println("Время выполнения: " + (end - start) + " нс");
 
-            System.out.println(min);
-            System.out.println(max);
-            System.out.println(sum);
-
-//
-//            for (int i = 0; i < threadCount; i++) {
-//
-//            }
+            System.out.println("min = " + min);
+            System.out.println("max = " + max);
+            System.out.println("Sum = " + sum);
 
             ExecutorService service = Executors.newFixedThreadPool(threadCount);
-            Future<Integer> task = service.submit(new Calculator(arr));
+            List<Future<Integer>> tasks = new LinkedList<>();
+            int elementInArray = arraySize / threadCount;
+            System.out.println("elementInArray = " + elementInArray);
+            int startIndex = 0;
+            int endIndex = 0;
+
+            for (int i = 0; i < threadCount; i++) {
+                if (i != threadCount - 1) {
+                    startIndex = elementInArray * i;
+                    endIndex = elementInArray + elementInArray * i;
+                    System.out.printf("startIndex = %d endIndex = %d\n", startIndex, endIndex);
+                } else {
+                    startIndex = endIndex;
+                    endIndex = arraySize;
+                }
+                int finalStartIndex = startIndex;
+                int finalEndIndex = endIndex;
+                tasks.add((service.submit(() -> Arrays.stream(arr, finalStartIndex, finalEndIndex).sum())));
+            }
 
             service.shutdown();
 
-            System.out.println(task.get());
+            for (Future<Integer> task : tasks) {
+                System.out.println(task.get());
+            }
 
 //            run(count);
         } catch (NumberFormatException e) {

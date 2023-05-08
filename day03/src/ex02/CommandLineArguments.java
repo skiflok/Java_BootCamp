@@ -23,7 +23,7 @@ public class CommandLineArguments {
         for (String s : args) {
             param = s.split("=");
             if (param.length != 2 || !validParam.contains(param[0])) {
-                throw new IllegalArgumentException("Неизвестнные параметры ввода");
+                throw new IllegalArgumentException("Неизвестные параметры ввода");
             }
             if (inputParamsToUse.containsKey(param[0])) {
                 throw new IllegalArgumentException("Параметры ввода дублируются");
