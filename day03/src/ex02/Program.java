@@ -24,44 +24,50 @@ public class Program {
 
             int[] arr = new Random().ints(arraySize, 1, 2).toArray();
 
-            int min = Arrays.stream(arr).min().getAsInt();
-            int max = Arrays.stream(arr).max().getAsInt();
+//            int min = Arrays.stream(arr).min().getAsInt();
+//            int max = Arrays.stream(arr).max().getAsInt();
 
             long start = System.nanoTime();
             long sum = Arrays.stream(arr).sum();
             long end = System.nanoTime();
             System.out.println("Время выполнения: " + (end - start) + " нс");
 
-            System.out.println("min = " + min);
-            System.out.println("max = " + max);
+//            System.out.println("min = " + min);
+//            System.out.println("max = " + max);
             System.out.println("Sum = " + sum);
 
             ExecutorService service = Executors.newFixedThreadPool(threadCount);
             List<Future<Integer>> tasks = new LinkedList<>();
             int elementInArray = arraySize / threadCount;
-            System.out.println("elementInArray = " + elementInArray);
-            int startIndex = 0;
+            int startIndex;
             int endIndex = 0;
 
             for (int i = 0; i < threadCount; i++) {
                 if (i != threadCount - 1) {
                     startIndex = elementInArray * i;
                     endIndex = elementInArray + elementInArray * i;
-                    System.out.printf("startIndex = %d endIndex = %d\n", startIndex, endIndex);
                 } else {
                     startIndex = endIndex;
                     endIndex = arraySize;
                 }
                 int finalStartIndex = startIndex;
                 int finalEndIndex = endIndex;
-                tasks.add((service.submit(() -> Arrays.stream(arr, finalStartIndex, finalEndIndex).sum())));
+                int finalI = i;
+                tasks.add((service.submit(() -> {
+                    int threadSum = Arrays.stream(arr, finalStartIndex, finalEndIndex).sum();
+                    System.out.printf("Thread %d: from %d to %d sum is %d\n", finalI + 1, finalStartIndex, finalEndIndex, threadSum);
+                    return threadSum;
+                })));
             }
 
             service.shutdown();
 
+            sum = 0;
             for (Future<Integer> task : tasks) {
-                System.out.println(task.get());
+                sum += task.get();
             }
+
+            System.out.println("sum by threads = " + sum);
 
 //            run(count);
         } catch (NumberFormatException e) {
