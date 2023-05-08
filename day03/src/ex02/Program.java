@@ -63,7 +63,7 @@ public class Program {
 
     private static int threadSum(int[] arr, int threadCount) throws ExecutionException, InterruptedException {
         int sum;
-        
+
         ExecutorService service = Executors.newFixedThreadPool(threadCount);
         List<Future<Integer>> tasks = new LinkedList<>();
         int elementInArray = arr.length / threadCount;
