@@ -6,6 +6,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Program {
 
@@ -15,16 +18,18 @@ public class Program {
             CommandLineArguments.fiiArguments(args);
             int threadsCount = CommandLineArguments.getParamValue("--threadsCount");
 
-            String file = "./files_url.txt";
+            String file = "./resources/files_url.txt";
             Path filePath = Paths.get(file);
 
-            HashMap<String, String> urls = readFileWithResourceToDownload(file);
+            Map<String, String> urls = readFileWithResourceToDownload(file);
 
-            for (Map.Entry<String, String> entry: urls.entrySet()) {
+            BlockingQueue<DownloadTask> downloadTasks = new LinkedBlockingQueue<>();
+
+//            for (Map.Entry<String, String> entry: urls.entrySet()) {
 //                System.out.println(entry);
-            }
+//            }
 
-            String downloadDirectory = "./download/";
+            String downloadDirectory = "./resources/download/";
             Path downloadDirectoryPath = Paths.get(downloadDirectory);
 
             if (Files.exists(downloadDirectoryPath)) {
@@ -33,6 +38,13 @@ public class Program {
                 System.out.println("not exist");
                 System.out.println("directory create");
                 Files.createDirectory(downloadDirectoryPath);
+            }
+
+            List<Thread> downloaderThreads = new ArrayList<>();
+            for (int i = 0; i < threadsCount; i++) {
+                Thread thread = new Thread(new UrlFileDownloader());
+                downloaderThreads.add(thread);
+                thread.start();
             }
 
 
@@ -48,6 +60,10 @@ public class Program {
             while ((bytesRead = urlReader.read(dataBuffer, 0, 1024)) != -1) {
                 fileWriter.write(dataBuffer, 0, bytesRead);
             }
+
+            fileWriter.flush();
+            fileWriter.close();
+            urlReader.close();
 
             run(threadsCount);
 
@@ -65,18 +81,30 @@ public class Program {
 //        System.out.println("threadsCount = " + threadsCount);
     }
 
-    private static HashMap<String, String> readFileWithResourceToDownload(String path) {
-        HashMap<String, String> urls = new LinkedHashMap<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
-            String [] temp;
-            while (reader.ready()) {
-                temp = reader.readLine().split(" ");
-                if (temp.length != 2) throw new IllegalArgumentException("Bad args");
-                urls.put(temp[0], temp[1]);
-            }
+    private static Map<String, String> readFileWithResourceToDownload(String path) {
+
+        Map<String, String> urls = null;
+
+        try(Stream<String> stream = Files.lines(Paths.get(path))) {
+            urls = stream.map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .collect(Collectors.toMap(
+                            key -> {
+                                String[] parts = key.split(" ");
+                                if (parts.length != 2) {
+                                    throw new IllegalArgumentException("Line does not have two parts: " + key);
+                                }
+                                return parts[0];
+                            }, // создаем ключ из первого слова
+                            value -> value.split(" ")[1], // создаем значение из оставшейся части строки
+                            (v1, v2) -> v1, // функция для обработки дубликатов ключей
+                            LinkedHashMap::new // указываем тип Map, чтобы сохранить порядок элементов
+                    ));
+
         } catch (IOException exception) {
             exception.printStackTrace();
         }
+
         return urls;
     }
 
