@@ -1,7 +1,6 @@
 package ex03;
 
 import java.io.*;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,19 +17,20 @@ public class Program {
             CommandLineArguments.fiiArguments(args);
             int threadsCount = CommandLineArguments.getParamValue("--threadsCount");
 
-            String file = "./resources/files_url.txt";
-            Path filePath = Paths.get(file);
-
-            Map<String, String> urls = readFileWithResourceToDownload(file);
-
-            BlockingQueue<DownloadTask> downloadTasks = new LinkedBlockingQueue<>();
-
-//            for (Map.Entry<String, String> entry: urls.entrySet()) {
-//                System.out.println(entry);
-//            }
-
-            String downloadDirectory = "./resources/download/";
+//            String file = "./resources/files_url.txt";
+//            String downloadDirectory = "./resources/download/";
+            String filesUrl = "./day03/src/ex03/resources/files_url.txt";
+            String downloadDirectory = "./day03/src/ex03/resources/download/";
+//            Path filePath = Paths.get(filesUrl);
             Path downloadDirectoryPath = Paths.get(downloadDirectory);
+
+            Map<String, String> urls = readFileWithResourceToDownload(filesUrl);
+
+            BlockingQueue<DownloadTask> downloadTasksQueue = new LinkedBlockingQueue<>(50);
+
+            for (Map.Entry<String, String> task : urls.entrySet()) {
+                downloadTasksQueue.add(new DownloadTask(task.getKey(), task.getValue()));
+            }
 
             if (Files.exists(downloadDirectoryPath)) {
                 System.out.println("exist");
@@ -42,28 +42,10 @@ public class Program {
 
             List<Thread> downloaderThreads = new ArrayList<>();
             for (int i = 0; i < threadsCount; i++) {
-                Thread thread = new Thread(new UrlFileDownloader());
+                Thread thread = new Thread(new UrlFileDownloader(downloadTasksQueue, downloadDirectory));
                 downloaderThreads.add(thread);
                 thread.start();
             }
-
-
-
-            BufferedOutputStream fileWriter = new BufferedOutputStream(
-                    new FileOutputStream(downloadDirectory + "11192eba63f6f3aa591d3263fdb66bd5.jpg"));
-
-            BufferedInputStream urlReader = new BufferedInputStream(
-                    new URL("https://i.pinimg.com/originals/11/19/2e/11192eba63f6f3aa591d3263fdb66bd5.jpg").openStream());
-
-            byte[] dataBuffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = urlReader.read(dataBuffer, 0, 1024)) != -1) {
-                fileWriter.write(dataBuffer, 0, bytesRead);
-            }
-
-            fileWriter.flush();
-            fileWriter.close();
-            urlReader.close();
 
             run(threadsCount);
 
@@ -81,11 +63,11 @@ public class Program {
 //        System.out.println("threadsCount = " + threadsCount);
     }
 
-    private static Map<String, String> readFileWithResourceToDownload(String path) {
+    private static Map<String, String> readFileWithResourceToDownload(String filesUrl) {
 
         Map<String, String> urls = null;
 
-        try(Stream<String> stream = Files.lines(Paths.get(path))) {
+        try(Stream<String> stream = Files.lines(Paths.get(filesUrl))) {
             urls = stream.map(String::trim)
                     .filter(s -> !s.isEmpty())
                     .collect(Collectors.toMap(
