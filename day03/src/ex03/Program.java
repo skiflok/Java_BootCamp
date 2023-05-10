@@ -1,15 +1,12 @@
 package ex03;
 
-import javax.swing.plaf.basic.BasicButtonUI;
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.nio.file.Files;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Program {
 
@@ -23,7 +20,6 @@ public class Program {
             Path filePath = Paths.get(file);
             System.out.println(filePath);
 
-
             BufferedReader reader = new BufferedReader(new FileReader(file));
             HashMap<String, String> urls = new HashMap<>();
             String [] temp;
@@ -33,11 +29,10 @@ public class Program {
                 urls.put(temp[0], temp[1]);
             }
 
-
-
             for (Map.Entry<String, String> entry: urls.entrySet()) {
                 System.out.println(entry);
             }
+
 
 
             run(threadsCount);
@@ -49,10 +44,29 @@ public class Program {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+
     }
 
     private static void run (int threadsCount) {
         System.out.println("threadsCount = " + threadsCount);
     }
+
+//    private static HashMap<String, String> readFile(String path) {
+//        HashMap<String, String> urls = new HashMap<>();
+//        try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
+//            String [] temp;
+//            while (reader.ready()) {
+//                temp = reader.readLine().split(" ");
+//                if (temp.length != 2) throw new IllegalArgumentException("Bad args");
+//                urls.put(temp[0], temp[1]);
+//            }
+//            for (Map.Entry<String, String> entry: urls.entrySet()) {
+//                System.out.println(entry);
+//            }
+//        } catch (IOException exception) {
+//            exception.printStackTrace();
+//        }
+//        return urls;
+//    }
 
 }
