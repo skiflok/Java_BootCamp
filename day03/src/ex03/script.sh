@@ -1,6 +1,6 @@
 #!/bin/bash
 if [ $# -ne 1 ]; then
-  echo "Usage: $0 arg2"
+  echo "Usage: $0 arg1"
   exit 1
 fi
 # shellcheck disable=SC2035
