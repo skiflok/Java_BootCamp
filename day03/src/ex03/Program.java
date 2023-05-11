@@ -21,33 +21,8 @@ public class Program {
 //            String downloadDirectory = "./resources/download/";
             String filesUrl = "./day03/src/ex03/resources/files_url.txt";
             String downloadDirectory = "./day03/src/ex03/resources/download/";
-//            Path filePath = Paths.get(filesUrl);
-            Path downloadDirectoryPath = Paths.get(downloadDirectory);
 
-            Map<String, String> urls = readFileWithResourceToDownload(filesUrl);
-
-            BlockingQueue<DownloadTask> downloadTasksQueue = new LinkedBlockingQueue<>(50);
-
-            for (Map.Entry<String, String> task : urls.entrySet()) {
-                downloadTasksQueue.add(new DownloadTask(task.getKey(), task.getValue()));
-            }
-
-            if (Files.exists(downloadDirectoryPath)) {
-                System.out.println("exist");
-            } else {
-                System.out.println("not exist");
-                System.out.println("directory create");
-                Files.createDirectory(downloadDirectoryPath);
-            }
-
-            List<Thread> downloaderThreads = new ArrayList<>();
-            for (int i = 0; i < threadsCount; i++) {
-                Thread thread = new Thread(new UrlFileDownloader(downloadTasksQueue, downloadDirectory));
-                downloaderThreads.add(thread);
-                thread.start();
-            }
-
-            run(threadsCount);
+            run(downloadDirectory, filesUrl, threadsCount);
 
         } catch (NumberFormatException e) {
             System.out.printf("Неверный числовой параметр %s\n", e.getMessage());
@@ -59,15 +34,41 @@ public class Program {
 
     }
 
-    private static void run (int threadsCount) {
-//        System.out.println("threadsCount = " + threadsCount);
+    private static void run(String downloadDirectory, String filesUrl, int threadsCount) throws IOException {
+
+        Path downloadDirectoryPath = Paths.get(downloadDirectory);
+
+        Map<String, String> urls = readFileWithResourceToDownload(filesUrl);
+//        BlockingQueue<DownloadTask> downloadTasksQueue = new LinkedBlockingQueue<>(50);
+        MyBlockingQueue myBlockingQueue = new MyBlockingQueue();
+
+        for (Map.Entry<String, String> task : urls.entrySet()) {
+//                downloadTasksQueue.add(new DownloadTask(task.getKey(), task.getValue()));
+            myBlockingQueue.put(new DownloadTask(task.getKey(), task.getValue()));
+        }
+
+        if (Files.exists(downloadDirectoryPath)) {
+            System.out.println("exist");
+        } else {
+            System.out.println("not exist");
+            System.out.println("directory create");
+            Files.createDirectory(downloadDirectoryPath);
+        }
+
+//            List<Thread> downloaderThreads = new ArrayList<>();
+        for (int i = 1; i < threadsCount + 1; i++) {
+            Thread thread = new Thread(new UrlFileDownloader(myBlockingQueue, downloadDirectory), "Thread-" + i);
+//                downloaderThreads.add(thread);
+            thread.start();
+        }
+
     }
 
     private static Map<String, String> readFileWithResourceToDownload(String filesUrl) {
 
         Map<String, String> urls = null;
 
-        try(Stream<String> stream = Files.lines(Paths.get(filesUrl))) {
+        try (Stream<String> stream = Files.lines(Paths.get(filesUrl))) {
             urls = stream.map(String::trim)
                     .filter(s -> !s.isEmpty())
                     .collect(Collectors.toMap(
