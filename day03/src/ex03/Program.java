@@ -5,7 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.concurrent.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -47,11 +46,7 @@ public class Program {
             myBlockingQueue.put(new DownloadTask(task.getKey(), task.getValue()));
         }
 
-        if (Files.exists(downloadDirectoryPath)) {
-            System.out.println("exist");
-        } else {
-            System.out.println("not exist");
-            System.out.println("directory create");
+        if (!Files.exists(downloadDirectoryPath)) {
             Files.createDirectory(downloadDirectoryPath);
         }
 
