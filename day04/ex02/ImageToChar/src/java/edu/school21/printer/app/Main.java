@@ -18,11 +18,13 @@ public class Main {
             JCommander.newBuilder().addObject(cla).build().parse(args);
 
             String imagePath = "day04/ex02/ImageToChar/src/resources/image.bmp";
-            String white = cla.getWhiteColor();
-            String black = cla.getBlackColor();
-            ConsoleImagePrinter consoleImagePrinter = new ConsoleImagePrinter(imagePath, white, black);
-            consoleImagePrinter.printImage();
 
+            ConsoleImagePrinter consoleImagePrinter =
+                    new ConsoleImagePrinter(
+                            imagePath,
+                            cla.getWhiteColor(),
+                            cla.getBlackColor());
+            consoleImagePrinter.printImage();
 
         } catch (IllegalArgumentException | ParameterException | IOException e) {
             System.out.println(e.getMessage());
