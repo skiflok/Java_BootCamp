@@ -1,5 +1,8 @@
 package edu.school21.printer.logic;
 
+import com.diogonunes.jcdp.color.ColoredPrinter;
+import com.diogonunes.jcdp.color.api.Ansi;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -10,9 +13,9 @@ import java.nio.file.Paths;
 
 public class ConsoleImagePrinter {
 
-    private String imagePath;
-    private String whiteColorSymbol;
-    private String blackColorSymbol;
+    private final String imagePath;
+    private final String whiteColorSymbol;
+    private final String blackColorSymbol;
     private final int blackColor;
 
     public ConsoleImagePrinter(String imagePath, String whiteColorSymbol, String blackColorSymbol) {
@@ -30,39 +33,25 @@ public class ConsoleImagePrinter {
         }
     }
 
-    public String getImagePath() {
-        return imagePath;
-    }
-
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
-    }
-
-    public String getWhiteColorSymbol() {
-        return whiteColorSymbol;
-    }
-
-    public void setWhiteColorSymbol(String whiteColorSymbol) {
-        this.whiteColorSymbol = whiteColorSymbol;
-    }
-
-    public String getBlackColorSymbol() {
-        return blackColorSymbol;
-    }
-
-    public void setBlackColorSymbol(String blackColorSymbol) {
-        this.blackColorSymbol = blackColorSymbol;
-    }
-
     public void printImage() throws IOException {
 
         BufferedImage myPicture = ImageIO.read(new File(imagePath));
 
+        ColoredPrinter whitePrinter =
+                new ColoredPrinter.Builder(1, false)
+                        .foreground(Ansi.FColor.valueOf(whiteColorSymbol)).build();
+
+        ColoredPrinter blackPrinter =
+                new ColoredPrinter.Builder(1, false)
+                        .foreground(Ansi.FColor.valueOf(blackColorSymbol)).build();
+
         for (int i = 0; i < myPicture.getHeight(); i++) {
             for (int j = 0; j < myPicture.getWidth(); j++) {
                 if (myPicture.getRGB(j, i) == blackColor) {
-                    System.out.print(blackColorSymbol);
-                } else System.out.print(whiteColorSymbol);
+                    blackPrinter.print('\u2588');
+                } else {
+                    whitePrinter.print('\u2588');
+                }
             }
             System.out.println();
         }
