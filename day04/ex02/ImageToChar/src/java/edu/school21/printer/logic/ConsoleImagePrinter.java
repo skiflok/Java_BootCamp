@@ -4,6 +4,9 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class ConsoleImagePrinter {
 
@@ -17,6 +20,14 @@ public class ConsoleImagePrinter {
         this.whiteColorSymbol = whiteColorSymbol;
         this.blackColorSymbol = blackColorSymbol;
         this.blackColor = 0xff000000;
+        checkPathFile(imagePath);
+    }
+
+    public static void checkPathFile (String imagePath) {
+        Path filePath = Paths.get(imagePath);
+        if (!Files.exists(filePath) || !Files.isRegularFile(filePath)) {
+            throw new IllegalArgumentException("Файл не существует");
+        }
     }
 
     public String getImagePath() {
