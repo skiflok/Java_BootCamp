@@ -1,13 +1,15 @@
 #!/bin/bash
-#if [ $# -ne 3 ]; then
-#  echo "Usage: $0 arg3"
-#  exit 1
-#fi
-rm -rf target
 
-mkdir "target"
-# shellcheck disable=SC2035
+if [ -d target ]; then
+    echo "Directory exists."
+    rm -rf target
+    mkdir "target"
+else
+    echo "Directory does not exist."
+    mkdir "target"
+fi
+
+
 javac -d target src/java/edu/school21/printer/app/*.java src/java/edu/school21/printer/logic/*.java
-#java -classpath target edu.school21.printer.app.Main . 0 ../it.bmp
-# shellcheck disable=SC2086
-java -classpath target edu.school21.printer.app.Main "$1" "$2" $3
+
+java -classpath target edu.school21.printer.app.Main "$@"

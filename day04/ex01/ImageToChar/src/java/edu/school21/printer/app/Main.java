@@ -1,5 +1,6 @@
 package edu.school21.printer.app;
 
+
 import edu.school21.printer.logic.CommandLineArguments;
 import edu.school21.printer.logic.ConsoleImagePrinter;
 
@@ -11,9 +12,10 @@ public class Main {
 
         try {
             CommandLineArguments.checkInputParam(args);
+            String imagePath = "src/resources/image.bmp";
+            CommandLineArguments.checkPathFile(imagePath);
             String white = args[0];
             String black = args[1];
-            String imagePath = args[2];
             ConsoleImagePrinter consoleImagePrinter = new ConsoleImagePrinter(imagePath, white, black);
             consoleImagePrinter.printImage();
 
