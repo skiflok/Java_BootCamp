@@ -9,7 +9,8 @@ else
     mkdir "target"
 fi
 
-javac -d target src/java/edu/school21/printer/app/*.java src/java/edu/school21/printer/logic/*.java
+# shellcheck disable=SC2046
+javac -d target -cp src/java $(find src/java -name '*.java')
 
 cp -r src/resources target
 

@@ -2,7 +2,7 @@
 mkdir "target"
 
 # Compile files to directory:
-javac -d target src/java/edu/school21/printer/app/*.java src/java/edu/school21/printer/logic/*.java
+javac -d target -cp src/java $(find src/java -name '*.java')
 
 # Copy resources
 cp -r src/resources target
