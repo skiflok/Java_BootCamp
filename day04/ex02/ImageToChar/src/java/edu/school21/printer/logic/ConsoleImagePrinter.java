@@ -13,12 +13,12 @@ import java.nio.file.Paths;
 
 public class ConsoleImagePrinter {
 
-    private final String imagePath;
+    private final Path imagePath;
     private final String whiteColorSymbol;
     private final String blackColorSymbol;
     private final int blackColor;
 
-    public ConsoleImagePrinter(String imagePath, String whiteColorSymbol, String blackColorSymbol) {
+    public ConsoleImagePrinter(Path imagePath, String whiteColorSymbol, String blackColorSymbol) {
         this.imagePath = imagePath;
         this.whiteColorSymbol = whiteColorSymbol;
         this.blackColorSymbol = blackColorSymbol;
@@ -26,16 +26,15 @@ public class ConsoleImagePrinter {
         checkPathFile(imagePath);
     }
 
-    public static void checkPathFile (String imagePath) {
-        Path filePath = Paths.get(imagePath);
-        if (!Files.exists(filePath) || !Files.isRegularFile(filePath)) {
+    public static void checkPathFile (Path imagePath) {
+        if (!Files.exists(imagePath) || !Files.isRegularFile(imagePath)) {
             throw new IllegalArgumentException("Файл не существует");
         }
     }
 
     public void printImage() throws IOException {
 
-        BufferedImage myPicture = ImageIO.read(new File(imagePath));
+        BufferedImage myPicture = ImageIO.read(imagePath.toFile());
 
         ColoredPrinter whitePrinter =
                 new ColoredPrinter.Builder(1, false)

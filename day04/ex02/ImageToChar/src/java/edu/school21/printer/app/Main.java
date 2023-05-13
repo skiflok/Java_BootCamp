@@ -7,6 +7,8 @@ import edu.school21.printer.logic.CommandLineArguments;
 import edu.school21.printer.logic.ConsoleImagePrinter;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class Main {
 
@@ -17,7 +19,8 @@ public class Main {
             CommandLineArguments cla = new CommandLineArguments();
             JCommander.newBuilder().addObject(cla).build().parse(args);
 
-            String imagePath = "day04/ex02/ImageToChar/src/resources/image.bmp";
+            Path imagePath =
+                    Paths.get("target/resources/image.bmp").toAbsolutePath().normalize();
 
             ConsoleImagePrinter consoleImagePrinter =
                     new ConsoleImagePrinter(
@@ -28,6 +31,7 @@ public class Main {
 
         } catch (IllegalArgumentException | ParameterException | IOException e) {
             System.out.println(e.getMessage());
+
         }
     }
 }
