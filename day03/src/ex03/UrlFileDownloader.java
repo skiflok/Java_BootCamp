@@ -5,11 +5,10 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.concurrent.BlockingQueue;
 
 public class UrlFileDownloader implements Runnable {
 
-//    private final BlockingQueue<DownloadTask> downloadTasksQueue;
+    //    private final BlockingQueue<DownloadTask> downloadTasksQueue;
     private final MyBlockingQueue downloadTasksQueue;
 
     private final String downloadDirectory;
@@ -28,6 +27,7 @@ public class UrlFileDownloader implements Runnable {
         while (!downloadTasksQueue.isEmpty()) {
             try {
                 downloadTask = downloadTasksQueue.take();
+                System.out.printf("%s start download file number %s\n", Thread.currentThread().getName(), downloadTask.getId());
                 fileName = downloadTask.getFilename();
                 BufferedOutputStream fileWriter = new BufferedOutputStream(Files.newOutputStream(Paths.get(
                         downloadDirectory +
@@ -50,8 +50,6 @@ public class UrlFileDownloader implements Runnable {
             } catch (URISyntaxException | IOException e) {
                 throw new RuntimeException(e);
             }
-
-            System.out.printf("%s start download file number %s\n", Thread.currentThread().getName(), downloadTask.getId());
 
             System.out.printf("%s finish download file number %s\n", Thread.currentThread().getName(), downloadTask.getId());
         }
