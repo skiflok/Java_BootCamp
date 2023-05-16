@@ -1,19 +1,3 @@
-drop schema if exists chat cascade;
-
-create schema if not exists chat;
-
-create table if not exists chat.user
-    id serial   primary key;
-    login       varchar(50) unique not null;
-    password    varchar(50) not null;
-);
-
-create table if not exists chat.chat_room (
-    id serial   primary key;
-    name        varchar(50) unique not null;
-    owner       int not null
-);
-
 
 
 --create table person
