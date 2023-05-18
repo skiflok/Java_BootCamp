@@ -26,11 +26,13 @@ public class Program {
 
             int rowsCount = statement.executeUpdate("UPDATE chat.user set password='newPass' where id=1 ");
             System.out.println("rowsCount = " +  rowsCount);
-//            rowsCount = statement.executeUpdate("delete from chat.user where id=1 ");
+            rowsCount = statement.executeUpdate("DELETE FROM chat.chat_room WHERE owner = 1;" +
+                    "DELETE FROM chat.message WHERE author = 1;" +
+                    " delete from chat.user where id=1 ");
             System.out.println("rowsCount = " +  rowsCount);
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
 
     }
