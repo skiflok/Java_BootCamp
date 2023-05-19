@@ -19,7 +19,6 @@ public class Program {
 
             System.out.println("Enter a message ID");
             Long inputId = Long.parseLong(bis.readLine());
-            System.out.println("inputId=" + inputId);
 
             Optional<Message> message = msgRep.findById(inputId);
 

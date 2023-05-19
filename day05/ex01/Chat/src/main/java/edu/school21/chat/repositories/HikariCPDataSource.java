@@ -8,7 +8,6 @@ import java.sql.SQLException;
 
 public class HikariCPDataSource {
 
-
     private static final HikariConfig config = new HikariConfig();
     private static final HikariDataSource ds;
 
@@ -16,10 +15,9 @@ public class HikariCPDataSource {
         config.setJdbcUrl("jdbc:postgresql://localhost:5432/chatDataBase");
         config.setUsername("postgres");
         config.setPassword("admin");
-        System.out.println("config.getMaximumPoolSize() " + config.getMaximumPoolSize());
+        config.setMaximumPoolSize(4);
         ds = new HikariDataSource(config);
     }
-
 
     public static Connection getConnection() throws SQLException {
         return ds.getConnection();
