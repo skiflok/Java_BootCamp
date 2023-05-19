@@ -26,11 +26,23 @@
             <version>42.6.0</version>
         </dependency>
 
-            <dependency>
-              <groupId>com.zaxxer</groupId>
-              <artifactId>HikariCP</artifactId>
-              <version>5.0.1</version>
-            </dependency>
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>4.0.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-nop</artifactId>
+            <version>2.0.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.3</version>
+        </dependency>
 
     </dependencies>
 
@@ -45,55 +57,57 @@
                 <version>3.11.0</version>
             </plugin>
 
-            <!--        <plugin>-->
-            <!--          <groupId>org.apache.maven.plugins</groupId>-->
-            <!--          <artifactId>maven-assembly-plugin</artifactId>-->
-            <!--          <version>3.6.0</version>-->
-            <!--          <configuration>-->
-            <!--            <archive>-->
-            <!--              <manifest>-->
-            <!--                <mainClass>edu.school21.chat.app.Program</mainClass>-->
-            <!--              </manifest>-->
-            <!--            </archive>-->
-            <!--            <descriptorRefs>-->
-            <!--              <descriptorRef>jar-with-dependencies</descriptorRef>-->
-            <!--            </descriptorRefs>-->
-            <!--          </configuration>-->
-            <!--          <executions>-->
-            <!--            <execution>-->
-            <!--              <id>assemble-all</id>-->
-            <!--              <phase>package</phase>-->
-            <!--              <goals>-->
-            <!--                <goal>single</goal>-->
-            <!--              </goals>-->
-            <!--            </execution>-->
-            <!--          </executions>-->
-            <!--        </plugin>-->
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.4.1</version>
-                <configuration>
-                    <createDependencyReducedPom>false</createDependencyReducedPom>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <transformers>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>edu.school21.chat.app.Program</mainClass>
-                                </transformer>
-                            </transformers>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+                    <plugin>
+                      <groupId>org.apache.maven.plugins</groupId>
+                      <artifactId>maven-assembly-plugin</artifactId>
+                      <version>3.6.0</version>
+                      <configuration>
+                        <archive>
+                          <manifest>
+                            <mainClass>edu.school21.chat.app.Program</mainClass>
+                          </manifest>
+                        </archive>
+                        <descriptorRefs>
+                          <descriptorRef>jar-with-dependencies</descriptorRef>
+                        </descriptorRefs>
+                      </configuration>
+                      <executions>
+                        <execution>
+                          <id>assemble-all</id>
+                          <phase>package</phase>
+                          <goals>
+                            <goal>single</goal>
+                          </goals>
+                        </execution>
+                      </executions>
+                    </plugin>
+
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-shade-plugin</artifactId>-->
+<!--                <version>3.4.1</version>-->
+<!--                <configuration>-->
+<!--                    <createDependencyReducedPom>false</createDependencyReducedPom>-->
+<!--                </configuration>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>shade</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <transformers>-->
+<!--                                <transformer-->
+<!--                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">-->
+<!--                                    <mainClass>edu.school21.chat.app.Program</mainClass>-->
+<!--                                </transformer>-->
+<!--                            </transformers>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
+
         </plugins>
     </build>
 </project>

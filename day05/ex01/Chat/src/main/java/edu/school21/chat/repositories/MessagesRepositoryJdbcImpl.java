@@ -8,13 +8,17 @@ import java.sql.*;
 import java.util.Optional;
 
 public class MessagesRepositoryJdbcImpl implements MessagesRepository {
+
     @Override
     public Optional<Message> findById(Long id) {
 
-        try (Connection connection = DriverManager.getConnection(
-                "jdbc:postgresql://localhost:5432/chatDataBase",
-                "postgres",
-                "admin")
+
+        try (
+//                Connection connection = DriverManager.getConnection(
+//                "jdbc:postgresql://localhost:5432/chatDataBase",
+//                "postgres",
+//                "admin");
+                Connection connection = HikariCPDataSource.getConnection()
         ) {
 
             String sql = "select * from chat.message where id = ?";
@@ -40,10 +44,12 @@ public class MessagesRepositoryJdbcImpl implements MessagesRepository {
 
     public Optional<User> findUserById(Long id) {
 
-        try (Connection connection = DriverManager.getConnection(
-                "jdbc:postgresql://localhost:5432/chatDataBase",
-                "postgres",
-                "admin")
+        try (
+//                Connection connection = DriverManager.getConnection(
+//                "jdbc:postgresql://localhost:5432/chatDataBase",
+//                "postgres",
+//                "admin")
+                Connection connection = HikariCPDataSource.getConnection()
         ) {
 
             String sql = "select * from chat.user where id = ?";
@@ -71,10 +77,12 @@ public class MessagesRepositoryJdbcImpl implements MessagesRepository {
 
     public Optional<ChatRoom> findChatRoomById(Long id) {
 
-        try (Connection connection = DriverManager.getConnection(
-                "jdbc:postgresql://localhost:5432/chatDataBase",
-                "postgres",
-                "admin")
+        try (
+//                Connection connection = DriverManager.getConnection(
+//                "jdbc:postgresql://localhost:5432/chatDataBase",
+//                "postgres",
+//                "admin")
+                Connection connection = HikariCPDataSource.getConnection()
         ) {
 
             String sql = "select * from chat.chat_room where id = ?";
