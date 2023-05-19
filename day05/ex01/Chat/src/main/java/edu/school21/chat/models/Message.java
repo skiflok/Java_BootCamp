@@ -1,21 +1,21 @@
 package edu.school21.chat.models;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Message {
-    private final int id;
+    private final long id;
     private final User author;
     private final ChatRoom room;
     private final String text;
-    private final Date dateTime;
+    private final LocalDateTime dateTime;
 
 
-    public Message(int id,
+    public Message(long id,
                    User author,
                    ChatRoom room,
                    String text,
-                   Date dateTime) {
+                   LocalDateTime dateTime) {
         this.id = id;
         this.author = author;
         this.room = room;

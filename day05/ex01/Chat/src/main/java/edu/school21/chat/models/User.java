@@ -4,13 +4,13 @@ import java.util.List;
 import java.util.Objects;
 
 public class User {
-    private final int ID;
+    private final long ID;
     private final String login;
     private final String password;
     private final List<ChatRoom> createdRoom;
     private final List<ChatRoom> userSocialized;
 
-    public User(int id,
+    public User(long id,
                 String login,
                 String password,
                 List<ChatRoom> createdRoom,

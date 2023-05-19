@@ -1,50 +1,39 @@
 package edu.school21.chat.app;
 
+import edu.school21.chat.models.Message;
+import edu.school21.chat.models.User;
+import edu.school21.chat.repositories.MessagesRepository;
+import edu.school21.chat.repositories.MessagesRepositoryJdbcImpl;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.*;
+import java.util.Optional;
 
-/**
- * Hello world!
- */
 public class Program {
     public static void main(String[] args) {
         System.out.println("Hello Chat!");
 
-        try (Connection connection = DriverManager.getConnection(
-                "jdbc:postgresql://localhost:5432/chatDataBase",
-                "postgres",
-                "admin");
-             BufferedReader bis = new BufferedReader(new InputStreamReader(System.in))
-        ) {
+        MessagesRepository msgRep = new MessagesRepositoryJdbcImpl();
+
+        try (BufferedReader bis = new BufferedReader(new InputStreamReader(System.in))) {
 
             System.out.println("Enter a message ID");
-            int inputId = Integer.parseInt(bis.readLine());
+            Long inputId = Long.parseLong(bis.readLine());
             System.out.println("inputId=" + inputId);
-            Statement statement = connection.createStatement();
-            ResultSet results = statement.executeQuery("select * from chat.message where id =" + inputId);
-            while (results.next()) {
 
-                int id = results.getInt(1);
-                int author = results.getInt(2);
-                int room = results.getInt(3);
-                String text = results.getString(4);
-                String date = results.getString(5);
+            Optional<Message> message = msgRep.findById(inputId);
 
-                System.out.printf("id = %d author = %d room = %d text = %s date = %s",
-                        id,
-                        author,
-                        room,
-                        text,
-                        date);
+            if (message.isPresent()) {
+                System.out.println(message.get());
+            } else {
+                System.out.println("Message not found");
             }
 
-
-        } catch (SQLException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
+
 }

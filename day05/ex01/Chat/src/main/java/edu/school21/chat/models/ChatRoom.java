@@ -4,12 +4,12 @@ import java.util.List;
 import java.util.Objects;
 
 public class ChatRoom {
-    private final int ID;
+    private final long ID;
     private final String name;
     private final String owner;
     private final List<Message> messages;
 
-    public ChatRoom(int id,
+    public ChatRoom(long id,
                     String name,
                     String owner,
                     List<Message> messages) {
