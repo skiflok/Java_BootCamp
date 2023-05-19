@@ -1,6 +1,7 @@
 package edu.school21.chat.models;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class Message {
@@ -9,6 +10,7 @@ public class Message {
     private final ChatRoom room;
     private final String text;
     private final LocalDateTime dateTime;
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm");
 
 
     public Message(long id,
@@ -38,12 +40,25 @@ public class Message {
 
     @Override
     public String toString() {
-        return "Message{" +
-                "id=" + id +
-                ", author=" + author +
-                ", room=" + room +
-                ", text='" + text + '\'' +
-                ", dateTime=" + dateTime +
-                '}';
+
+        return String.format("Message : {\n" +
+                        "id=%d,\n" +
+                        "author={%s},\n" +
+                        "room={%s},\n" +
+                        "text=\"%s\",\n" +
+                        "dateTime=%s\n" +
+                        "}",
+                id,
+                author,
+                room,
+                text,
+                dateTime.format(formatter));
+//        return "Message{" +
+//                "id=" + id +
+//                ", author=" + author +
+//                ", room=" + room +
+//                ", text='" + text + '\'' +
+//                ", dateTime=" + dateTime +
+//                '}';
     }
 }
