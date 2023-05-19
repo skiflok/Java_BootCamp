@@ -4,16 +4,16 @@ import java.util.List;
 import java.util.Objects;
 
 public class ChatRoom {
-    private final long ID;
+    private final long id;
     private final String name;
-    private final String owner;
+    private final User owner;
     private final List<Message> messages;
 
     public ChatRoom(long id,
                     String name,
-                    String owner,
+                    User owner,
                     List<Message> messages) {
-        ID = id;
+        this.id = id;
         this.name = name;
         this.owner = owner;
         this.messages = messages;
@@ -24,21 +24,21 @@ public class ChatRoom {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChatRoom chatRoom = (ChatRoom) o;
-        return ID == chatRoom.ID && name.equals(chatRoom.name) && owner.equals(chatRoom.owner);
+        return id == chatRoom.id && name.equals(chatRoom.name) && owner.equals(chatRoom.owner);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ID, name, owner);
+        return Objects.hash(id, name, owner);
     }
 
     @Override
     public String toString() {
-        return "ChatRoom{" +
-                "ID=" + ID +
-                ", name='" + name + '\'' +
-                ", owner='" + owner + '\'' +
-                ", messages=" + messages +
-                '}';
+        return String.format(
+                "{id=%d,name=\"%s\",creator=%s,messages=%s}",
+                id,
+                name,
+                owner,
+                messages);
     }
 }

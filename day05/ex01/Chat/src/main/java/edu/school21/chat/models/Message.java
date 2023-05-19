@@ -41,10 +41,11 @@ public class Message {
     @Override
     public String toString() {
 
-        return String.format("Message : {\n" +
+        return String.format(
+                "Message : {\n" +
                         "id=%d,\n" +
-                        "author={%s},\n" +
-                        "room={%s},\n" +
+                        "author=%s,\n" +
+                        "room=%s,\n" +
                         "text=\"%s\",\n" +
                         "dateTime=%s\n" +
                         "}",

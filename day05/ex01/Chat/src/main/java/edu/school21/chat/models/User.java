@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class User {
-    private final long ID;
+    private final long id;
     private final String login;
     private final String password;
     private final List<ChatRoom> createdRoom;
@@ -15,7 +15,7 @@ public class User {
                 String password,
                 List<ChatRoom> createdRoom,
                 List<ChatRoom> userSocialized) {
-        ID = id;
+        this.id = id;
         this.login = login;
         this.password = password;
         this.createdRoom = createdRoom;
@@ -27,22 +27,22 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return ID == user.ID && login.equals(user.login);
+        return id == user.id && login.equals(user.login);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ID, login);
+        return Objects.hash(id, login);
     }
 
     @Override
     public String toString() {
-        return "User{" +
-                "ID=" + ID +
-                ", login='" + login + '\'' +
-                ", password='" + password + '\'' +
-                ", createdRoom=" + createdRoom +
-                ", userSocialized=" + userSocialized +
-                '}';
+        return String.format(
+                "{id=%d,login=\"%s\",password=\"%s\",createdRoom=%s,userSocialized=%s}",
+                id,
+                login,
+                password,
+                createdRoom,
+                userSocialized);
     }
 }
