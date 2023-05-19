@@ -1,14 +1,12 @@
 package edu.school21.chat.app;
 
 import edu.school21.chat.models.Message;
-import edu.school21.chat.models.User;
 import edu.school21.chat.repositories.MessagesRepository;
 import edu.school21.chat.repositories.MessagesRepositoryJdbcImpl;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.sql.*;
 import java.util.Optional;
 
 public class Program {

@@ -16,12 +16,10 @@ public class MessagesRepositoryJdbcImpl implements MessagesRepository {
                 "admin")
         ) {
 
-            Statement statement = connection.createStatement();
             String sql = "select * from chat.message where id = ?";
             PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setLong(1, id);
             ResultSet results = stmt.executeQuery();
-//            ResultSet results = statement.executeQuery("select * from chat.message where id =" + inputId);
             if (!results.next()) {
                 return Optional.empty();
             }
@@ -40,7 +38,6 @@ public class MessagesRepositoryJdbcImpl implements MessagesRepository {
                     date);
 
             return Optional.of(new Message(msgId, null, null, text, date));
-
 
         } catch (SQLException e) {
             e.printStackTrace();
