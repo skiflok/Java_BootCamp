@@ -11,23 +11,21 @@ public class MessagesRepositoryJdbcImpl implements MessagesRepository {
 
     @Override
     public Optional<Message> findById(Long id) {
-
-        try (Connection connection = HikariCPDataSource.getConnection()) {
-
-            String sql = "select * from chat.message where id = ?";
-            PreparedStatement stmt = connection.prepareStatement(sql);
-            stmt.setLong(1, id);
-            ResultSet results = stmt.executeQuery();
-            if (!results.next()) {
-                return Optional.empty();
-            }
-
-            return Optional.of(new Message(
-                    id,
-                    findUserById(results.getLong(2)).orElse(null),
-                    findChatRoomById(results.getLong(3)).orElse(null),
-                    results.getString(4),
-                    results.getTimestamp(5).toLocalDateTime()));
+        String sql = "select * from chat.message where id = ?";
+        try {
+            return JdbcTemplate.preparedStatement(sql, (stmt) -> {
+                stmt.setLong(1, id);
+                ResultSet results = stmt.executeQuery();
+                if (!results.next()) {
+                    return Optional.empty();
+                }
+                return Optional.of(new Message(
+                        id,
+                        findUserById(results.getLong(2)).orElse(null),
+                        findChatRoomById(results.getLong(3)).orElse(null),
+                        results.getString(4),
+                        results.getTimestamp(5).toLocalDateTime()));
+            });
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -36,55 +34,51 @@ public class MessagesRepositoryJdbcImpl implements MessagesRepository {
     }
 
     public Optional<User> findUserById(Long id) {
-
-        try (Connection connection = HikariCPDataSource.getConnection()) {
-
-            String sql = "select * from chat.user where id = ?";
-            PreparedStatement stmt = connection.prepareStatement(sql);
-            stmt.setLong(1, id);
-            ResultSet results = stmt.executeQuery();
-            if (!results.next()) {
-                return Optional.empty();
-            }
-
-            return Optional.of(new User(
-                    results.getLong(1),
-                    results.getString(2),
-                    results.getString(3),
-                    null,
-                    null
-            ));
-
+        String sql = "select * from chat.user where id = ?";
+        try {
+            return JdbcTemplate.preparedStatement(sql, (stmt) -> {
+                stmt.setLong(1, id);
+                ResultSet results = stmt.executeQuery();
+                if (!results.next()) {
+                    return Optional.empty();
+                }
+                return Optional.of(new User(
+                        results.getLong(1),
+                        results.getString(2),
+                        results.getString(3),
+                        null,
+                        null
+                ));
+            });
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return Optional.empty();
-
     }
 
     public Optional<ChatRoom> findChatRoomById(Long id) {
 
-        try (Connection connection = HikariCPDataSource.getConnection()) {
+        String sql = "select * from chat.chat_room where id = ?";
 
-            String sql = "select * from chat.chat_room where id = ?";
-            PreparedStatement stmt = connection.prepareStatement(sql);
-            stmt.setLong(1, id);
-            ResultSet results = stmt.executeQuery();
-            if (!results.next()) {
-                return Optional.empty();
-            }
-
-            return Optional.of(new ChatRoom(
-                    results.getLong(1),
-                    results.getString(2),
-                    null,
-                    null
-            ));
+        try {
+            return JdbcTemplate.preparedStatement(sql, (stmt) -> {
+                stmt.setLong(1, id);
+                ResultSet results = stmt.executeQuery();
+                if (!results.next()) {
+                    return Optional.empty();
+                }
+                return Optional.of(new ChatRoom(
+                        results.getLong(1),
+                        results.getString(2),
+                        null,
+                        null
+                ));
+            });
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return Optional.empty();
 
+        return Optional.empty();
     }
 }
