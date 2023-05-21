@@ -34,5 +34,4 @@ values   ('2', '2', 'acne wheel jpg vic goal', '2023-03-11'),
          ('5', '6', 'declined ears activity seattle injured', '2023-05-08'),
          ('8', '9', 'continue white eve sustainable actually', '2023-02-07'),
          ('7', '2', 'inflation separate consortium casual apnic', '2023-04-27'),
-         ('2', '9', 'vc featuring coffee males attitude', '2023-04-29')
-ON CONFLICT (name) DO NOTHING;
+         ('2', '9', 'vc featuring coffee males attitude', '2023-04-29');
