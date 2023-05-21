@@ -1,13 +1,15 @@
 package edu.school21.chat.app;
 
+import edu.school21.chat.models.ChatRoom;
 import edu.school21.chat.models.Message;
+import edu.school21.chat.models.User;
 import edu.school21.chat.repositories.MessagesRepository;
 import edu.school21.chat.repositories.MessagesRepositoryJdbcImpl;
+import edu.school21.chat.repositories.NotSavedSubEntityException;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+
 
 public class Program {
     public static void main(String[] args) {
@@ -15,21 +17,15 @@ public class Program {
 
         MessagesRepository msgRep = new MessagesRepositoryJdbcImpl();
 
-        try (BufferedReader bis = new BufferedReader(new InputStreamReader(System.in))) {
+        try {
+            User creator = new User(7L, "user", "user", new ArrayList(), new ArrayList());
+            ChatRoom room = new ChatRoom(8L, "room", creator, new ArrayList());
+            Message message = new Message(null, creator, room, "Hello!", LocalDateTime.now());
+            msgRep.save(message);
+            System.out.println(message.getId()); // ex. id == 11
 
-            System.out.println("Enter a message ID");
-            Long inputId = Long.parseLong(bis.readLine());
-
-            Optional<Message> message = msgRep.findById(inputId);
-
-            if (message.isPresent()) {
-                System.out.println(message.get());
-            } else {
-                System.out.println("Message not found");
-            }
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (NotSavedSubEntityException e) {
+            e.printStackTrace();
         }
     }
 

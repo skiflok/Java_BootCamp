@@ -33,7 +33,31 @@ public class MessagesRepositoryJdbcImpl implements MessagesRepository {
         return Optional.empty();
     }
 
-    public Optional<User> findUserById(Long id) {
+    @Override
+    public void save(Message message) {
+
+        if (message.getAuthor() == null) {
+            throw new NotSavedSubEntityException("Author is null");
+        }
+        if (message.getRoom() == null) {
+            throw new NotSavedSubEntityException("ChatRoom is null");
+        }
+
+        if (!findUserById(message.getAuthor().getId()).isPresent()) {
+            throw new NotSavedSubEntityException("User not found");
+        }
+        if (!findChatRoomById(message.getRoom().getId()).isPresent()) {
+            throw new NotSavedSubEntityException("ChatRoom not found");
+        }
+
+        saveMessage(message);
+    }
+
+    private void saveMessage(Message message){
+        System.out.println("TODO save");
+    }
+
+    private Optional<User> findUserById(Long id) {
         String sql = "select * from chat.user where id = ?";
         try {
             return JdbcTemplate.preparedStatement(sql, (stmt) -> {
@@ -56,7 +80,7 @@ public class MessagesRepositoryJdbcImpl implements MessagesRepository {
         return Optional.empty();
     }
 
-    public Optional<ChatRoom> findChatRoomById(Long id) {
+    private Optional<ChatRoom> findChatRoomById(Long id) {
 
         String sql = "select * from chat.chat_room where id = ?";
 

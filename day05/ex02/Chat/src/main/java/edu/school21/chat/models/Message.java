@@ -5,7 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class Message {
-    private final long id;
+    private Long id;
     private final User author;
     private final ChatRoom room;
     private final String text;
@@ -13,7 +13,7 @@ public class Message {
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm");
 
 
-    public Message(long id,
+    public Message(Long id,
                    User author,
                    ChatRoom room,
                    String text,
@@ -25,12 +25,28 @@ public class Message {
         this.dateTime = dateTime;
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public User getAuthor() {
+        return author;
+    }
+
+    public ChatRoom getRoom() {
+        return room;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Message message = (Message) o;
-        return id == message.id && author.equals(message.author) && room.equals(message.room) && text.equals(message.text) && dateTime.equals(message.dateTime);
+        return Objects.equals(id, message.id) && author.equals(message.author) && room.equals(message.room) && text.equals(message.text) && dateTime.equals(message.dateTime);
     }
 
     @Override
