@@ -37,6 +37,14 @@ public class Message {
         return author;
     }
 
+    public String getText() {
+        return text;
+    }
+
+    public LocalDateTime getDateTime() {
+        return dateTime;
+    }
+
     public ChatRoom getRoom() {
         return room;
     }

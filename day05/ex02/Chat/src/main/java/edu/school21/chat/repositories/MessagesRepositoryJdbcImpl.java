@@ -34,7 +34,7 @@ public class MessagesRepositoryJdbcImpl implements MessagesRepository {
     }
 
     @Override
-    public void save(Message message) {
+    public void save(Message message) throws SQLException {
 
         if (message.getAuthor() == null) {
             throw new NotSavedSubEntityException("Author is null");
@@ -53,7 +53,17 @@ public class MessagesRepositoryJdbcImpl implements MessagesRepository {
         saveMessage(message);
     }
 
-    private void saveMessage(Message message){
+    private void saveMessage(Message message) throws SQLException {
+        String sql = "insert into chat.message (author, room, text, date_time) values   (?, ?, ?, ?)";
+
+        JdbcTemplate.preparedStatement(sql, (stmt) -> {
+            stmt.setLong(1, message.getAuthor().getId());
+            stmt.setLong(2, message.getRoom().getId());
+            stmt.setString(3, message.getText());
+            stmt.setTimestamp(4, Timestamp.valueOf(message.getDateTime()));
+            stmt.executeUpdate();
+        });
+
         System.out.println("TODO save");
     }
 

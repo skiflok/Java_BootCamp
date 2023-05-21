@@ -24,26 +24,24 @@ public class Program {
 
         MessagesRepository msgRep = new MessagesRepositoryJdbcImpl();
 
-
-
         try {
-            reloadDataBaseToDefault();
+//            reloadDataBaseToDefault();
             User creator = new User(7L, "user", "user", new ArrayList(), new ArrayList());
             ChatRoom room = new ChatRoom(8L, "room", creator, new ArrayList());
             Message message = new Message(null, creator, room, "Hello!", LocalDateTime.now());
             msgRep.save(message);
             System.out.println(message.getId()); // ex. id == 11
 
-        } catch (NotSavedSubEntityException | IOException | SQLException e) {
+        } catch (NotSavedSubEntityException | SQLException e) {
             e.printStackTrace();
         }
     }
 
     public static void reloadDataBaseToDefault() throws IOException, SQLException {
-        System.out.println(System.getProperty("user.dir"));
+//        System.out.println(System.getProperty("user.dir"));
         Path schema = Paths.get("day05/ex02/Chat/src/main/resources/schema.sql").normalize().toAbsolutePath();
         Path data = Paths.get("day05/ex02/Chat/src/main/resources/data.sql").normalize().toAbsolutePath();
-        System.out.println(schema);
+//        System.out.println(schema);
         String schemaSQL = Files.lines(schema).collect(Collectors.joining("\n"));
         String dataSQL = Files.lines(data).collect(Collectors.joining("\n"));
 
