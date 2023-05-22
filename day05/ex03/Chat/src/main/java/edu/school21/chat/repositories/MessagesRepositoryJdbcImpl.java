@@ -34,6 +34,11 @@ public class MessagesRepositoryJdbcImpl implements MessagesRepository {
     }
 
     @Override
+    public void update(Message message) {
+
+    }
+
+    @Override
     public void save(Message message) throws SQLException {
 
         if (message.getAuthor() == null) {
