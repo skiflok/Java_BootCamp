@@ -5,6 +5,7 @@ import edu.school21.chat.models.Message;
 import edu.school21.chat.models.User;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 public class MessagesRepositoryJdbcImpl implements MessagesRepository {
@@ -34,12 +35,41 @@ public class MessagesRepositoryJdbcImpl implements MessagesRepository {
     }
 
     @Override
-    public void update(Message message) {
+    public void update(Message message) throws SQLException {
+        checkMessageParamIfIsBadThrowException(message);
+
+        if (message.getText() == null) {
+            message.setText("");
+        }
+
+        if (message.getDateTime() == null) {
+            message.setDateTime(LocalDateTime.now());
+        }
+
+        String sql = "update chat.message set author = ?, room = ?, text = ?, date_time = ? where id = ?";
+        JdbcTemplate.preparedStatement(sql, (stmt) -> {
+            stmt.setLong(1, message.getAuthor().getId());
+            stmt.setLong(2, message.getRoom().getId());
+            stmt.setString(3, message.getText());
+            stmt.setTimestamp(4, Timestamp.valueOf(message.getDateTime()));
+            stmt.setLong(5, message.getId());
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new NotSavedSubEntityException("changes not save");
+            }
+
+        });
+
 
     }
 
     @Override
     public void save(Message message) throws SQLException {
+        checkMessageParamIfIsBadThrowException(message);
+        saveMessage(message);
+    }
+
+    private void checkMessageParamIfIsBadThrowException(Message message) {
 
         if (message.getAuthor() == null) {
             throw new NotSavedSubEntityException("Author is null");
@@ -55,7 +85,6 @@ public class MessagesRepositoryJdbcImpl implements MessagesRepository {
             throw new NotSavedSubEntityException("ChatRoom not found");
         }
 
-        saveMessage(message);
     }
 
     private void saveMessage(Message message) throws SQLException {

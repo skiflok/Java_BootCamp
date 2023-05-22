@@ -6,10 +6,10 @@ import java.util.Objects;
 
 public class Message {
     private Long id;
-    private final User author;
-    private final ChatRoom room;
-    private final String text;
-    private final LocalDateTime dateTime;
+    private User author;
+    private ChatRoom room;
+    private String text;
+    private LocalDateTime dateTime;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm");
 
 
@@ -25,11 +25,11 @@ public class Message {
         this.dateTime = dateTime;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -37,16 +37,32 @@ public class Message {
         return author;
     }
 
+    public void setAuthor(User author) {
+        this.author = author;
+    }
+
+    public ChatRoom getRoom() {
+        return room;
+    }
+
+    public void setRoom(ChatRoom room) {
+        this.room = room;
+    }
+
     public String getText() {
         return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 
     public LocalDateTime getDateTime() {
         return dateTime;
     }
 
-    public ChatRoom getRoom() {
-        return room;
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
     }
 
     @Override

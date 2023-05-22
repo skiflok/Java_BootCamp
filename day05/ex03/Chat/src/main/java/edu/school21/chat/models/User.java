@@ -22,6 +22,15 @@ public class User {
         this.userSocialized = userSocialized;
     }
 
+    public User(long id) {
+        this.id = id;
+        this.login = null;
+        this.password = null;
+        this.createdRoom = null;
+        this.userSocialized = null;
+    }
+
+
     public long getId() {
         return id;
     }

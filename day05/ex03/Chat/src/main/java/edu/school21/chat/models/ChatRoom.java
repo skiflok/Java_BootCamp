@@ -19,6 +19,13 @@ public class ChatRoom {
         this.messages = messages;
     }
 
+    public ChatRoom(long id) {
+        this.id = id;
+        this.name = null;
+        this.owner = null;
+        this.messages = null;
+    }
+
     public long getId() {
         return id;
     }

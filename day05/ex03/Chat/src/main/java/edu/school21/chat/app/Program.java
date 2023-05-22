@@ -13,8 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -26,13 +25,24 @@ public class Program {
 
         try {
 //            reloadDataBaseToDefault();
-            User creator = new User(7L, "user", "user", new ArrayList(), new ArrayList());
-            ChatRoom room = new ChatRoom(8L, "room", creator, new ArrayList());
-            Message message = new Message(null, creator, room, "Hello!", LocalDateTime.now());
-            msgRep.save(message);
-            System.out.println(message.getId());
+            Optional<Message> messageOptional = msgRep.findById(11L);
+            if (messageOptional.isPresent()) {
+                System.out.println(messageOptional);
+                Message message = messageOptional.get();
+                message.setText("Bye Bye");
+                message.setAuthor(new User(1L));
+                message.setRoom(new ChatRoom(2));
+
+                message.setDateTime(null);
+                msgRep.update(message);
+            }
+            messageOptional = msgRep.findById(11L);
+            if (messageOptional.isPresent()) {
+                System.out.println(messageOptional);
+            }
 
         } catch (NotSavedSubEntityException | SQLException e) {
+            System.out.println(e.getMessage());
             e.printStackTrace();
         }
     }
