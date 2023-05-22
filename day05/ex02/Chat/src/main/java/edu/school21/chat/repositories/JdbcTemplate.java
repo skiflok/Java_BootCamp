@@ -53,7 +53,7 @@ public class JdbcTemplate {
     public static  <R> R preparedStatement(String sql, SQLFunction<? super PreparedStatement, ? extends R> function) throws SQLException {
         Objects.requireNonNull(function);
         return connection(conn -> {
-            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 return function.apply(stmt);
             }
         });
@@ -62,7 +62,7 @@ public class JdbcTemplate {
     public static void preparedStatement(String sql, SQLConsumer<? super PreparedStatement> consumer) throws SQLException {
         Objects.requireNonNull(consumer);
         connection(conn -> {
-            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 consumer.accept(stmt);
             }
         });

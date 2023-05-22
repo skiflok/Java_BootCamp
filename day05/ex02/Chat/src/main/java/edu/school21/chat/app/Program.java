@@ -30,7 +30,7 @@ public class Program {
             ChatRoom room = new ChatRoom(8L, "room", creator, new ArrayList());
             Message message = new Message(null, creator, room, "Hello!", LocalDateTime.now());
             msgRep.save(message);
-            System.out.println(message.getId()); // ex. id == 11
+            System.out.println(message.getId());
 
         } catch (NotSavedSubEntityException | SQLException e) {
             e.printStackTrace();

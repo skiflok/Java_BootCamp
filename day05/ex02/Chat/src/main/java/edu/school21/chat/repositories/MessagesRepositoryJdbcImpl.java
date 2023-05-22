@@ -61,10 +61,17 @@ public class MessagesRepositoryJdbcImpl implements MessagesRepository {
             stmt.setLong(2, message.getRoom().getId());
             stmt.setString(3, message.getText());
             stmt.setTimestamp(4, Timestamp.valueOf(message.getDateTime()));
-            stmt.executeUpdate();
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected > 0) {
+                ResultSet generatedKeys = stmt.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    long generatedId = generatedKeys.getLong(1); // Получение значения сгенерированного id
+                    message.setId(generatedId);
+                }
+            } else {
+                throw new NotSavedSubEntityException("id not received");
+            }
         });
-
-        System.out.println("TODO save");
     }
 
     private Optional<User> findUserById(Long id) {
