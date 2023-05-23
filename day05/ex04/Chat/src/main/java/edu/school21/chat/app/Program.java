@@ -24,12 +24,33 @@ public class Program {
         try {
 //            reloadDataBaseToDefault();
 
+            System.out.println("##########################");
+            int page = 4;
+            int size = 4;
+            System.out.printf("page = %d, size = %d\n", page, size);
             UsersRepository usersRepository = new UsersRepositoryJdbcImpl();
-            List<User> users = usersRepository.findAll(4, 4);
+            List<User> users = usersRepository.findAll(page, size);
             users.forEach(System.out::println);
 
             System.out.println("##########################");
-            users = usersRepository.findAll(1, 2);
+            page = 1;
+            size = 2;
+            System.out.printf("page = %d, size = %d\n", page, size);
+            users = usersRepository.findAll(page, size);
+            users.forEach(System.out::println);
+
+            System.out.println("##########################");
+            page = 5;
+            size = 5;
+            System.out.printf("page = %d, size = %d\n", page, size);
+            users = usersRepository.findAll(page, size);
+            users.forEach(System.out::println);
+
+            System.out.println("##########################");
+            page = 3;
+            size = 3;
+            System.out.printf("page = %d, size = %d\n", page, size);
+            users = usersRepository.findAll(page, size);
             users.forEach(System.out::println);
 
 
