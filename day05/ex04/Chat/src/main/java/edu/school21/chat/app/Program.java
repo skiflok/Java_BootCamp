@@ -25,7 +25,7 @@ public class Program {
 //            reloadDataBaseToDefault();
 
             UsersRepository usersRepository = new UsersRepositoryJdbcImpl();
-            List<User> users = usersRepository.findAll(2, 2);
+            List<User> users = usersRepository.findAll(4, 4);
 
             for (User user : users) {
                 System.out.println(user);

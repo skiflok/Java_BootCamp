@@ -30,9 +30,16 @@ public class User {
         this.userSocialized = null;
     }
 
-
     public long getId() {
         return id;
+    }
+
+    public List<ChatRoom> getCreatedRoom() {
+        return createdRoom;
+    }
+
+    public List<ChatRoom> getUserSocialized() {
+        return userSocialized;
     }
 
     @Override
