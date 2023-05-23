@@ -26,10 +26,12 @@ public class Program {
 
             UsersRepository usersRepository = new UsersRepositoryJdbcImpl();
             List<User> users = usersRepository.findAll(4, 4);
+            users.forEach(System.out::println);
 
-            for (User user : users) {
-                System.out.println(user);
-            }
+            System.out.println("##########################");
+            users = usersRepository.findAll(1, 2);
+            users.forEach(System.out::println);
+
 
         } catch (NotSavedSubEntityException e) {
             System.out.println(e.getMessage());

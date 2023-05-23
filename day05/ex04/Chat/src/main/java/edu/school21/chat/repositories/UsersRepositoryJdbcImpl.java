@@ -13,7 +13,6 @@ public class UsersRepositoryJdbcImpl implements UsersRepository {
     @Override
     public List<User> findAll(int page, int size) throws SQLException {
 
-
         /*
         with user_page as (
 select * from chat.user
@@ -54,19 +53,15 @@ left join chat.chat_room cr on t.socializes_chat_id = cr.id
                         "select t.*, cr.name as socializes_chat_name from t\n" +
                         "left join chat.chat_room cr on t.socializes_chat_id = cr.id";
 
-        Optional<List<User>> optionalUserList = Optional.empty();
-        try {
+        Optional<List<User>> optionalUserList;
+
             optionalUserList = JdbcTemplate.preparedStatement(sql, (stmt) -> {
                 stmt.setInt(1, page);
                 stmt.setInt(2, size);
                 ResultSet results = stmt.executeQuery();
 
                 ArrayList<User> users = new ArrayList<>();
-                List<ChatRoom> createdRoom = new ArrayList<>();
-                List<ChatRoom> userSocialized = new ArrayList<>();
-                User tempUser = null;
-                ChatRoom tempOwnerChat = null;
-                ChatRoom tempSocializesChat = null;
+
                 while (results.next()) {
 
                     User user = new User(
@@ -79,28 +74,33 @@ left join chat.chat_room cr on t.socializes_chat_id = cr.id
                         users.add(user);
                     }
 
+                    user = users.get(users.size() - 1);
                     long owner_chat_id = results.getLong("owner_chat_id");
-//                    if (owner_chat_id  != 0 &&
-//                    users.get(users.size()).getCreatedRoom().stream().noneMatch(chatRoom -> chatRoom.getId() != owner_chat_id)) {
-//                        ChatRoom ownerChat = new ChatRoom(
-//                                results.getLong("owner_chat_id"),
-//                                results.getString("owner_chat_name"),
-//                                null,
-//                                null);
-//                    }
+                    if (owner_chat_id != 0 &&
+                            user.getCreatedRoom().stream().noneMatch(chatRoom -> chatRoom.getId() == owner_chat_id)) {
+                        ChatRoom ownerChat = new ChatRoom(
+                                results.getLong("owner_chat_id"),
+                                results.getString("owner_chat_name"),
+                                null,
+                                null);
+                        user.getCreatedRoom().add(ownerChat);
+                    }
 
-
-                    boolean contains = users.get(users.size() -1).getCreatedRoom().stream().noneMatch(chatRoom -> chatRoom.getId() == owner_chat_id);
-                    System.out.printf("user id = %d owner_chat_id = %d  is contains %b\n", user.getId(), owner_chat_id, contains);
-
-
+                    long socializes_chat_id = results.getLong("socializes_chat_id");
+                    if (socializes_chat_id != 0 &&
+                            user.getUserSocialized().stream().noneMatch(chatRoom -> chatRoom.getId() == socializes_chat_id)) {
+                        ChatRoom socializesChat = new ChatRoom(
+                                results.getLong("socializes_chat_id"),
+                                results.getString("socializes_chat_name"),
+                                null,
+                                null);
+                        user.getUserSocialized().add(socializesChat);
+                    }
                 }
 
                 return Optional.of(users);
             });
-        } catch (Exception ignored) {
 
-        }
 
         return optionalUserList.orElse(null);
     }
