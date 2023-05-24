@@ -2,7 +2,7 @@ package edu.school21.numbers;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.CsvFileSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,10 +34,8 @@ class NumberWorkerTest {
     }
 
 
-
-
     @ParameterizedTest
-    @CsvSource(value = {"12, 3", "123, 6", "3245, 14", "543, 12", "234664, 25"})
+    @CsvFileSource(resources = "/data.csv")
     void digitsSum(int input, int expected) {
         assertEquals(numberWorker.digitsSum(input), expected);
     }
