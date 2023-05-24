@@ -12,13 +12,13 @@ public class NumberWorker {
         return true;
     }
 
-    public int digitsSum() {
-
-
-
-        //todo
-        return 0;
+    public int digitsSum(int number) {
+        number = Math.abs(number);
+        int digitsSum = 0;
+        while (number > 0) {
+            digitsSum += number % 10;
+            number /= 10;
+        }
+        return digitsSum;
     }
-
-
 }
