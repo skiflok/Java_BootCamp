@@ -77,6 +77,9 @@ class ProductsRepositoryJdbcImplTest {
 
     @Test
     void delete() {
-
+        pri.delete(10L);
+        assertNull(pri.findById(10L).orElse(null));
+        EXPECTED_FIND_ALL_PRODUCTS.remove(EXPECTED_FIND_ALL_PRODUCTS.size() - 1);
+        assertEquals(EXPECTED_FIND_ALL_PRODUCTS, pri.findAll());
     }
 }
