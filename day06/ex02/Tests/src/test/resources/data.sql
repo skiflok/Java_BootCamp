@@ -9,4 +9,4 @@ values
 ('JONES', 71.26),
 ('TRUFFINO', 99.69),
 ('KIKI', 77.59),
-('FRAGILE', 77.5);
+('FRAGILE', 77.50);

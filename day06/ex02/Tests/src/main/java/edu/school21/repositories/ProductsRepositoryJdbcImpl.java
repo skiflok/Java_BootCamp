@@ -10,13 +10,9 @@ import java.util.Optional;
 
 public class ProductsRepositoryJdbcImpl implements ProductsRepository{
 
-    private final DataSource ds;
     private final JdbcTemplate jdbcTemplate;
 
-
-
     public ProductsRepositoryJdbcImpl(DataSource ds) {
-        this.ds = ds;
         jdbcTemplate = new JdbcTemplate(ds);
     }
 
