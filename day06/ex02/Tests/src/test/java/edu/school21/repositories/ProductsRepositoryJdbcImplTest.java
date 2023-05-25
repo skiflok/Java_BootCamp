@@ -67,7 +67,6 @@ class ProductsRepositoryJdbcImplTest {
     void update() {
         pri.update(EXPECTED_UPDATED_PRODUCT);
         assertEquals(EXPECTED_UPDATED_PRODUCT, pri.findById(8L).orElse(null));
-        System.out.println(pri.findById(8L));
     }
 
     @Test
