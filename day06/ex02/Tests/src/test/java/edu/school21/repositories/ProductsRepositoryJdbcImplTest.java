@@ -1,8 +1,10 @@
 package edu.school21.repositories;
 
 import edu.school21.models.Product;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
@@ -30,6 +32,7 @@ class ProductsRepositoryJdbcImplTest {
             new Product(10L, "FRAGILE", new BigDecimal("77.50"))));
     final Product EXPECTED_FIND_BY_ID_PRODUCT = new Product(6L, "PIZZETI", new BigDecimal("80.32"));
     final Product EXPECTED_UPDATED_PRODUCT = new Product(8L, "NEW_NAME", new BigDecimal("888.88"));
+    final Product EXPECTED_SAVED_PRODUCT = new Product(11, "NEW_NAME", new BigDecimal("888.88"));
     DataSource dataSource;
     ProductsRepositoryJdbcImpl pri;
 
@@ -43,6 +46,13 @@ class ProductsRepositoryJdbcImplTest {
         pri = new ProductsRepositoryJdbcImpl(dataSource);
     }
 
+    @AfterEach
+    public void drop() {
+        if (dataSource != null && dataSource instanceof EmbeddedDatabase) {
+            ((EmbeddedDatabase) dataSource).shutdown();
+        }
+    }
+
     @Test
     void findAll() {
         assertEquals(EXPECTED_FIND_ALL_PRODUCTS, pri.findAll());
@@ -50,19 +60,24 @@ class ProductsRepositoryJdbcImplTest {
 
     @Test
     void findById() {
-
+        assertEquals(EXPECTED_FIND_BY_ID_PRODUCT, pri.findById(6L).orElse(null));
     }
 
     @Test
     void update() {
-
+        pri.update(EXPECTED_UPDATED_PRODUCT);
+        assertEquals(EXPECTED_UPDATED_PRODUCT, pri.findById(8L).orElse(null));
+        System.out.println(pri.findById(8L));
     }
 
     @Test
     void save() {
+        pri.save(EXPECTED_SAVED_PRODUCT);
+        assertEquals(EXPECTED_SAVED_PRODUCT, pri.findById(11L).orElse(null));
     }
 
     @Test
     void delete() {
+
     }
 }
