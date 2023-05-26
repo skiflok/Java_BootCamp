@@ -44,11 +44,11 @@ class UsersServiceImplTest {
         Mockito.verify(usersRepository).findByLogin(Mockito.anyString());
         Mockito.verify(usersRepository, Mockito.never()).update(user);
     }
-//
-//    @Test
-//    public void authenticateBadPassword() {
-//
-//    }
+
+    @Test
+    public void authenticateBadPassword() {
+
+    }
 
 
 }
