@@ -3,16 +3,36 @@ package edu.school21.models;
 import java.util.Objects;
 
 public class User {
-    private final long Identifier;
-    private final String Login;
-    private final String Password;
-    private final boolean Authentication;
+    private final long identifier;
+    private final String login;
+    private final String password;
+    private boolean isAuthenticated;
 
-    public User(long identifier, String login, String password, boolean authentication) {
-        Identifier = identifier;
-        Login = login;
-        Password = password;
-        Authentication = authentication;
+    public User(long identifier, String login, String password, boolean isAuthenticated) {
+        this.identifier = identifier;
+        this.login = login;
+        this.password = password;
+        this.isAuthenticated = isAuthenticated;
+    }
+
+    public long getIdentifier() {
+        return identifier;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public boolean isAuthenticated() {
+        return isAuthenticated;
+    }
+
+    public void setAuthenticated(boolean authenticated) {
+        isAuthenticated = authenticated;
     }
 
     @Override
@@ -20,21 +40,21 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Identifier == user.Identifier && Authentication == user.Authentication && Login.equals(user.Login) && Password.equals(user.Password);
+        return identifier == user.identifier && isAuthenticated == user.isAuthenticated && login.equals(user.login) && password.equals(user.password);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(Identifier, Login, Password, Authentication);
+        return Objects.hash(identifier, login, password, isAuthenticated);
     }
 
     @Override
     public String toString() {
         return "User{" +
-                "Identifier=" + Identifier +
-                ", Login='" + Login + '\'' +
-                ", Password='" + Password + '\'' +
-                ", Authentication=" + Authentication +
+                "Identifier=" + identifier +
+                ", Login='" + login + '\'' +
+                ", Password='" + password + '\'' +
+                ", Authentication=" + isAuthenticated +
                 '}';
     }
 }
