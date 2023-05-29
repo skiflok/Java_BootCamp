@@ -11,6 +11,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.persistence.EntityNotFoundException;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,9 +48,28 @@ class UsersServiceImplTest {
     }
 
     @Test
-    public void authenticateBadPassword() {
-
+    public void authenticateBadPassword() throws AlreadyAuthenticatedException {
+        Mockito.when(usersRepository.findByLogin("USER")).thenReturn(user);
+        assertFalse(usersService.authenticate("USER", "BAD PASS"));
+        Mockito.verify(usersRepository).findByLogin("USER");
+        Mockito.verify(usersRepository, Mockito.never()).update(user);
     }
 
+    @Test
+    public void authenticateUserNotFound() {
+        Mockito.when(usersRepository.findByLogin(Mockito.anyString())).thenReturn(null);
+        assertThrows(EntityNotFoundException.class, () -> usersService.authenticate("bad login", "PASSWORD"));
+        Mockito.verify(usersRepository).findByLogin(Mockito.anyString());
+        Mockito.verify(usersRepository, Mockito.never()).update(user);
+    }
+
+    @Test
+    public void authenticateIsAuthenticated() {
+        user.setAuthenticated(true);
+        Mockito.when(usersRepository.findByLogin("USER")).thenReturn(user);
+        assertThrows(AlreadyAuthenticatedException.class, () -> usersService.authenticate("USER", "PASSWORD"));
+        Mockito.verify(usersRepository).findByLogin(Mockito.anyString());
+        Mockito.verify(usersRepository, Mockito.never()).update(user);
+    }
 
 }
