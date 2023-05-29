@@ -37,18 +37,15 @@ public class Program {
         Path currentDirectory = Paths.get("day07/ex00/Reflection/src/main/java/edu/school21/ex00/models").toAbsolutePath().normalize();
 
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(currentDirectory)) {
-            for (Path file : stream) {
-                if (Files.isDirectory(file)) {
-
-                } else {
-                    System.out.printf("%s %d KB\n", file.getFileName(), Files.size(file) / 1024);
+            for (Path path : stream) {
+                if (Files.isRegularFile(path)) {
+                    System.out.printf("path - %s\n", path);
                 }
             }
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
 }
