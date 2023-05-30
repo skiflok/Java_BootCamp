@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
@@ -88,22 +89,19 @@ public class Program {
                 ConsoleHelper.writeMessage(printMethod);
             }
 
+            ConsoleHelper.printSeparatingLine();
 
-//            for (Class<?> clazz : classes) {
-//                // Получение информации о классе
-//                System.out.println("Class Name: " +
-////                        clazz.getName()
-//                                clazz.getSimpleName()
-//                );
-//                System.out.println("Package Name: " + clazz.getPackage().getName());
-//
-//                System.out.println("Methods:");
-//                for (Method method : clazz.getDeclaredMethods()) {
-//                    System.out.println(method.getName());
-//                }
-//
-//                System.out.println();
-//            }
+            ConsoleHelper.writeMessage("Let’s create an object.");
+
+            Constructor<?>[] constructors = findClazz.getDeclaredConstructors();
+
+            for (Constructor<?> constructor : constructors) {
+                System.out.println(Arrays.stream(constructor.getParameters()).map(p ->
+                        p.getType().getSimpleName()
+                ).collect(Collectors.joining(", ")));
+            }
+
+
 
         } catch (IOException | ClassNotFoundException | URISyntaxException e) {
             logger.warn(e.getMessage());
@@ -142,4 +140,3 @@ public class Program {
         return classes;
     }
 }
-
