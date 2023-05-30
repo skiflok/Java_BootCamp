@@ -24,6 +24,12 @@ public class User {
         return height;
     }
 
+    public int grow(int value, double val) {
+        this.height += value;
+        return height;
+    }
+
+
     @Override
     public String toString() {
         return new StringJoiner(", ", User.class.getSimpleName() + "[", "]")

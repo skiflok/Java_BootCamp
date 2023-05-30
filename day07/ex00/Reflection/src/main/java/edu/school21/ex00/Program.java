@@ -6,12 +6,14 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class Program {
@@ -43,7 +45,8 @@ public class Program {
             }
             ConsoleHelper.printSeparatingLine();
             ConsoleHelper.writeMessage("Enter class name:");
-            String inputClass = ConsoleHelper.readString();
+//            String inputClass = ConsoleHelper.readString();
+            String inputClass = "User";
             ConsoleHelper.printSeparatingLine();
 
             Class<?> findClazz = null;
@@ -67,12 +70,23 @@ public class Program {
             ConsoleHelper.printSeparatingLine();
             ConsoleHelper.writeMessage("fields:");
 
-            Field [] fields = findClazz.getDeclaredFields();
+            Field[] fields = findClazz.getDeclaredFields();
             for (Field field : fields) {
                 ConsoleHelper.writeMessage("\t" + field.getType().getSimpleName());
-
             }
 
+            ConsoleHelper.writeMessage("methods:");
+            Method[] methods = findClazz.getDeclaredMethods();
+            for (Method method : methods) {
+                String printMethod = String.format("\t%s %s (%s)",
+                        method.getReturnType().getSimpleName(),
+                        method.getName(),
+                        Arrays.stream(method.getParameters()).map((parameter ->
+                                parameter.getType().getSimpleName()
+                        )).collect(Collectors.joining(", "))
+                );
+                ConsoleHelper.writeMessage(printMethod);
+            }
 
 
 //            for (Class<?> clazz : classes) {
