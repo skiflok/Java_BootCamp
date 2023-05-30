@@ -1,19 +1,22 @@
 package edu.school21.ex00;
 
 import edu.school21.ex00.utils.ConsoleHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Method;
+import java.lang.reflect.Field;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Consumer;
+
 
 public class Program {
+
+    private static final Logger logger = LoggerFactory.getLogger(Program.class);
 
     public static void main(String[] args) {
 
@@ -41,8 +44,37 @@ public class Program {
             ConsoleHelper.printSeparatingLine();
             ConsoleHelper.writeMessage("Enter class name:");
             String inputClass = ConsoleHelper.readString();
+            ConsoleHelper.printSeparatingLine();
 
-            ConsoleHelper.writeMessage(inputClass);
+            Class<?> findClazz = null;
+            for (Class<?> clazz : classes) {
+                if (inputClass.equals(clazz.getSimpleName())) {
+                    findClazz = clazz;
+                    System.out.println("find " + findClazz);
+                }
+                // Получение информации о классе
+                System.out.println("Class Name: " +
+//                        clazz.getName()
+                                clazz.getSimpleName()
+                );
+            }
+
+            if (findClazz == null) {
+                logger.warn("Class not found");
+                throw new RuntimeException();
+            }
+
+            ConsoleHelper.printSeparatingLine();
+            ConsoleHelper.writeMessage("fields:");
+
+            Field [] fields = findClazz.getDeclaredFields();
+            for (Field field : fields) {
+                ConsoleHelper.writeMessage("\t" + field.getType().getSimpleName());
+
+            }
+
+
+
 //            for (Class<?> clazz : classes) {
 //                // Получение информации о классе
 //                System.out.println("Class Name: " +
@@ -60,9 +92,9 @@ public class Program {
 //            }
 
         } catch (IOException | ClassNotFoundException | URISyntaxException e) {
+            logger.warn(e.getMessage());
             e.printStackTrace();
         }
-
     }
 
     private static List<Class<?>> getClassesInPackage(String packagePath) throws IOException, ClassNotFoundException, URISyntaxException {
