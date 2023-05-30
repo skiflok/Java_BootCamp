@@ -1,20 +1,23 @@
 package edu.school21.ex00;
 
+import edu.school21.ex00.utils.ConsoleHelper;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class Program {
 
     public static void main(String[] args) {
 
         try {
-            System.out.println("Reflection");
 
 //            Path directory = Paths.get("day07/ex00/Reflection/src/main/java/edu/school21/ex00/models").toAbsolutePath().normalize();
 //
@@ -31,29 +34,38 @@ public class Program {
             String classDirectory = "edu.school21.ex00.models";
             List<Class<?>> classes = getClassesInPackage(classDirectory);
 
+            System.out.println("Classes:");
             for (Class<?> clazz : classes) {
-                // Получение информации о классе
-                System.out.println("Class Name: " +
-//                        clazz.getName()
-                        clazz.getSimpleName()
-                );
-                System.out.println("Package Name: " + clazz.getPackage().getName());
-
-                System.out.println("Methods:");
-                for (Method method : clazz.getDeclaredMethods()) {
-                    System.out.println(method.getName());
-                }
-
-                System.out.println();
+                System.out.println(clazz.getSimpleName());
             }
+            ConsoleHelper.printSeparatingLine();
+            ConsoleHelper.writeMessage("Enter class name:");
+            String inputClass = ConsoleHelper.readString();
 
-        } catch (IOException | ClassNotFoundException e) {
+            ConsoleHelper.writeMessage(inputClass);
+//            for (Class<?> clazz : classes) {
+//                // Получение информации о классе
+//                System.out.println("Class Name: " +
+////                        clazz.getName()
+//                                clazz.getSimpleName()
+//                );
+//                System.out.println("Package Name: " + clazz.getPackage().getName());
+//
+//                System.out.println("Methods:");
+//                for (Method method : clazz.getDeclaredMethods()) {
+//                    System.out.println(method.getName());
+//                }
+//
+//                System.out.println();
+//            }
+
+        } catch (IOException | ClassNotFoundException | URISyntaxException e) {
             e.printStackTrace();
         }
 
     }
 
-    private static List<Class<?>> getClassesInPackage(String packagePath) throws IOException, ClassNotFoundException {
+    private static List<Class<?>> getClassesInPackage(String packagePath) throws IOException, ClassNotFoundException, URISyntaxException {
         String packageDirectory = packagePath.replace('.', '/');
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         URL packageUrl = classLoader.getResource(packageDirectory);
@@ -62,40 +74,26 @@ public class Program {
             throw new IllegalArgumentException("Package not found: " + packagePath);
         }
 
-        List<Class<?>> classes = new ArrayList<>();
-        File packageDirectoryFile = new File(packageUrl.getFile());
-        File[] files = packageDirectoryFile.listFiles();
+        if (!Files.isDirectory(Paths.get(packageUrl.toURI()))) {
+            throw new NotDirectoryException("is not directory");
+        }
 
-        if (files != null) {
-            for (File file : files) {
-                String fileName = file.getName();
-                if (fileName.endsWith(".class")) {
-                    String className = packagePath + '.' + fileName.substring(0, fileName.lastIndexOf('.'));
-                    Class<?> clazz = Class.forName(className);
-                    classes.add(clazz);
+        List<Class<?>> classes = new ArrayList<>();
+
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(packageUrl.toURI()))) {
+            for (Path path : stream) {
+                if (Files.isRegularFile(path)) {
+                    String className = String.format(
+                            "%s.%s",
+                            packagePath,
+                            path.getFileName().toString().substring(0, path.getFileName().toString().lastIndexOf('.'))
+                    );
+                    classes.add(Class.forName(className));
                 }
             }
         }
 
         return classes;
     }
-
-    private static List<Path> getFilesFromPath (Path directory) throws NotDirectoryException {
-        if (!Files.isDirectory(directory)) {
-            throw new NotDirectoryException("is not directory");
-        }
-        List<Path> pathList = new ArrayList<>();
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
-            for (Path path : stream) {
-                if (Files.isRegularFile(path)) {
-                    pathList.add(path);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return pathList;
-    }
-
 }
 
