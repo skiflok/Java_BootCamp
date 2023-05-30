@@ -1,11 +1,8 @@
 package edu.school21.ex00;
 
-import edu.school21.ex00.models.User;
-
+import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.net.URI;
 import java.net.URL;
 import java.nio.file.*;
 import java.util.ArrayList;
@@ -19,38 +16,68 @@ public class Program {
         try {
             System.out.println("Reflection");
 
-            Path directory = Paths.get("day07/ex00/Reflection/src/main/java/edu/school21/ex00/models").toAbsolutePath().normalize();
-
-            List<Path> filePath = getFilesFromPath(directory);
-
-            Arrays.stream(filePath.toArray()).forEach(System.out::println);
-
-            System.out.println("Classes:");
-
-            Arrays.stream(filePath.toArray()).forEachOrdered((file) -> {
-                System.out.println(file.getClass().getSimpleName());
-            });
+//            Path directory = Paths.get("day07/ex00/Reflection/src/main/java/edu/school21/ex00/models").toAbsolutePath().normalize();
+//
+//            List<Path> filePath = getFilesFromPath(directory);
+//
+//            Arrays.stream(filePath.toArray()).forEach(System.out::println);
+//
+//            System.out.println("Classes:");
+//
+//            Arrays.stream(filePath.toArray()).forEachOrdered((file) -> {
+//                System.out.println(file.getClass().getSimpleName());
+//            });
 
             String classDirectory = "edu.school21.ex00.models";
-//            List<Class<?>> classes = getClassesInPackage(classDirectory);
-//
-//            for (Class<?> clazz : classes) {
-//                // Получение информации о классе
-//                System.out.println("Class Name: " + clazz.getName());
-//                System.out.println("Package Name: " + clazz.getPackage().getName());
-//
-//                System.out.println("Methods:");
-//                for (Method method : clazz.getDeclaredMethods()) {
-//                    System.out.println(method.getName());
-//                }
-//
-//                System.out.println();
-//            }
+            List<Class<?>> classes = getClassesInPackage(classDirectory);
 
-        } catch (NotDirectoryException e) {
+            for (Class<?> clazz : classes) {
+                // Получение информации о классе
+                System.out.println("Class Name: " +
+//                        clazz.getName()
+                        clazz.getSimpleName()
+                );
+                System.out.println("Package Name: " + clazz.getPackage().getName());
+
+                System.out.println("Methods:");
+                for (Method method : clazz.getDeclaredMethods()) {
+                    System.out.println(method.getName());
+                }
+
+                System.out.println();
+            }
+
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
 
+    }
+
+    private static List<Class<?>> getClassesInPackage(String packagePath) throws IOException, ClassNotFoundException {
+        String packageDirectory = packagePath.replace('.', '/');
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        URL packageUrl = classLoader.getResource(packageDirectory);
+
+        if (packageUrl == null) {
+            throw new IllegalArgumentException("Package not found: " + packagePath);
+        }
+
+        List<Class<?>> classes = new ArrayList<>();
+        File packageDirectoryFile = new File(packageUrl.getFile());
+        File[] files = packageDirectoryFile.listFiles();
+
+        if (files != null) {
+            for (File file : files) {
+                String fileName = file.getName();
+                if (fileName.endsWith(".class")) {
+                    String className = packagePath + '.' + fileName.substring(0, fileName.lastIndexOf('.'));
+                    Class<?> clazz = Class.forName(className);
+                    classes.add(clazz);
+                }
+            }
+        }
+
+        return classes;
     }
 
     private static List<Path> getFilesFromPath (Path directory) throws NotDirectoryException {
