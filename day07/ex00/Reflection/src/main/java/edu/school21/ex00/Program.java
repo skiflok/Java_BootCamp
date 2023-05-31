@@ -12,9 +12,9 @@ import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Program {
@@ -56,41 +56,37 @@ public class Program {
 
             ConsoleHelper.writeMessage("Let’s create an object.");
 
+            Object obj = createObject(findClazz);
 
-            // TODO: 5/31/23 create object
-
-            ConsoleHelper.writeMessage("Field count = " + Arrays.stream(findClazz.getDeclaredFields()).count());
-
-            int maxConstructorParameters = getMaxConstructorParameters(findClazz);
-
-            // TODO: 5/31/23 del
-            ConsoleHelper.writeMessage("Max constructor param = " + maxConstructorParameters);
-
-            while (maxConstructorParameters > 0) {
-                ConsoleHelper.writeMessage("Input param");
-                maxConstructorParameters--;
-            }
-
-
-
-            Constructor<?>[] constructors = findClazz.getDeclaredConstructors();
-
-            for (Constructor<?> constructor : constructors) {
-                System.out.println(Arrays.stream(constructor.getParameters()).map(p ->
-                        p.getType().getSimpleName()
-                ).collect(Collectors.joining(", ")));
-            }
-
-            Object object = constructors[0].newInstance();
-
-            ConsoleHelper.writeMessage(object.toString());
+            ConsoleHelper.writeMessage(String.format("Object created: %s", obj));
             ConsoleHelper.printSeparatingLine();
 
             // TODO: 5/31/23 Enter name of the field for changing
 
+            List<Field> fieldList = Arrays.stream(findClazz.getDeclaredFields()).collect(Collectors.toList());
+
             ConsoleHelper.writeMessage("Enter name of the field for changing:");
 
-            ConsoleHelper.writeMessage("Object updated:");
+            String changeFieldName = ConsoleHelper.readString();
+
+            System.out.println(changeFieldName);
+
+            Optional<Field> changeField = fieldList.stream()
+                    .filter(field -> changeFieldName.equals(field.getName()))
+                            .findFirst();
+
+            if (!changeField.isPresent()) {
+                throw new IllegalArgumentException("Field not found");
+            }
+
+            ConsoleHelper.writeMessage("Enter "+ changeField.get().getType().getSimpleName() + " value:");
+
+            String inputChangeValue = ConsoleHelper.readString();
+
+            changeField.get().setAccessible(true);
+            changeField.get().set(obj, inputChangeValue);
+
+            ConsoleHelper.writeMessage(String.format("Object updated: %s", obj));
             ConsoleHelper.printSeparatingLine();
 
             // TODO: 5/31/23 Enter name of the method for call:
@@ -100,13 +96,48 @@ public class Program {
 
             ConsoleHelper.writeMessage("Method returned:");
 
-
-
-        } catch (IOException | ClassNotFoundException | URISyntaxException e) {
-            logger.warn(e.getMessage());
+        } catch (NumberFormatException | IOException | ClassNotFoundException | URISyntaxException |
+                 InvocationTargetException | InstantiationException | IllegalAccessException |
+                 NoSuchMethodException e) {
+            logger.warn("Ошибка выполнения " + e.getMessage());
             e.printStackTrace();
-        } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e);
+        }
+    }
+
+    private static Object createObject(Class<?> clazz) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        Object obj = clazz.getConstructor().newInstance();
+
+        Field[] fields = clazz.getDeclaredFields();
+        for (Field field : fields) {
+            System.out.println("Input " + field.getName());
+            String value = ConsoleHelper.readString();
+            setFieldValue(obj, field, value);
+        }
+        return obj;
+    }
+
+    private static void setFieldValue (Object obj, Field field, String value) throws IllegalAccessException {
+
+        String type = field.getType().getSimpleName().toLowerCase().substring(0, 3);
+        field.setAccessible(true);
+        switch (type) {
+            case "str":
+                field.set(obj, value);
+                break;
+            case "int":
+                field.setInt(obj, Integer.parseInt(value));
+                break;
+            case "dou":
+                field.setDouble(obj, Double.parseDouble(value));
+                break;
+            case "lon":
+                field.setLong(obj, Long.parseLong(value));
+                break;
+            case "boo":
+                field.setBoolean(obj, Boolean.parseBoolean(value));
+                break;
+            default:
+                break;
         }
     }
 
@@ -117,6 +148,7 @@ public class Program {
                 .max(Integer::compare)
                 .orElse(0);
     }
+
     private static void printDeclaredMethods(Class<?> clazz) {
         Method[] methods = clazz.getDeclaredMethods();
         for (Method method : methods) {
@@ -130,10 +162,11 @@ public class Program {
             ConsoleHelper.writeMessage(printMethod);
         }
     }
+
     private static void printClassDeclaredField(Class<?> clazz) {
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
-            ConsoleHelper.writeMessage("\t" + field.getType().getSimpleName());
+            ConsoleHelper.writeMessage("\t" + field.getType().getSimpleName() + " " + field.getName());
         }
     }
 
