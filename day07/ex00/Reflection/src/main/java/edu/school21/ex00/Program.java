@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -16,7 +17,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 public class Program {
 
     private static final Logger logger = LoggerFactory.getLogger(Program.class);
@@ -25,69 +25,32 @@ public class Program {
 
         try {
 
-//            Path directory = Paths.get("day07/ex00/Reflection/src/main/java/edu/school21/ex00/models").toAbsolutePath().normalize();
-//
-//            List<Path> filePath = getFilesFromPath(directory);
-//
-//            Arrays.stream(filePath.toArray()).forEach(System.out::println);
-//
-//            System.out.println("Classes:");
-//
-//            Arrays.stream(filePath.toArray()).forEachOrdered((file) -> {
-//                System.out.println(file.getClass().getSimpleName());
-//            });
-
             String classDirectory = "edu.school21.ex00.models";
             List<Class<?>> classes = getClassesInPackage(classDirectory);
 
             System.out.println("Classes:");
-            for (Class<?> clazz : classes) {
-                System.out.println(clazz.getSimpleName());
-            }
+
+            printClassesInPackage(classes);
+
             ConsoleHelper.printSeparatingLine();
+
             ConsoleHelper.writeMessage("Enter class name:");
+// TODO: 5/31/23
 //            String inputClass = ConsoleHelper.readString();
-            String inputClass = "User";
+            String inputClass = "User"; // заглушка
+
             ConsoleHelper.printSeparatingLine();
 
-            Class<?> findClazz = null;
-            for (Class<?> clazz : classes) {
-                if (inputClass.equals(clazz.getSimpleName())) {
-                    findClazz = clazz;
-                    System.out.println("find " + findClazz);
-                }
-                // Получение информации о классе
-                System.out.println("Class Name: " +
-//                        clazz.getName()
-                                clazz.getSimpleName()
-                );
-            }
-
-            if (findClazz == null) {
-                logger.warn("Class not found");
-                throw new RuntimeException();
-            }
+            Class<?> findClazz = findClass(classes, inputClass);
 
             ConsoleHelper.printSeparatingLine();
             ConsoleHelper.writeMessage("fields:");
 
-            Field[] fields = findClazz.getDeclaredFields();
-            for (Field field : fields) {
-                ConsoleHelper.writeMessage("\t" + field.getType().getSimpleName());
-            }
+            printClassDeclaredField(findClazz);
 
             ConsoleHelper.writeMessage("methods:");
-            Method[] methods = findClazz.getDeclaredMethods();
-            for (Method method : methods) {
-                String printMethod = String.format("\t%s %s (%s)",
-                        method.getReturnType().getSimpleName(),
-                        method.getName(),
-                        Arrays.stream(method.getParameters()).map((parameter ->
-                                parameter.getType().getSimpleName()
-                        )).collect(Collectors.joining(", "))
-                );
-                ConsoleHelper.writeMessage(printMethod);
-            }
+
+            printDeclaredMethods(findClazz);
 
             ConsoleHelper.printSeparatingLine();
 
@@ -95,17 +58,66 @@ public class Program {
 
             Constructor<?>[] constructors = findClazz.getDeclaredConstructors();
 
+
             for (Constructor<?> constructor : constructors) {
                 System.out.println(Arrays.stream(constructor.getParameters()).map(p ->
                         p.getType().getSimpleName()
                 ).collect(Collectors.joining(", ")));
             }
 
+            Object object = constructors[0].newInstance();
+            System.out.println(object);
 
 
         } catch (IOException | ClassNotFoundException | URISyntaxException e) {
             logger.warn(e.getMessage());
             e.printStackTrace();
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void printDeclaredMethods(Class<?> clazz) {
+        Method[] methods = clazz.getDeclaredMethods();
+        for (Method method : methods) {
+            String printMethod = String.format("\t%s %s (%s)",
+                    method.getReturnType().getSimpleName(),
+                    method.getName(),
+                    Arrays.stream(method.getParameters()).map((parameter ->
+                            parameter.getType().getSimpleName()
+                    )).collect(Collectors.joining(", "))
+            );
+            ConsoleHelper.writeMessage(printMethod);
+        }
+    }
+    private static void printClassDeclaredField(Class<?> clazz) {
+        Field[] fields = clazz.getDeclaredFields();
+        for (Field field : fields) {
+            ConsoleHelper.writeMessage("\t" + field.getType().getSimpleName());
+        }
+    }
+
+    private static Class<?> findClass(List<Class<?>> classes, String inputClass) {
+        Class<?> findClazz = null;
+        for (Class<?> clazz : classes) {
+            if (inputClass.equals(clazz.getSimpleName())) {
+                findClazz = clazz;
+                // TODO: 5/31/23 delete print
+                System.out.println("find " + findClazz.getSimpleName());
+                break;
+            }
+        }
+
+        if (findClazz == null) {
+            logger.warn("Class not found");
+            throw new RuntimeException();
+        }
+        return findClazz;
+    }
+
+    private static void printClassesInPackage(List<Class<?>> classes) {
+        for (Class<?> clazz : classes) {
+            System.out.println(clazz.getSimpleName());
         }
     }
 
