@@ -59,7 +59,17 @@ public class Program {
 
             // TODO: 5/31/23 create object
 
+            ConsoleHelper.writeMessage("Field count = " + Arrays.stream(findClazz.getDeclaredFields()).count());
 
+            int maxConstructorParameters = getMaxConstructorParameters(findClazz);
+
+            // TODO: 5/31/23 del
+            ConsoleHelper.writeMessage("Max constructor param = " + maxConstructorParameters);
+
+            while (maxConstructorParameters > 0) {
+                ConsoleHelper.writeMessage("Input param");
+                maxConstructorParameters--;
+            }
 
 
 
@@ -100,6 +110,13 @@ public class Program {
         }
     }
 
+    private static int getMaxConstructorParameters(Class<?> clazz) {
+        Constructor<?>[] constructors = clazz.getDeclaredConstructors();
+        return Arrays.stream(constructors)
+                .map(Constructor::getParameterCount)
+                .max(Integer::compare)
+                .orElse(0);
+    }
     private static void printDeclaredMethods(Class<?> clazz) {
         Method[] methods = clazz.getDeclaredMethods();
         for (Method method : methods) {
