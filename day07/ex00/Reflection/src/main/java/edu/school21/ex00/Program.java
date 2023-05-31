@@ -56,8 +56,14 @@ public class Program {
 
             ConsoleHelper.writeMessage("Let’s create an object.");
 
-            Constructor<?>[] constructors = findClazz.getDeclaredConstructors();
 
+            // TODO: 5/31/23 create object
+
+
+
+
+
+            Constructor<?>[] constructors = findClazz.getDeclaredConstructors();
 
             for (Constructor<?> constructor : constructors) {
                 System.out.println(Arrays.stream(constructor.getParameters()).map(p ->
@@ -66,7 +72,24 @@ public class Program {
             }
 
             Object object = constructors[0].newInstance();
-            System.out.println(object);
+
+            ConsoleHelper.writeMessage(object.toString());
+            ConsoleHelper.printSeparatingLine();
+
+            // TODO: 5/31/23 Enter name of the field for changing
+
+            ConsoleHelper.writeMessage("Enter name of the field for changing:");
+
+            ConsoleHelper.writeMessage("Object updated:");
+            ConsoleHelper.printSeparatingLine();
+
+            // TODO: 5/31/23 Enter name of the method for call:
+            ConsoleHelper.writeMessage("Enter name of the method for call:");
+
+            ConsoleHelper.writeMessage("Enter int value:");
+
+            ConsoleHelper.writeMessage("Method returned:");
+
 
 
         } catch (IOException | ClassNotFoundException | URISyntaxException e) {
