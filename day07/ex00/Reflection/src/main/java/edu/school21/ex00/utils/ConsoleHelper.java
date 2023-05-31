@@ -17,6 +17,9 @@ public class ConsoleHelper {
     public static void writeMessage(String message) {
         System.out.println(message);
     }
+    public static void writeMessage(int message) {
+        System.out.println(message);
+    }
 
     public static void printSeparatingLine() {
         System.out.println("---------------------");
@@ -43,5 +46,4 @@ public class ConsoleHelper {
             }
         }
     }
-
 }
