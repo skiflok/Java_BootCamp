@@ -17,8 +17,8 @@ public class ConsoleHelper {
                 "height\n" +
                 "9999\n" +
                 "grow(int, double)\n" +
-                "123\n" +
-                "545.4545\n";
+                "1\n" +
+                "2.5\n";
         byte[] inputBytes = inputString.getBytes();
         InputStream inputStream = new ByteArrayInputStream(inputBytes);
 //        InputStream originalInputStream = System.in;

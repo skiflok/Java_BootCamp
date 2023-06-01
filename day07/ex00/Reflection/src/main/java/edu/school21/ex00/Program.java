@@ -7,10 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.*;
@@ -34,13 +31,7 @@ public class Program {
         classDictionary.put("Boolean", Boolean.class);
         classDictionary.put("String", String.class);
 
-        String inputString = "Hello, World!";
-        byte[] inputBytes = inputString.getBytes();
-        InputStream inputStream = new ByteArrayInputStream(inputBytes);
-        InputStream originalInputStream = System.in;
-
         try {
-
 
             String classDirectory = "edu.school21.ex00.models";
             List<Class<?>> classes = getClassesInPackage(classDirectory);
@@ -81,7 +72,7 @@ public class Program {
             ConsoleHelper.writeMessage("Enter " + changeField.getType().getSimpleName() + " value:");
             String inputChangeValue = ConsoleHelper.readString();
             changeField.setAccessible(true);
-            changeField.set(obj, getNewFieldObject(changeField, inputChangeValue)
+            changeField.set(obj, getNewObjectOfGivenTypeAndValue(changeField.getType(), inputChangeValue)
                     .orElseThrow(() -> new IllegalAccessException("Bad parameter")));
             ConsoleHelper.writeMessage(String.format("Object updated: %s", obj));
             ConsoleHelper.printSeparatingLine();
@@ -118,7 +109,20 @@ public class Program {
 
             Arrays.stream(inputMethodValues.toArray()).forEach((arg) -> logger.debug("inputMethodValues {} ", arg));
 
+            method.setAccessible(true);
+
+            Object [] methodParam = new Object[methodTypeClasses.length];
+
+            for (int i = 0; i < methodParam.length; i++) {
+                methodParam[i] = getNewObjectOfGivenTypeAndValue(methodTypeClasses[i], inputMethodValues.get(i))
+                        .orElseThrow(() -> new IllegalAccessException("Bad parameter"));
+            }
+
+            Arrays.stream(methodParam).forEach((arg) -> logger.debug("methodParam {} {} ", arg.getClass().getSimpleName() ,arg));
+
             ConsoleHelper.writeMessage("Method returned:");
+            System.out.println(method.invoke(obj, methodParam));
+
 
         } catch (NumberFormatException | IOException | ClassNotFoundException | URISyntaxException |
                  InvocationTargetException | InstantiationException | IllegalAccessException |
@@ -136,16 +140,16 @@ public class Program {
             System.out.println("\t" + field.getName());
             String value = ConsoleHelper.readString();
             field.setAccessible(true);
-            field.set(obj, getNewFieldObject(field, value)
+            field.set(obj, getNewObjectOfGivenTypeAndValue(field.getType(), value)
                     .orElseThrow(() -> new IllegalAccessException("Bad parameter")));
         }
         return obj;
     }
 
-    private static Optional<Object> getNewFieldObject(Field field, String value) throws IllegalAccessException {
+    private static Optional<Object> getNewObjectOfGivenTypeAndValue(Class<?> classType, String value) throws IllegalAccessException {
 
         Optional<Object> resObj = Optional.empty();
-        String type = field.getType().getSimpleName().toLowerCase().substring(0, 3);
+        String type = classType.getSimpleName().toLowerCase().substring(0, 3);
         switch (type) {
             case "str":
                 resObj = Optional.ofNullable(value);
@@ -166,14 +170,6 @@ public class Program {
                 break;
         }
         return resObj;
-    }
-
-    private static int getMaxConstructorParameters(Class<?> clazz) {
-        Constructor<?>[] constructors = clazz.getDeclaredConstructors();
-        return Arrays.stream(constructors)
-                .map(Constructor::getParameterCount)
-                .max(Integer::compare)
-                .orElse(0);
     }
 
     private static void printDeclaredMethods(Class<?> clazz) {

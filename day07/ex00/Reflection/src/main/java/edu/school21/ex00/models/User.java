@@ -3,8 +3,8 @@ package edu.school21.ex00.models;
 import java.util.StringJoiner;
 
 public class User {
-    private String firstName;
-    private String lastName;
+    private final String firstName;
+    private final String lastName;
     private int height;
 
     public User() {
@@ -28,9 +28,8 @@ public class User {
         return height;
     }
 
-    public int grow(int value, double val) {
-        this.height += value;
-        return height;
+    public double grow(int value, double val) {
+        return height + value + val;
     }
 
 
