@@ -8,13 +8,10 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.lang.reflect.*;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class Program {
-
 
     private static final Logger logger = LoggerFactory.getLogger(Program.class);
 
@@ -24,8 +21,8 @@ public class Program {
 
             String classDirectory = "edu.school21.ex00.models";
             List<Class<?>> classes = ReflectionUtil.getClassesInPackage(classDirectory);
-
-            printClassesInPackage(classes);
+            System.out.println("Classes:");
+            classes.stream().map(Class::getSimpleName).forEach(System.out::println);
             ConsoleHelper.printSeparatingLine();
 
             ConsoleHelper.writeMessage("Enter class name:");
@@ -33,9 +30,14 @@ public class Program {
             ConsoleHelper.printSeparatingLine();
 
             Class<?> findClazz = ReflectionUtil.findClass(classes, inputClassName);
+            ConsoleHelper.writeMessage("fields:");
+            Arrays.stream(findClazz.getDeclaredFields())
+                    .map(field -> String.format("\t%s %s",
+                            field.getType().getSimpleName(),
+                            field.getName()))
+                    .forEach(System.out::println);
 
-            printClassDeclaredField(findClazz);
-
+            ConsoleHelper.writeMessage("methods:");
             printDeclaredMethods(findClazz);
             ConsoleHelper.printSeparatingLine();
 
@@ -57,33 +59,14 @@ public class Program {
     }
 
     private static void printDeclaredMethods(Class<?> clazz) {
-        ConsoleHelper.writeMessage("methods:");
-        Method[] methods = clazz.getDeclaredMethods();
-        for (Method method : methods) {
-            String printMethod = String.format("\t%s %s(%s)",
-                    method.getReturnType().getSimpleName(),
-                    method.getName(),
-                    Arrays.stream(method.getParameters()).map((parameter ->
-                            parameter.getType().getSimpleName()
-                    )).collect(Collectors.joining(", "))
-            );
-            ConsoleHelper.writeMessage(printMethod);
-        }
+        Arrays.stream(clazz.getDeclaredMethods())
+                .map(method -> String.format("\t%s %s(%s)",
+                        method.getReturnType().getSimpleName(),
+                        method.getName(),
+                        Arrays.stream(method.getParameters()).map((parameter ->
+                                parameter.getType().getSimpleName()
+                        )).collect(Collectors.joining(", "))
+                ))
+                .forEach(System.out::println);
     }
-
-    private static void printClassDeclaredField(Class<?> clazz) {
-        ConsoleHelper.writeMessage("fields:");
-        Field[] fields = clazz.getDeclaredFields();
-        for (Field field : fields) {
-            ConsoleHelper.writeMessage("\t" + field.getType().getSimpleName() + " " + field.getName());
-        }
-    }
-
-    private static void printClassesInPackage(List<Class<?>> classes) {
-        System.out.println("Classes:");
-        for (Class<?> clazz : classes) {
-            System.out.println(clazz.getSimpleName());
-        }
-    }
-
 }
