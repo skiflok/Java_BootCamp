@@ -16,7 +16,6 @@ import java.net.URL;
 import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Program {
 
@@ -106,17 +105,18 @@ public class Program {
                     .map(classDictionary::get)
                     .toArray(Class<?>[]::new);
 
-            System.out.println(Arrays.toString(methodTypeClasses));
+            logger.debug("methodTypeClasses = {}", Arrays.toString(methodTypeClasses));
 
             Method method = findClazz.getDeclaredMethod(methodType, methodTypeClasses);
-            System.out.println(method.getName());
+            logger.debug("method = {}", method.getName());
 
+            List<String> inputMethodValues = new ArrayList<>();
             for (Class<?> cl : methodTypeClasses) {
                 ConsoleHelper.writeMessage(String.format("Enter %s value:", cl.toString()));
+                inputMethodValues.add(ConsoleHelper.readString());
             }
 
-
-
+            Arrays.stream(inputMethodValues.toArray()).forEach((arg) -> logger.debug("inputMethodValues {} ", arg));
 
             ConsoleHelper.writeMessage("Method returned:");
 
