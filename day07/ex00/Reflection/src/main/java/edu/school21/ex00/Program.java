@@ -54,19 +54,31 @@ public class Program {
             System.out.println(changeFieldName);
             Optional<Field> optionalField = fieldList.stream()
                     .filter(field -> changeFieldName.equals(field.getName()))
-                            .findFirst();
+                    .findFirst();
             if (!optionalField.isPresent()) {
                 throw new IllegalArgumentException("Field not found");
             }
             Field changeField = optionalField.get();
-            ConsoleHelper.writeMessage("Enter "+ changeField.getType().getSimpleName() + " value:");
+            ConsoleHelper.writeMessage("Enter " + changeField.getType().getSimpleName() + " value:");
             String inputChangeValue = ConsoleHelper.readString();
-            setFieldValue(obj, changeField, inputChangeValue);
+            changeField.setAccessible(true);
+            changeField.set(obj, getNewFieldObject(changeField, inputChangeValue)
+                    .orElseThrow(() -> new IllegalAccessException("Bad parameter")));
             ConsoleHelper.writeMessage(String.format("Object updated: %s", obj));
             ConsoleHelper.printSeparatingLine();
 
             // TODO: 5/31/23 Enter name of the method for call:
             ConsoleHelper.writeMessage("Enter name of the method for call:");
+
+//            Method [] methods = findClazz.getDeclaredMethods();
+
+//            for (Method method : methods) {
+//                System.out.println(method.getName());
+//            }
+
+            Class<?>[] classes1 = {int.class, double.class};
+            Method method = findClazz.getDeclaredMethod("grow", classes1);
+            System.out.println(method.getName());
 
             ConsoleHelper.writeMessage("Enter int value:");
 
@@ -87,34 +99,37 @@ public class Program {
         for (Field field : fields) {
             System.out.println("\t" + field.getName());
             String value = ConsoleHelper.readString();
-            setFieldValue(obj, field, value);
+            field.setAccessible(true);
+            field.set(obj, getNewFieldObject(field, value)
+                    .orElseThrow(() -> new IllegalAccessException("Bad parameter")));
         }
         return obj;
     }
 
-    private static void setFieldValue (Object obj, Field field, String value) throws IllegalAccessException {
+    private static Optional<Object> getNewFieldObject(Field field, String value) throws IllegalAccessException {
 
+        Optional<Object> resObj = Optional.empty();
         String type = field.getType().getSimpleName().toLowerCase().substring(0, 3);
-        field.setAccessible(true);
         switch (type) {
             case "str":
-                field.set(obj, value);
+                resObj = Optional.ofNullable(value);
                 break;
             case "int":
-                field.setInt(obj, Integer.parseInt(value));
+                resObj = Optional.of(Integer.parseInt(value));
                 break;
             case "dou":
-                field.setDouble(obj, Double.parseDouble(value));
+                resObj = Optional.of(Double.parseDouble(value));
                 break;
             case "lon":
-                field.setLong(obj, Long.parseLong(value));
+                resObj = Optional.of(Long.parseLong(value));
                 break;
             case "boo":
-                field.setBoolean(obj, Boolean.parseBoolean(value));
+                resObj = Optional.of(Boolean.parseBoolean(value));
                 break;
             default:
                 break;
         }
+        return resObj;
     }
 
     private static int getMaxConstructorParameters(Class<?> clazz) {
@@ -128,7 +143,7 @@ public class Program {
     private static void printDeclaredMethods(Class<?> clazz) {
         Method[] methods = clazz.getDeclaredMethods();
         for (Method method : methods) {
-            String printMethod = String.format("\t%s %s (%s)",
+            String printMethod = String.format("\t%s %s(%s)",
                     method.getReturnType().getSimpleName(),
                     method.getName(),
                     Arrays.stream(method.getParameters()).map((parameter ->

@@ -23,6 +23,10 @@ public class User {
         this.height += value;
         return height;
     }
+    public int grow(Integer value) {
+        this.height += value;
+        return height;
+    }
 
     public int grow(int value, double val) {
         this.height += value;
