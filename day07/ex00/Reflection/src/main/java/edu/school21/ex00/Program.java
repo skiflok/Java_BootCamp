@@ -4,7 +4,9 @@ import edu.school21.ex00.utils.ConsoleHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -14,6 +16,7 @@ import java.net.URL;
 import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Program {
 
@@ -21,7 +24,24 @@ public class Program {
 
     public static void main(String[] args) {
 
+        Map<String, Class<?>> classDictionary = new HashMap<>();
+        classDictionary.put("int", int.class);
+        classDictionary.put("Integer", Integer.class);
+        classDictionary.put("long", long.class);
+        classDictionary.put("Long", Long.class);
+        classDictionary.put("double", double.class);
+        classDictionary.put("Double", Double.class);
+        classDictionary.put("boolean", boolean.class);
+        classDictionary.put("Boolean", Boolean.class);
+        classDictionary.put("String", String.class);
+
+        String inputString = "Hello, World!";
+        byte[] inputBytes = inputString.getBytes();
+        InputStream inputStream = new ByteArrayInputStream(inputBytes);
+        InputStream originalInputStream = System.in;
+
         try {
+
 
             String classDirectory = "edu.school21.ex00.models";
             List<Class<?>> classes = getClassesInPackage(classDirectory);
@@ -31,8 +51,8 @@ public class Program {
             ConsoleHelper.printSeparatingLine();
             ConsoleHelper.writeMessage("Enter class name:");
 // TODO: 5/31/23
-//            String inputClass = ConsoleHelper.readString();
-            String inputClass = "User"; // заглушка
+            String inputClass = ConsoleHelper.readString();
+//            String inputClass = "User"; // заглушка
             ConsoleHelper.printSeparatingLine();
 
             Class<?> findClazz = findClass(classes, inputClass);
@@ -70,17 +90,33 @@ public class Program {
             // TODO: 5/31/23 Enter name of the method for call:
             ConsoleHelper.writeMessage("Enter name of the method for call:");
 
-//            Method [] methods = findClazz.getDeclaredMethods();
 
-//            for (Method method : methods) {
-//                System.out.println(method.getName());
-//            }
+            String inputMethod = ConsoleHelper.readString();
+            String methodType = inputMethod.substring(0, inputMethod.lastIndexOf("("));
+            logger.debug("methodType = {}", methodType);
+            String methodArgument = inputMethod.substring(inputMethod.indexOf("(") + 1, inputMethod.lastIndexOf(")"));
+            logger.debug("methodArgument = {}", methodArgument);
+            String [] methodArgs =  Arrays.stream(methodArgument.split(","))
+                    .map(String::trim)
+                    .toArray(String[]::new);
 
-            Class<?>[] classes1 = {int.class, double.class};
-            Method method = findClazz.getDeclaredMethod("grow", classes1);
+            Arrays.stream(methodArgs).forEach((arg) -> logger.debug("methodArg {} ", arg));
+
+            Class<?>[] methodTypeClasses = Arrays.stream(methodArgs)
+                    .map(classDictionary::get)
+                    .toArray(Class<?>[]::new);
+
+            System.out.println(Arrays.toString(methodTypeClasses));
+
+            Method method = findClazz.getDeclaredMethod(methodType, methodTypeClasses);
             System.out.println(method.getName());
 
-            ConsoleHelper.writeMessage("Enter int value:");
+            for (Class<?> cl : methodTypeClasses) {
+                ConsoleHelper.writeMessage(String.format("Enter %s value:", cl.toString()));
+            }
+
+
+
 
             ConsoleHelper.writeMessage("Method returned:");
 

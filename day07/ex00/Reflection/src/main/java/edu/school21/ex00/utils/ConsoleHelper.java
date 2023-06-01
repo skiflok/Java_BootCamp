@@ -3,13 +3,25 @@ package edu.school21.ex00.utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 
 public class ConsoleHelper {
 
     private static final Logger logger = LoggerFactory.getLogger(ConsoleHelper.class);
+
+    static {
+        String inputString = "User\n" +
+                "firstName\n!" +
+                "lastName\n" +
+                "100\n" +
+                "height\n" +
+                "9999\n" +
+                "grow(int, double)\n";
+        byte[] inputBytes = inputString.getBytes();
+        InputStream inputStream = new ByteArrayInputStream(inputBytes);
+//        InputStream originalInputStream = System.in;
+        System.setIn(inputStream);
+    }
 
     static private final BufferedReader bis =
             new BufferedReader(new InputStreamReader(System.in));
