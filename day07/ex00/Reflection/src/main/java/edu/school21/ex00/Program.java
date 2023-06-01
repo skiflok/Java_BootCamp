@@ -12,8 +12,6 @@ import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.*;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -29,63 +27,41 @@ public class Program {
             List<Class<?>> classes = getClassesInPackage(classDirectory);
 
             System.out.println("Classes:");
-
             printClassesInPackage(classes);
-
             ConsoleHelper.printSeparatingLine();
-
             ConsoleHelper.writeMessage("Enter class name:");
 // TODO: 5/31/23
 //            String inputClass = ConsoleHelper.readString();
             String inputClass = "User"; // заглушка
-
             ConsoleHelper.printSeparatingLine();
 
             Class<?> findClazz = findClass(classes, inputClass);
-
             ConsoleHelper.printSeparatingLine();
             ConsoleHelper.writeMessage("fields:");
-
             printClassDeclaredField(findClazz);
-
             ConsoleHelper.writeMessage("methods:");
-
             printDeclaredMethods(findClazz);
-
             ConsoleHelper.printSeparatingLine();
 
             ConsoleHelper.writeMessage("Let’s create an object.");
-
             Object obj = createObject(findClazz);
-
             ConsoleHelper.writeMessage(String.format("Object created: %s", obj));
             ConsoleHelper.printSeparatingLine();
 
-            // TODO: 5/31/23 Enter name of the field for changing
-
             List<Field> fieldList = Arrays.stream(findClazz.getDeclaredFields()).collect(Collectors.toList());
-
             ConsoleHelper.writeMessage("Enter name of the field for changing:");
-
             String changeFieldName = ConsoleHelper.readString();
-
             System.out.println(changeFieldName);
-
-            Optional<Field> changeField = fieldList.stream()
+            Optional<Field> optionalField = fieldList.stream()
                     .filter(field -> changeFieldName.equals(field.getName()))
                             .findFirst();
-
-            if (!changeField.isPresent()) {
+            if (!optionalField.isPresent()) {
                 throw new IllegalArgumentException("Field not found");
             }
-
-            ConsoleHelper.writeMessage("Enter "+ changeField.get().getType().getSimpleName() + " value:");
-
+            Field changeField = optionalField.get();
+            ConsoleHelper.writeMessage("Enter "+ changeField.getType().getSimpleName() + " value:");
             String inputChangeValue = ConsoleHelper.readString();
-
-            changeField.get().setAccessible(true);
-            changeField.get().set(obj, inputChangeValue);
-
+            setFieldValue(obj, changeField, inputChangeValue);
             ConsoleHelper.writeMessage(String.format("Object updated: %s", obj));
             ConsoleHelper.printSeparatingLine();
 
@@ -109,7 +85,7 @@ public class Program {
 
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
-            System.out.println("Input " + field.getName());
+            System.out.println("\t" + field.getName());
             String value = ConsoleHelper.readString();
             setFieldValue(obj, field, value);
         }
