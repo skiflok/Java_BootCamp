@@ -1,6 +1,7 @@
 package edu.school21.ex00.utils;
 
-import edu.school21.ex00.Program;
+import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +75,7 @@ public class ReflectionUtil {
         return obj;
     }
 
-    public static Optional<Object> getNewObjectOfGivenTypeAndValue(Class<?> classType, String value) throws IllegalAccessException {
+    public static Optional<Object> getNewObjectOfGivenTypeAndValue(Class<?> classType, String value)  {
 
         Optional<Object> optional = Optional.empty();
         String type = classType.getSimpleName().toLowerCase().substring(0, 3);
@@ -166,33 +167,10 @@ public class ReflectionUtil {
     }
 
     public static List<Class<?>> getClassesInPackage(String packagePath) throws IOException, ClassNotFoundException, URISyntaxException {
-        String packageDirectory = packagePath.replace('.', '/');
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        URL packageUrl = classLoader.getResource(packageDirectory);
 
-        if (packageUrl == null) {
-            throw new IllegalArgumentException("Package not found: " + packagePath);
-        }
+        Reflections reflections = new Reflections(packagePath, new SubTypesScanner(false));
+        Set<Class<?>> classes = reflections.getSubTypesOf(Object.class);
 
-        if (!Files.isDirectory(Paths.get(packageUrl.toURI()))) {
-            throw new NotDirectoryException("is not directory");
-        }
-
-        List<Class<?>> classes = new ArrayList<>();
-
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(packageUrl.toURI()))) {
-            for (Path path : stream) {
-                if (Files.isRegularFile(path)) {
-                    String className = String.format(
-                            "%s.%s",
-                            packagePath,
-                            path.getFileName().toString().substring(0, path.getFileName().toString().lastIndexOf('.'))
-                    );
-                    classes.add(Class.forName(className));
-                }
-            }
-        }
-
-        return classes;
+        return new ArrayList<>(classes);
     }
 }
