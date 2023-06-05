@@ -34,16 +34,48 @@ public class HtmlProcessor extends AbstractProcessor {
         String filName = htmlForm.fileName();
         String action = htmlForm.action();
         String method = htmlForm.method();
-        String formCode = String.format("<form action = \"%s\" method = \"%s\">",
-                              action,
-                              method);
-        System.out.println(formCode);
+        StringBuilder formCode = new StringBuilder();
+        formCode
+            .append("<form action = \"")
+            .append(action)
+            .append("\" method = \"")
+            .append(method)
+            .append("\">\n");
 
+        for (Element fieldElement : typeElement.getEnclosedElements()) {
+
+          if (fieldElement.getKind().isField() &&
+              fieldElement.getAnnotation(HtmlInput.class) != null) {
+            HtmlInput htmlInput = fieldElement.getAnnotation(HtmlInput.class);
+
+            formCode
+                .append("\t<input type = \"")
+                .append(htmlInput.type())
+                .append("\" name = \"")
+                .append(htmlInput.name())
+                .append("\" placeholder = \"")
+                .append(htmlInput.placeholder())
+                .append("\">\n");
+          }
+
+        }
+        System.out.println(formCode);
       }
     }
     return true;
   }
 }
+
+
+/*
+*
+  <form action = "/users" method = "post">
+	<input type = "text" name = "first_name" placeholder = "Enter First Name">
+	<input type = "text" name = "last_name" placeholder = "Enter Last Name">
+	<input type = "password" name = "password" placeholder = "Enter Password">
+	<input type = "submit" value = "Send">
+</form>
+* */
 //        System.out.println("annotations = " + annotations.size());
 
 //        annotations.forEach(System.out::println);
