@@ -19,7 +19,6 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 
-
 @SupportedAnnotationTypes(value = {"edu.school21.ex01.annotations.HtmlForm"
     , "edu.school21.ex01.annotations.HtmlInput"
 })
@@ -80,31 +79,3 @@ public class HtmlProcessor extends AbstractProcessor {
     return true;
   }
 }
-
-
-/*
-*
-  <form action = "/users" method = "post">
-	<input type = "text" name = "first_name" placeholder = "Enter First Name">
-	<input type = "text" name = "last_name" placeholder = "Enter Last Name">
-	<input type = "password" name = "password" placeholder = "Enter Password">
-	<input type = "submit" value = "Send">
-</form>
-* */
-//        System.out.println("annotations = " + annotations.size());
-
-//        annotations.forEach(System.out::println);
-
-//          roundEnv.getElementsAnnotatedWith(HtmlForm.class).stream()
-//                  .map(element -> {
-//                      HtmlForm htmlForm = element.getAnnotation(HtmlForm.class);
-//                      String filName = htmlForm.fileName();
-//                      String action = htmlForm.action();
-//                      String method = htmlForm.method();
-//
-//
-//                      return String.format("<form action = \"%s\" method = \"%s\">",
-//                              action,
-//                              method);
-//                  })
-//                  .forEach(System.out::println);
