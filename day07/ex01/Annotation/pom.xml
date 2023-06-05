@@ -16,13 +16,13 @@
     <auto-service.version>1.0.1</auto-service.version>
   </properties>
 
-  <dependencies>
-    <dependency>
-      <groupId>com.google.auto.service</groupId>
-      <artifactId>auto-service-annotations</artifactId>
-      <version>${auto-service.version}</version>
-    </dependency>
-  </dependencies>
+<!--  <dependencies>-->
+<!--    <dependency>-->
+<!--      <groupId>com.google.auto.service</groupId>-->
+<!--      <artifactId>auto-service-annotations</artifactId>-->
+<!--      <version>${auto-service.version}</version>-->
+<!--    </dependency>-->
+<!--  </dependencies>-->
 
   <build>
     <plugins>
