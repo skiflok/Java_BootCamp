@@ -16,89 +16,46 @@
     <auto-service.version>1.0.1</auto-service.version>
   </properties>
 
-<!--  <dependencies>-->
-<!--    <dependency>-->
-<!--      <groupId>com.google.auto.service</groupId>-->
-<!--      <artifactId>auto-service-annotations</artifactId>-->
-<!--      <version>${auto-service.version}</version>-->
-<!--    </dependency>-->
-<!--  </dependencies>-->
+  <dependencies>
+    <dependency>
+      <groupId>com.google.auto.service</groupId>
+      <artifactId>auto-service-annotations</artifactId>
+      <version>${auto-service.version}</version>
+    </dependency>
+  </dependencies>
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.3.1</version>
+      </plugin>
 
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.11.0</version>
 
-<!--      <plugin>-->
-<!--              <groupId>org.apache.maven.plugins</groupId>-->
-<!--              <artifactId>maven-compiler-plugin</artifactId>-->
-<!--              <version>3.11.0</version>-->
-<!--              <configuration>-->
-<!--                <annotationProcessorPaths>-->
-<!--                  <path>-->
-<!--                    <groupId>com.google.auto.service</groupId>-->
-<!--                    <artifactId>auto-service</artifactId>-->
-<!--                    <version>${auto-service.version}</version>-->
-<!--                  </path>-->
-<!--                </annotationProcessorPaths>-->
-<!--              </configuration>-->
-<!--            </plugin>-->
+        <executions>
+          <execution>
+            <id>annotations</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+            <configuration>
+              <proc>only</proc>
+              <annotationProcessors>
+                <annotationProcessor>
+                  edu.school21.ex01.annotationProcessor.HtmlProcessor
+                </annotationProcessor>
+              </annotationProcessors>
+            </configuration>
+          </execution>
+        </executions>
 
-
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-resources-plugin</artifactId>
-              <version>3.3.1</version>
-            </plugin>
-
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-compiler-plugin</artifactId>
-              <version>3.11.0</version>
-
-              <executions>
-                <execution>
-                  <id>annotations</id>
-                  <phase>compile</phase>
-                  <goals>
-                    <goal>compile</goal>
-                  </goals>
-                  <configuration>
-                    <proc>only</proc>
-                    <annotationProcessors>
-                      <annotationProcessor>
-                        edu.school21.ex01.annotationProcessor.HtmlProcessor</annotationProcessor>
-                    </annotationProcessors>
-                  </configuration>
-                </execution>
-              </executions>
-
-            </plugin>
-
-<!--      <plugin>-->
-<!--        <groupId>org.apache.maven.plugins</groupId>-->
-<!--        <artifactId>maven-assembly-plugin</artifactId>-->
-<!--        <version>3.6.0</version>-->
-<!--        <configuration>-->
-<!--          <archive>-->
-<!--            <manifest>-->
-<!--              <mainClass>edu.school21.ex01.Program</mainClass>-->
-<!--            </manifest>-->
-<!--          </archive>-->
-<!--          <descriptorRefs>-->
-<!--            <descriptorRef>jar-with-dependencies</descriptorRef>-->
-<!--          </descriptorRefs>-->
-<!--        </configuration>-->
-<!--        <executions>-->
-<!--          <execution>-->
-<!--            <id>assemble-all</id>-->
-<!--            <phase>package</phase>-->
-<!--            <goals>-->
-<!--              <goal>single</goal>-->
-<!--            </goals>-->
-<!--          </execution>-->
-<!--        </executions>-->
-<!--      </plugin>-->
-
+      </plugin>
 
     </plugins>
   </build>
