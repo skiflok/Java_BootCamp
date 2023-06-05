@@ -64,7 +64,7 @@ public class HtmlProcessor extends AbstractProcessor {
         formCode.append("\t<input type=\"submit\" value=\"Send\">\n");
         formCode.append("</form>");
 
-        System.out.println(formCode);
+//        System.out.println(formCode);
 
         try {
           Path outputPath = Paths.get("target/classes", fileName);
