@@ -13,7 +13,7 @@ public class HikariCPDataSource {
     private static final HikariDataSource ds;
 
     static {
-        config.setJdbcUrl("jdbc:postgresql://localhost:5432/chatDataBase");
+        config.setJdbcUrl("jdbc:postgresql://localhost:5432/ORM");
         config.setUsername("postgres");
         config.setPassword("admin");
         config.setMaximumPoolSize(4);

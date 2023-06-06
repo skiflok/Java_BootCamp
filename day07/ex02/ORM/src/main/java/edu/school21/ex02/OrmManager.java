@@ -1,6 +1,14 @@
 package edu.school21.ex02;
 
+import edu.school21.ex02.repositories.JdbcTemplate;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 public class OrmManager {
+
+    public OrmManager() throws SQLException {
+        init();
+    }
 
     // TODO: 06.06.2023
     //    Разработанный вами класс OrmManager должен генерировать и
@@ -13,7 +21,6 @@ public class OrmManager {
     //  автоинкремента. OrmManager также должен поддерживать следующие
     //  набор операций (для каждой из них также генерируется
     //  соответствующий код SQL в Runtime)
-
 
     public void save(Object entity) {
 
@@ -34,5 +41,14 @@ public class OrmManager {
 //   Метод обновления должен заменять значения в столбцах, указанных в
 //    объекте, даже если значение поля объекта равно нулю.
 
+    public void init() throws SQLException {
+
+        String SQL = "drop schema if exists orm cascade;\n"
+            + "create schema if not exists orm;\n";
+        JdbcTemplate.statement((stmt) -> {
+            stmt.execute(SQL);
+            System.out.println(SQL);
+        });
+    }
 
 }
