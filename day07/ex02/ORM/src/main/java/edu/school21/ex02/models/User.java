@@ -4,8 +4,6 @@ import edu.school21.ex02.annotation.OrmColumn;
 import edu.school21.ex02.annotation.OrmColumnId;
 import edu.school21.ex02.annotation.OrmEntity;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 @Data
 @OrmEntity(table = "simple_user")
