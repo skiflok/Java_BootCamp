@@ -11,7 +11,9 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
@@ -29,9 +31,9 @@ import javax.lang.model.util.Elements;
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class ORMProcessor extends AbstractProcessor {
 
-  private final Map<String, String> sqlTypes = new HashMap<>();
+  private final static Map<String, String> sqlTypes = new HashMap<>();
   private final String schemaName;
-
+  Path outputPath;
   String fileName;
 
   {
@@ -42,6 +44,7 @@ public class ORMProcessor extends AbstractProcessor {
     sqlTypes.put("Long", "bigint");
     schemaName = "orm";
     fileName = "schema.sql";
+    outputPath = Paths.get("target/classes", fileName);
   }
 
   @Override
@@ -69,40 +72,29 @@ public class ORMProcessor extends AbstractProcessor {
             .append(schemaName).append(".").append(ormEntity.table()).append(" (\n");
 
         List<? extends Element> fieldElements = typeElement.getEnclosedElements();
-        int count = 0;
-        for (Element fieldElement : fieldElements) {
-          count++;
-          if (fieldElement.getKind().isField()) {
-            if (fieldElement.getAnnotation(OrmColumnId.class) != null) {
-              schema.append(fieldElement)
-                  .append(" ")
-                  .append(getAutoIncrementType(elements, fieldElement));
-            }
-            if (fieldElement.getAnnotation(OrmColumn.class) != null) {
-              schema.append(fieldElement)
-                  .append(" ")
-                  .append(appendType(elements, fieldElement));
-            }
-            if (count == fieldElements.size()) {
-              schema.append(");\n");
-            } else {
-              schema.append(",\n");
-            }
-          }
-        }
+        String columns = fieldElements.stream()
+            .map(fieldElement -> {
+              if (fieldElement.getAnnotation(OrmColumnId.class) != null) {
+                return fieldElement + " " + getAutoIncrementType(elements, fieldElement);
+              }
+              if (fieldElement.getAnnotation(OrmColumn.class) != null) {
+                return fieldElement + " " + appendType(elements, fieldElement);
+              }
+              return null;
+            })
+            .filter(Objects::nonNull)
+            .collect(Collectors.joining(",\n"));
+
+        schema.append(columns)
+            .append(");\n");
       }
     }
 
-    try {
-      System.out.println("\n" + schema);
-      Path outputPath = Paths.get("target/classes", fileName);
-      BufferedWriter writer = Files.newBufferedWriter(outputPath);
+    try (BufferedWriter writer = Files.newBufferedWriter(outputPath)) {
       writer.write(schema.toString());
-      writer.close();
     } catch (IOException e) {
       e.printStackTrace();
     }
-
     return true;
   }
 
@@ -119,11 +111,10 @@ public class ORMProcessor extends AbstractProcessor {
 
   private String appendType(Elements elements, Element element) {
     if ("String".equals(getType(elements, element))) {
-      return sqlTypes.get(getType(elements, element)) + "(" + element.getAnnotation(OrmColumn.class).length() + ")";
+      return sqlTypes.get(getType(elements, element)) + "(" + element.getAnnotation(OrmColumn.class)
+          .length() + ")";
     } else {
       return sqlTypes.get(getType(elements, element));
     }
   }
-
-
 }
