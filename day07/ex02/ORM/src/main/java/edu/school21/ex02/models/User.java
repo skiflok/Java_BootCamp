@@ -6,7 +6,7 @@ import edu.school21.ex02.orm.annotation.OrmEntity;
 import lombok.Data;
 
 @Data
-@OrmEntity(table = "user")
+@OrmEntity(table = "simple_user")
 public class User {
     @OrmColumnId
     private Long id;

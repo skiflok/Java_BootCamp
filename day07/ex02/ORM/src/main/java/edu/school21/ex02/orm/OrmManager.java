@@ -3,9 +3,10 @@ package edu.school21.ex02.orm;
 import edu.school21.ex02.repositories.JdbcTemplate;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class OrmManager {
 
@@ -46,12 +47,22 @@ public class OrmManager {
 
     public void init() throws SQLException, IOException {
 
-        String filePath = "day07/ex02/ORM/target/classes/schema.sql";
-        String sql = new String(Files.readAllBytes(Paths.get(filePath)));
-        System.out.println(sql);
+//        String filePath = "day07/ex02/ORM/target/classes/schema.sql";
+//        String sqlInit = new String(Files.readAllBytes(Paths.get(filePath)));
+//        String sqlData = new String(Files.readAllBytes(Paths.get("day07/ex02/ORM/src/main/resources/data.sql")));
+
+        Path schema = Paths.get("day07/ex02/ORM/target/classes/schema.sql").normalize().toAbsolutePath();
+        Path data = Paths.get("day07/ex02/ORM/target/classes/data.sql").normalize().toAbsolutePath();
+//        System.out.println(schema);
+        String schemaSQL = Files.lines(schema).collect(Collectors.joining("\n"));
+        String dataSQL = Files.lines(data).collect(Collectors.joining("\n"));
+        System.out.println(schemaSQL);
+        System.out.println(dataSQL);
         JdbcTemplate.statement((stmt) -> {
-            stmt.execute(sql);
+            stmt.executeUpdate(schemaSQL);
+            stmt.executeUpdate(dataSQL);
         });
+
     }
 
 }

@@ -14,12 +14,6 @@ public class Car {
     @OrmColumn(name = "name")
     private String name;
 
-    @OrmColumn(name = "length")
-    private Integer length;
-
-    @OrmColumn(name = "width")
-    private Integer width;
-
     @OrmColumn(name = "speed")
     private Double speed;
 

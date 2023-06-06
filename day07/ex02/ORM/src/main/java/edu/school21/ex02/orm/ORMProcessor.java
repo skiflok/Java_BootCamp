@@ -90,6 +90,7 @@ public class ORMProcessor extends AbstractProcessor {
       }
     }
 
+    System.out.println(schema);
     try (BufferedWriter writer = Files.newBufferedWriter(outputPath)) {
       writer.write(schema.toString());
     } catch (IOException e) {
