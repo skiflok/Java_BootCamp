@@ -1,4 +1,4 @@
-insert into orm.simple_user (firstname, lastname, age)
+insert into orm.simple_user (first_name, last_name, age)
 values ('Gladys', 'Pyle', '69'),
        ('Kayce', 'Hunter', '73'),
        ('Carina', 'Beck', '65'),
@@ -10,7 +10,7 @@ values ('Gladys', 'Pyle', '69'),
        ('Wava', 'Hurd', '19'),
        ('Annalisa', 'Nowlin', '31');
 
-insert into orm.car (name, speed)
+insert into orm.my_car (car_name, car_speed)
 values  ('dennis', '9'),
         ('notes', '7'),
         ('rug', '7'),

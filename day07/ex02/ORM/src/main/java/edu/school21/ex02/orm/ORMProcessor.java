@@ -75,10 +75,10 @@ public class ORMProcessor extends AbstractProcessor {
         String columns = fieldElements.stream()
             .map(fieldElement -> {
               if (fieldElement.getAnnotation(OrmColumnId.class) != null) {
-                return fieldElement + " " + getAutoIncrementType(elements, fieldElement);
+                return fieldElement.getAnnotation(OrmColumnId.class).id() + " " + getAutoIncrementType(elements, fieldElement);
               }
               if (fieldElement.getAnnotation(OrmColumn.class) != null) {
-                return fieldElement + " " + appendType(elements, fieldElement);
+                return fieldElement.getAnnotation(OrmColumn.class).name() + " " + appendType(elements, fieldElement);
               }
               return null;
             })

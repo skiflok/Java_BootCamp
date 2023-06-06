@@ -47,10 +47,6 @@ public class OrmManager {
 
     public void init() throws SQLException, IOException {
 
-//        String filePath = "day07/ex02/ORM/target/classes/schema.sql";
-//        String sqlInit = new String(Files.readAllBytes(Paths.get(filePath)));
-//        String sqlData = new String(Files.readAllBytes(Paths.get("day07/ex02/ORM/src/main/resources/data.sql")));
-
         Path schema = Paths.get("day07/ex02/ORM/target/classes/schema.sql").normalize().toAbsolutePath();
         Path data = Paths.get("day07/ex02/ORM/target/classes/data.sql").normalize().toAbsolutePath();
 //        System.out.println(schema);

@@ -6,15 +6,15 @@ import edu.school21.ex02.orm.annotation.OrmEntity;
 import lombok.Data;
 
 @Data
-@OrmEntity(table = "car")
+@OrmEntity(table = "my_car")
 public class Car {
     @OrmColumnId
     private Long id;
 
-    @OrmColumn(name = "name")
+    @OrmColumn(name = "car_name")
     private String name;
 
-    @OrmColumn(name = "speed")
+    @OrmColumn(name = "car_speed")
     private Double speed;
 
 }
