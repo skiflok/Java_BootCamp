@@ -1,8 +1,7 @@
-package edu.school21.ex02;
+package edu.school21.ex02.orm;
 
 import edu.school21.ex02.repositories.JdbcTemplate;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 public class OrmManager {
 
@@ -37,7 +36,7 @@ public class OrmManager {
 // TODO: 06.06.2023
 //    OrmManager должен обеспечивать вывод сгенерированного SQL на
 //    консоль во время выполнения.
-//   При инициализации OrmManager должен удалить созданные таблицы.
+//   При инициализации OrmManager должен удалить созданные таблицы. +++++++++
 //   Метод обновления должен заменять значения в столбцах, указанных в
 //    объекте, даже если значение поля объекта равно нулю.
 

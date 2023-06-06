@@ -1,5 +1,6 @@
 package edu.school21.ex02;
 
+import edu.school21.ex02.orm.OrmManager;
 import java.sql.SQLException;
 
 public class Program {

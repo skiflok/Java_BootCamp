@@ -1,4 +1,4 @@
-package edu.school21.ex02.annotation;
+package edu.school21.ex02.orm.annotation;
 
 
 import java.lang.annotation.ElementType;

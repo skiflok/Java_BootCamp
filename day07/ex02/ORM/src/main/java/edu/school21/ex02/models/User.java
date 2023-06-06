@@ -1,8 +1,8 @@
 package edu.school21.ex02.models;
 
-import edu.school21.ex02.annotation.OrmColumn;
-import edu.school21.ex02.annotation.OrmColumnId;
-import edu.school21.ex02.annotation.OrmEntity;
+import edu.school21.ex02.orm.annotation.OrmColumn;
+import edu.school21.ex02.orm.annotation.OrmColumnId;
+import edu.school21.ex02.orm.annotation.OrmEntity;
 import lombok.Data;
 
 @Data

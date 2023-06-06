@@ -1,4 +1,4 @@
-package edu.school21.ex02.annotation;
+package edu.school21.ex02.orm.annotation;
 
 
 import java.lang.annotation.ElementType;
@@ -7,6 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface OrmColumnId {
+@Target(ElementType.TYPE)
+public @interface OrmEntity {
+    String table();
 }
