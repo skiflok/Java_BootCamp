@@ -1,11 +1,15 @@
 package edu.school21.ex02.orm;
 
 import edu.school21.ex02.repositories.JdbcTemplate;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 public class OrmManager {
 
-    public OrmManager() throws SQLException {
+    public OrmManager() throws SQLException, IOException {
         init();
     }
 
@@ -40,13 +44,13 @@ public class OrmManager {
 //   Метод обновления должен заменять значения в столбцах, указанных в
 //    объекте, даже если значение поля объекта равно нулю.
 
-    public void init() throws SQLException {
+    public void init() throws SQLException, IOException {
 
-        String SQL = "drop schema if exists orm cascade;\n"
-            + "create schema if not exists orm;\n";
+        String filePath = "day07/ex02/ORM/target/classes/schema.sql";
+        String sql = new String(Files.readAllBytes(Paths.get(filePath)));
+        System.out.println(sql);
         JdbcTemplate.statement((stmt) -> {
-            stmt.execute(SQL);
-            System.out.println(SQL);
+            stmt.execute(sql);
         });
     }
 
