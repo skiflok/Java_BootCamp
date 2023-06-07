@@ -1,6 +1,7 @@
 package edu.school21.ex02.orm;
 
 import edu.school21.ex02.orm.annotation.OrmColumn;
+import edu.school21.ex02.orm.annotation.OrmColumnId;
 import edu.school21.ex02.orm.annotation.OrmEntity;
 import edu.school21.ex02.repositories.JdbcTemplate;
 
@@ -18,10 +19,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class OrmManager {
+
   private final String dataBaseName;
+
   public OrmManager(String dataBaseName) throws SQLException, IOException {
     this.dataBaseName = dataBaseName;
-    init();
+//    init();
   }
 
   // TODO: 06.06.2023
@@ -69,8 +72,6 @@ public class OrmManager {
         , paramPlaceholders
     );
 
-    System.out.println(sql);
-
     JdbcTemplate.preparedStatement(sql, (stmt) -> {
       for (int i = 0; i < paramValues.size(); i++) {
         stmt.setObject(i + 1, paramValues.get(i));
@@ -81,8 +82,42 @@ public class OrmManager {
     });
   }
 
-  public void update(Object entity) {
-    String sql = "update chat.message set author = ?, room = ?, text = ?, date_time = ? where id = ?";
+  public void update(Object entity) throws IllegalAccessException, SQLException {
+
+    Class<?> clazz = entity.getClass();
+    OrmEntity ormEntity = clazz.getAnnotation(OrmEntity.class);
+    String schema = ormEntity.table();
+    StringBuilder sqlBuilder = new StringBuilder();
+    sqlBuilder.append("update ").append(dataBaseName).append(".").append(schema).append(" set ");
+    List<Object> paramValues = new ArrayList<>();
+    List<Field> fields = Arrays.stream(clazz.getDeclaredFields()).collect(Collectors.toList());
+
+    Object id = null;
+    for (Field field : fields) {
+      field.setAccessible(true);
+      if (field.isAnnotationPresent(OrmColumnId.class)) {
+        id = field.get(entity);
+      }
+      if (field.isAnnotationPresent(OrmColumn.class)) {
+        OrmColumn ormColumn = field.getAnnotation(OrmColumn.class);
+        sqlBuilder.append(ormColumn.name()).append(" = ?, ");
+        paramValues.add(field.get(entity));
+      }
+    }
+    sqlBuilder.setLength(sqlBuilder.length() - 2);
+    sqlBuilder.append(" where id = ?");
+
+    Object finalId = id;
+    JdbcTemplate.preparedStatement(sqlBuilder.toString(), (stmt) -> {
+      for (int i = 0; i < paramValues.size(); i++) {
+        stmt.setObject(i + 1, paramValues.get(i));
+      }
+      stmt.setObject(paramValues.size() + 1, finalId);
+      stmt.executeUpdate();
+      System.out.println(stmt.unwrap(PreparedStatement.class)
+          .toString().replace("RETURNING *", ""));
+    });
+
   }
 
   public <T> T findById(Long id, Class<T> aClass) {
@@ -99,17 +134,18 @@ public class OrmManager {
 
   public void init() throws SQLException, IOException {
 
-        Path schema = Paths.get("day07/ex02/ORM/target/classes/schema.sql").normalize().toAbsolutePath();
-        Path data = Paths.get("day07/ex02/ORM/target/classes/data.sql").normalize().toAbsolutePath();
-        System.out.println(schema);
-        String schemaSQL = Files.lines(schema).collect(Collectors.joining("\n"));
-        String dataSQL = Files.lines(data).collect(Collectors.joining("\n"));
-        System.out.println(schemaSQL);
-        System.out.println(dataSQL);
-        JdbcTemplate.statement((stmt) -> {
-            stmt.executeUpdate(schemaSQL);
-            stmt.executeUpdate(dataSQL);
-        });
+    Path schema = Paths.get("day07/ex02/ORM/target/classes/schema.sql").normalize()
+        .toAbsolutePath();
+    Path data = Paths.get("day07/ex02/ORM/target/classes/data.sql").normalize().toAbsolutePath();
+    System.out.println(schema);
+    String schemaSQL = Files.lines(schema).collect(Collectors.joining("\n"));
+    String dataSQL = Files.lines(data).collect(Collectors.joining("\n"));
+    System.out.println(schemaSQL);
+    System.out.println(dataSQL);
+    JdbcTemplate.statement((stmt) -> {
+      stmt.executeUpdate(schemaSQL);
+      stmt.executeUpdate(dataSQL);
+    });
 
   }
 

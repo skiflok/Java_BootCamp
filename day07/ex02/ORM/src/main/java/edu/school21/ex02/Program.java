@@ -14,12 +14,27 @@ public class Program {
             OrmManager ormManager = new OrmManager("orm");
 
             User user = new User(0L, "John", "Connor" , 500);
-            ormManager.save(user);
+//            ormManager.save(user);
 
             System.out.println("\n########################\n");
 
             Car car = new Car(0L, "myCar", 999.99);
-            ormManager.save(car);
+//            ormManager.save(car);
+
+            System.out.println("\n########################\n");
+
+            user.setId(3L);
+            user.setFirstName("Name");
+            user.setLastName("LastName");
+            user.setAge(1000);
+            ormManager.update(user);
+
+            System.out.println("\n########################\n");
+
+            car.setId(3L);
+            car.setName("upCar");
+            car.setSpeed(0.001);
+            ormManager.update(car);
 
         } catch (SQLException | IOException | IllegalAccessException e) {
             e.printStackTrace();
