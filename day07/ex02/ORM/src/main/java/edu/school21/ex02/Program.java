@@ -11,7 +11,7 @@ public class Program {
     public static void main(String[] args) {
 
         try {
-            OrmManager ormManager = new OrmManager();
+            OrmManager ormManager = new OrmManager("orm");
 
             User user = new User(0L, "John", "Connor" , 500);
             ormManager.save(user);
@@ -20,7 +20,6 @@ public class Program {
 
             Car car = new Car(0L, "myCar", 999.99);
             ormManager.save(car);
-
 
         } catch (SQLException | IOException | IllegalAccessException e) {
             e.printStackTrace();
