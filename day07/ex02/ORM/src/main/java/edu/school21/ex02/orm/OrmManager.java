@@ -8,10 +8,12 @@ import edu.school21.ex02.repositories.JdbcTemplate;
 import java.io.IOException;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,20 +26,8 @@ public class OrmManager {
 
   public OrmManager(String dataBaseName) throws SQLException, IOException {
     this.dataBaseName = dataBaseName;
-//    init();
+    init();
   }
-
-  // TODO: 06.06.2023
-  //  Разработанный вами класс OrmManager должен генерировать и
-  //  выполнять соответствующий код SQL при инициализации всех классов,
-  //  помеченных аннотацией @OrmEntity. Этот код будет содержать
-  //  команду CREATE TABLE для создания таблицы с именем, указанным в
-  //  аннотации. Каждое поле класса, помеченное аннотацией @OrmColumn,
-  //  становится столбцом в этой таблице. Поле, помеченное аннотацией
-  //  @OrmColumnId, указывает на необходимость создания идентификатора
-  //  автоинкремента. OrmManager также должен поддерживать следующие
-  //  набор операций (для каждой из них также генерируется
-  //  соответствующий код SQL в Runtime)
 
   public void save(Object entity) throws IllegalAccessException, SQLException {
 
@@ -120,24 +110,56 @@ public class OrmManager {
 
   }
 
-  public <T> T findById(Long id, Class<T> aClass) {
-    String sql = "select * from chat.message where id = ?";
-    return null;
-  }
+  public <T> T findById(Long id, Class<T> aClass) throws SQLException {
 
-// TODO: 06.06.2023
-//    OrmManager должен обеспечивать вывод сгенерированного SQL на
-//    консоль во время выполнения.
-//   При инициализации OrmManager должен удалить созданные таблицы. +++++++++
-//   Метод обновления должен заменять значения в столбцах, указанных в
-//    объекте, даже если значение поля объекта равно нулю.
+    OrmEntity ormEntity = aClass.getAnnotation(OrmEntity.class);
+    String schema = ormEntity.table();
+
+    String sql = String.format("select * from %s.%s where id = ?"
+        , dataBaseName
+        , schema
+    );
+
+    return JdbcTemplate.preparedStatement(sql, (stmt) -> {
+      stmt.setLong(1, id);
+      System.out.println(stmt.unwrap(PreparedStatement.class)
+          .toString().replace("RETURNING *", ""));
+      ResultSet resultSet = stmt.executeQuery();
+
+      if (!resultSet.next()) {
+        return null;
+      }
+
+      T object = null;
+      try {
+        object = aClass.getDeclaredConstructor().newInstance();
+
+        for (Field field : aClass.getDeclaredFields()) {
+          field.setAccessible(true);
+          Object value = null;
+          if (field.isAnnotationPresent(OrmColumnId.class)) {
+            value = resultSet.getObject(field.getAnnotation(OrmColumnId.class).id());
+          }
+          if (field.isAnnotationPresent(OrmColumn.class)) {
+            value = resultSet.getObject(field.getAnnotation(OrmColumn.class).name());
+          }
+
+          field.set(object, value);
+        }
+      } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+               NoSuchMethodException e) {
+        e.printStackTrace();
+      }
+      return object;
+    });
+
+  }
 
   public void init() throws SQLException, IOException {
 
     Path schema = Paths.get("day07/ex02/ORM/target/classes/schema.sql").normalize()
         .toAbsolutePath();
     Path data = Paths.get("day07/ex02/ORM/target/classes/data.sql").normalize().toAbsolutePath();
-    System.out.println(schema);
     String schemaSQL = Files.lines(schema).collect(Collectors.joining("\n"));
     String dataSQL = Files.lines(data).collect(Collectors.joining("\n"));
     System.out.println(schemaSQL);
@@ -146,7 +168,5 @@ public class OrmManager {
       stmt.executeUpdate(schemaSQL);
       stmt.executeUpdate(dataSQL);
     });
-
   }
-
 }

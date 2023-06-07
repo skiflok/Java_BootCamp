@@ -18,4 +18,6 @@ public class User {
     private String lastName;
     @OrmColumn(name = "age")
     private Integer age;
+
+    public User() {}
 }

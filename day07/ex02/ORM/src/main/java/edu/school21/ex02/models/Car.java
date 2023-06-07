@@ -10,13 +10,16 @@ import lombok.Data;
 @AllArgsConstructor
 @OrmEntity(table = "my_car")
 public class Car {
-    @OrmColumnId
-    private Long id;
 
-    @OrmColumn(name = "car_name")
-    private String name;
+  @OrmColumnId
+  private Long id;
 
-    @OrmColumn(name = "car_speed")
-    private Double speed;
+  @OrmColumn(name = "car_name")
+  private String name;
+
+  @OrmColumn(name = "car_speed")
+  private Double speed;
+
+  public Car() {}
 
 }

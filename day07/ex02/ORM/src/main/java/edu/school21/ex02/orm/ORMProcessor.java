@@ -39,7 +39,7 @@ public class ORMProcessor extends AbstractProcessor {
   {
     sqlTypes.put("String", "varchar");
     sqlTypes.put("Integer", "int");
-    sqlTypes.put("Double", "numeric");
+    sqlTypes.put("Double", "double precision");
     sqlTypes.put("Boolean", "bool");
     sqlTypes.put("Long", "bigint");
     schemaName = "orm";
