@@ -1,7 +1,6 @@
 package edu.school21.ex00.models;
 
 
-import java.math.BigDecimal;
 
 public class Car {
     private String brand;
