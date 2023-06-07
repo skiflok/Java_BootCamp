@@ -20,6 +20,7 @@ public class Car {
   @OrmColumn(name = "car_speed")
   private Double speed;
 
-  public Car() {}
+  public Car() {
+  }
 
 }

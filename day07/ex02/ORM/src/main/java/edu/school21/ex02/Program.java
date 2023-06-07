@@ -11,7 +11,6 @@ public class Program {
 
   public static void main(String[] args) {
 
-
     try {
       OrmManager ormManager = new OrmManager("orm");
       System.out.println("#### Program ####");
