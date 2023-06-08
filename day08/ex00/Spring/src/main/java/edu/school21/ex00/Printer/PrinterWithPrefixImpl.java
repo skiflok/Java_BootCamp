@@ -1,5 +1,12 @@
 package edu.school21.ex00.Printer;
 
-public class PrinterWithPrefixImpl {
+import edu.school21.ex00.renderer.Renderer;
 
+public class PrinterWithPrefixImpl implements Printer {
+
+  Renderer renderer;
+
+  public void print(String msg) {
+
+  }
 }
