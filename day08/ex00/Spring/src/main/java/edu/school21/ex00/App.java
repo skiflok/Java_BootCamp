@@ -11,8 +11,12 @@ public class App {
   public static void main(String[] args) {
 
     ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("context.xml");
-    Printer printer = ctx.getBean("printerWithPrefix", Printer.class);
-    printer.print("Hello");
+
+    Printer printerWithPrefix = ctx.getBean("printerWithPrefix", Printer.class);
+    printerWithPrefix.print("printerWithPrefix");
+
+    Printer printerWithTime = ctx.getBean("printerWithTime", Printer.class);
+    printerWithTime.print("printerWithTime");
 
     ctx.close();
   }
