@@ -10,16 +10,16 @@
     class="edu.school21.ex00.preProcessor.PreProcessorToUpperImpl"/>
 
   <bean id="rendererErrImplToLower" class="edu.school21.ex00.renderer.RendererErrImpl">
-    <property name="preProcessor" ref="preProcessorToLower"/>
+    <constructor-arg ref="preProcessorToLower"/>
   </bean>
   <bean id="rendererErrImplToUpper" class="edu.school21.ex00.renderer.RendererErrImpl">
-    <property name="preProcessor" ref="preProcessorToUpperImpl"/>
+    <constructor-arg ref="preProcessorToUpperImpl"/>
   </bean>
   <bean id="rendererStandardImplToLower" class="edu.school21.ex00.renderer.RendererStandardImpl">
-    <property name="preProcessor" ref="preProcessorToLower"/>
+    <constructor-arg ref="preProcessorToLower"/>
   </bean>
   <bean id="rendererStandardImplToUpper" class="edu.school21.ex00.renderer.RendererStandardImpl">
-    <property name="preProcessor" ref="preProcessorToUpperImpl"/>
+    <constructor-arg ref="preProcessorToUpperImpl"/>
   </bean>
 
   <bean id="printerWithTime" class=
@@ -29,7 +29,7 @@
 
   <bean id="printerWithPrefix" class=
     "edu.school21.ex00.printer.PrinterWithPrefixImpl">
-    <property name="renderer" ref="rendererStandardImplToUpper"/>
+    <property name="renderer" ref="rendererStandardImplToLower"/>
     <property name="prefix" value="Prefix"/>
   </bean>
 
