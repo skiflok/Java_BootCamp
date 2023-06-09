@@ -24,12 +24,12 @@
 
   <bean id="printerWithTime" class=
     "edu.school21.ex00.printer.PrinterWithDateTimeImpl">
-    <property name="renderer" ref="rendererErrImplToUpper"/>
+    <constructor-arg ref="rendererErrImplToUpper"/>
   </bean>
 
   <bean id="printerWithPrefix" class=
     "edu.school21.ex00.printer.PrinterWithPrefixImpl">
-    <property name="renderer" ref="rendererStandardImplToLower"/>
+    <constructor-arg ref="rendererStandardImplToLower"/>
     <property name="prefix" value="Prefix"/>
   </bean>
 
