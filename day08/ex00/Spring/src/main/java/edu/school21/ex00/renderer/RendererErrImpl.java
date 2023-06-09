@@ -4,7 +4,7 @@ import edu.school21.ex00.preProcessor.PreProcessor;
 
 public class RendererErrImpl implements Renderer {
 
-  PreProcessor preProcessor;
+  PreProcessor preProcessor = null;
 
   @Override
   public void print(String msg) {
