@@ -11,6 +11,7 @@ public class PrinterWithPrefixImpl implements Printer {
 
   @NonNull
   private final Renderer renderer;
+
   private String prefix;
 
   public void print(String msg) {
