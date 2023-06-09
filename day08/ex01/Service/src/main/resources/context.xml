@@ -7,28 +7,39 @@
 
     <context:property-placeholder location="classpath:db.properties"/>
 
+
+<!--    <bean id="driverManagerDataSource"-->
+<!--          class="org.springframework.jdbc.datasource.DriverManagerDataSource">-->
+<!--        <property name="url" value="${db.url}" />-->
+<!--        <property name="username" value="${db.user}" />-->
+<!--        <property name="password" value="${db.password}" />-->
+<!--        <property name="driverClassName" value="${db.driver.name}" />-->
+<!--    </bean>-->
+
     <bean id="test" class="edu.school21.ex01.models.Test">
         <property name="url" value="${db.url}"/>
         <property name="user" value="${db.user}"/>
         <property name="password" value="${db.password}"/>
         <property name="driver" value="${db.driver.name}"/>
     </bean>
-    <!--
-    <bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
-    <property name="jdbcUrl" value="${db.url}"/>
-    </bean>
 
-    <bean id="hikariDataSource" class="com.zaxxer.hikari.HikariDataSource">
-        <constructor-arg ref="hikariConfig"/>
-    </bean>
+<!--    <bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">-->
+<!--        <property name="jdbcUrl" value="${db.url}"/>-->
+<!--        <property name="username" value="${db.user}"/>-->
+<!--        <property name="password" value="${db.password}"/>-->
+<!--    </bean>-->
 
-    <bean id="usersRepositoryJdbcImpl" class="edu.school21.ex01.repositories.UsersRepositoryJdbcImpl">
+<!--    <bean id="hikariDataSource" class="com.zaxxer.hikari.HikariDataSource">-->
+<!--        <constructor-arg ref="hikariConfig"/>-->
+<!--    </bean>-->
 
-    </bean>
+<!--    <bean id="usersRepositoryJdbcImpl" class="edu.school21.ex01.repositories.UsersRepositoryJdbcImpl">-->
+<!--        <constructor-arg ref="driverManagerDataSource"/>-->
+<!--    </bean>-->
 
-    <bean id="usersRepositoryJdbcTemplateImpl" class="edu.school21.ex01.repositories.UsersRepositoryJdbcTemplateImpl">
+<!--    <bean id="usersRepositoryJdbcTemplateImpl" class="edu.school21.ex01.repositories.UsersRepositoryJdbcTemplateImpl">-->
+<!--        <constructor-arg ref="hikariDataSource"/>-->
+<!--    </bean>-->
 
-    </bean>
--->
 
 </beans>
