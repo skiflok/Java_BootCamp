@@ -12,7 +12,7 @@ public class App {
 
     ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("context.xml");
     Printer printer = ctx.getBean("printer", Printer.class);
-    printer.print("test");
+    printer.print("Test");
 
     ctx.close();
   }
