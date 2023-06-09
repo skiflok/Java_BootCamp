@@ -10,6 +10,6 @@ public class RendererErrImpl implements Renderer {
 
   @Override
   public void print(String msg) {
-    System.err.println(msg);
+    System.err.println(preProcessor.process(msg));
   }
 }
