@@ -12,8 +12,9 @@ public class App {
   public static void main(String[] args) {
 
     ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("context.xml");
-    new PrinterWithDateTimeImpl().print("test");
     Printer printer = ctx.getBean("printerWithDateTimeImpl", PrinterWithDateTimeImpl.class);
     printer.print("test");
+
+    ctx.close();
   }
 }
