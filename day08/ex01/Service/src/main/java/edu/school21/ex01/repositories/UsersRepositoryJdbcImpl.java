@@ -1,10 +1,18 @@
 package edu.school21.ex01.repositories;
 
 import edu.school21.ex01.models.User;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+
+import javax.sql.DataSource;
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 public class UsersRepositoryJdbcImpl implements UsersRepository {
+
+  @NonNull
+  private final DataSource ds;
 
   @Override
   public Optional<User> findById(Long id) {
