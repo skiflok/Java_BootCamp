@@ -101,7 +101,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>edu.school21.ex00.App</mainClass>
+              <mainClass>edu.school21.ex01.application.Main</mainClass>
             </manifest>
           </archive>
           <descriptorRefs>
