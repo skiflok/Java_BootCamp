@@ -27,6 +27,7 @@ public class Main {
 
     System.out.println();
     System.out.println(usersRepositoryJdbc.findById(1L));
+    System.out.println(usersRepositoryJdbcTemplate.findById(1L));
 
 
 

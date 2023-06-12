@@ -1,22 +1,38 @@
 package edu.school21.ex01.repositories;
 
 import edu.school21.ex01.models.User;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 import javax.sql.DataSource;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.lang.NonNull;
 
-@RequiredArgsConstructor
+
 public class UsersRepositoryJdbcTemplateImpl implements UsersRepository{
 
-  @NonNull
+
   private final DataSource ds;
+  private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+  public UsersRepositoryJdbcTemplateImpl(DataSource ds) {
+    this.ds = ds;
+    namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(ds);
+  }
 
   @Override
   public Optional<User> findById(Long id) {
-    return Optional.empty();
+    String sql = "select * from chat.users where id = :id;";
+    MapSqlParameterSource params = new MapSqlParameterSource();
+    params.addValue("id", id);
+
+    return namedParameterJdbcTemplate.query(sql, params, (rs) -> {
+      if (rs.next()) {
+        return Optional.of(new User(rs.getLong("id"), rs.getString("email")));
+      }
+      return Optional.empty();
+    });
   }
 
   @Override
