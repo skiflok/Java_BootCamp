@@ -24,14 +24,14 @@ public class UsersRepositoryJdbcImpl implements UsersRepository {
         try (PreparedStatement p = ds.getConnection().prepareStatement(sql)) {
             p.setLong(1, id);
             ResultSet resultSet = p.executeQuery();
-            while (resultSet.next()) {
-                return Optional.of(new User(resultSet.getLong(1),
-                        resultSet.getString(2)));
+            if (!resultSet.next()) {
+                return Optional.empty();
             }
+            return Optional.of(new User(resultSet.getLong(1),
+                resultSet.getString(2)));
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return Optional.empty();
     }
 
