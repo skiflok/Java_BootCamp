@@ -27,7 +27,7 @@ public class Program {
     }
 
     public static byte getMinScore (Scanner scanner) {
-        byte num = 0;
+        byte num;
         byte minScore = 10;
         for (int i = 0; i < 5; i++) {
 

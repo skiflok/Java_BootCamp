@@ -1,17 +1,9 @@
 package ex05;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
+
 import java.util.Scanner;
 
 public class Program {
-
-    static {
-        String testString =
-                "John\nMike\n.\n2 MO\n4 WE\n.\nMike 2 28 NOT_HERE\nJohn 4 9 HERE\nMike 4 9 HERE\n.\n";
-        InputStream is = new ByteArrayInputStream(testString.getBytes());
-        System.setIn(is);
-    }
 
     public static Scanner scanner = new Scanner(System.in);
 
@@ -25,9 +17,9 @@ public class Program {
         int numberOfHours = 5;
         int dayOfWeek = 7;
 
-        String[] students = getStringArrayFromInput();
-        String[] schedule = getStringArrayFromInput();
-        String[] attendance = getStringArrayFromInput();
+        String[] students = getStringArrayFromInput(10);
+        String[] schedule = getStringArrayFromInput(10);
+        String[] attendance = getStringArrayFromInput(500);
 
         int[] calendar = new int[31];
 
@@ -215,12 +207,12 @@ public class Program {
         }
         return res;
     }
-    private static String[] getStringArrayFromInput() {
+    private static String[] getStringArrayFromInput(int arrayLength) {
         String input;
-        byte count = 0;
-        String[] temp = new String[10];
-        while (count < 10 && !(input = scanner.nextLine()).equals(".")) {
-            if (input.length() > 50) {
+        int count = 0;
+        String[] temp = new String[arrayLength];
+        while (!(input = scanner.nextLine()).equals(".")) {
+            if (count > arrayLength) {
                 exitApp();
             }
             temp[count] = input;
@@ -228,6 +220,8 @@ public class Program {
         }
         return temp;
     }
+
+
     private static String[] split(String str, char delimiter) {
         int delimiterCount = 0;
         char[] chars = str.toCharArray();

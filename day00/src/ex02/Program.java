@@ -20,7 +20,7 @@ public class Program {
                 count++;
             }
         }
-        System.out.println("Count of coffee - request - " + count);
+        System.out.println("Count of coffee-request - " + count);
         scanner.close();
     }
 

@@ -38,7 +38,7 @@ public class Program {
         }
 
         sort(res);
-        if (res[0][0] > 999) {
+        if (res[0][1] > 999) {
             exitApp(scanner);
         }
         printRes(res);
@@ -58,8 +58,8 @@ public class Program {
     }
     public static void printRes(int[][] res) {
         double max = res[0][1];
-        
-        double range = max/10;
+
+        double range = max / 10;
         for (double y = max + range; y > 0; y-= range) {
             for (int x = 0; x < res.length && x < 10; x++) {
                 if (res[x][1] >= y - range && res[x][1] < y) {
@@ -76,6 +76,7 @@ public class Program {
             System.out.printf("%3c ", res[x][0]);
         }
     }
+
     public static void exitApp(Scanner scanner) {
         scanner.close();
         System.err.print("Illegal Argument");
@@ -83,3 +84,4 @@ public class Program {
     }
 
 }
+
