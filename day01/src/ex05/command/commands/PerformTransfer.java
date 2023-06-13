@@ -3,7 +3,6 @@ package ex05.command.commands;
 import ex05.ConsoleHelper;
 import ex05.command.Command;
 import ex05.service.TransactionsService;
-import ex05.user.UserNotFoundException;
 
 public class PerformTransfer implements Command {
 

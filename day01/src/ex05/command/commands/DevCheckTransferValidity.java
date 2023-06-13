@@ -4,13 +4,8 @@ import ex05.ConsoleHelper;
 import ex05.command.Command;
 import ex05.service.TransactionsService;
 import ex05.service.transaction.Transaction;
-import ex05.service.transaction.TransactionList;
 import ex05.user.User;
-import ex05.user.UsersArrayList;
-import ex05.user.UsersList;
 
-import javax.jws.soap.SOAPBinding;
-import java.util.UUID;
 
 public class DevCheckTransferValidity implements Command {
 

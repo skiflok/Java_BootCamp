@@ -6,7 +6,6 @@ import ex05.service.TransactionsService;
 import ex05.service.transaction.Transaction;
 import ex05.user.User;
 
-import java.util.Objects;
 
 public final class ViewAllTransactionsForSpecificUser implements Command {
     private final TransactionsService service;

@@ -1,4 +1,4 @@
-package ex0;
+package ex00;
 
 public class Program {
 
@@ -15,7 +15,7 @@ public class Program {
             Transaction t2 = new Transaction(user1,user2, Transaction.Category.CREDIT, -150);
             System.out.println(t1);
             System.out.println(t2);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             System.out.println("Transaction error");
         }
 

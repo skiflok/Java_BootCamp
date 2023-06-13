@@ -1,6 +1,5 @@
 package ex03;
 
-import java.util.LinkedList;
 import java.util.UUID;
 
 public class TransactionLinkedList implements TransactionList {
@@ -39,7 +38,7 @@ public class TransactionLinkedList implements TransactionList {
                 return;
             }
         }
-        throw new TransactionNotFoundException("Пользователь не найден");
+        throw new TransactionNotFoundException("Транзакция не найдена");
     }
 
     private void unlink(Node x) {

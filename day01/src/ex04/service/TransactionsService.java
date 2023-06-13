@@ -20,11 +20,12 @@ public class TransactionsService {
         usersList.addUser(user);
     }
 
-    public double getUserBalance(User user) {
-        return user.getBalance();
+    public double getUserBalance(int id) {
+        return usersList.getByID(id).getBalance();
     }
 
-    public void transactionExecution(int recipientID, int senderID, double transactionAmount) throws Exception {
+    public void transactionExecution(int recipientID, int senderID, double transactionAmount)
+        throws UserNotFoundException {
 
         User recipient = usersList.getByID(recipientID);
         User sender = usersList.getByID(senderID);

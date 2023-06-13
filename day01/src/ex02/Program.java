@@ -10,16 +10,17 @@ public class Program {
             usersList.addUser(new User("user" + i, 1000d));
         }
 
-        System.out.println(usersList.get(0));
-        System.out.println(usersList.get(1));
+        for (int i = 0; i < usersList.size(); i++) {
+            System.out.println(usersList.get(i));
+        }
 
         try {
             Transaction t1 = new Transaction(usersList.get(0), usersList.get(1), Transaction.Category.DEBIT, 100);
             Transaction t2 = new Transaction(usersList.get(0), usersList.get(1), Transaction.Category.CREDIT, -150);
             System.out.println(t1);
             System.out.println(t2);
-        } catch (Exception e) {
-            System.out.println("Transaction error");
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
         }
 
 
@@ -30,7 +31,7 @@ public class Program {
             System.out.println(exception.getMessage());
         }
 
-        System.out.println(usersList.size());
+        System.out.println("usersList.size() = " + usersList.size());
 
     }
 

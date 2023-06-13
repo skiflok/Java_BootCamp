@@ -25,12 +25,12 @@ public class Transaction {
         switch (transferCategory) {
             case DEBIT:
                 if (transferAmount < 0 || sender.getBalance() < transferAmount) {
-                    throw new RuntimeException();
+                    throw new RuntimeException("Ошибка транцакции");
                 }
                 break;
             case CREDIT:
                 if (transferAmount > 0 || sender.getBalance() < -transferAmount) {
-                    throw new RuntimeException();
+                    throw new RuntimeException("Ошибка транцакции");
                 }
                 break;
         }

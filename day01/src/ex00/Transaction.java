@@ -1,4 +1,4 @@
-package ex0;
+package ex00;
 
 import java.util.UUID;
 
@@ -15,16 +15,16 @@ public class Transaction {
         CREDIT
     }
 
-    public Transaction(User recipient, User sender, Category transferCategory, double transferAmount) throws Exception {
+    public Transaction(User recipient, User sender, Category transferCategory, double transferAmount) {
         switch (transferCategory) {
             case DEBIT:
                 if (transferAmount < 0 || sender.getBalance() < transferAmount) {
-                    throw new Exception();
+                    throw new RuntimeException("Ошибка транцакции");
             }
                 break;
             case CREDIT:
                 if (transferAmount > 0 || sender.getBalance() < -transferAmount) {
-                    throw new Exception();
+                    throw new RuntimeException("Ошибка транцакции");
                 }
                 break;
         }
