@@ -1,8 +1,8 @@
-package school21.spring.service;
+package edu.school21.ex02;
 
-import school21.spring.service.models.Car;
-import school21.spring.service.models.User;
-import school21.spring.service.orm.OrmManager;
+import edu.school21.ex02.models.Car;
+import edu.school21.ex02.models.User;
+import edu.school21.ex02.orm.OrmManager;
 
 import java.io.IOException;
 import java.sql.SQLException;

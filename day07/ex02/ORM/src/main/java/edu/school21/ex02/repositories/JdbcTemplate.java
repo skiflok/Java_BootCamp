@@ -1,4 +1,4 @@
-package school21.spring.service.repositories;
+package edu.school21.ex02.repositories;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
