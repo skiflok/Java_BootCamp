@@ -1,9 +1,9 @@
-package edu.school21.ex02.orm;
+package school21.spring.service.orm;
 
-import edu.school21.ex02.orm.annotation.OrmColumn;
-import edu.school21.ex02.orm.annotation.OrmColumnId;
-import edu.school21.ex02.orm.annotation.OrmEntity;
-import edu.school21.ex02.repositories.JdbcTemplate;
+import school21.spring.service.orm.annotation.OrmColumn;
+import school21.spring.service.orm.annotation.OrmColumnId;
+import school21.spring.service.orm.annotation.OrmEntity;
+import school21.spring.service.repositories.JdbcTemplate;
 
 import java.io.IOException;
 

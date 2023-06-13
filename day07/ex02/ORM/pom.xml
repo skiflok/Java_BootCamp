@@ -84,7 +84,7 @@
               <proc>only</proc>
               <annotationProcessors>
                 <annotationProcessor>
-                  edu.school21.ex02.orm.ORMProcessor
+                  school21.spring.service.orm.ORMProcessor
                 </annotationProcessor>
               </annotationProcessors>
             </configuration>
