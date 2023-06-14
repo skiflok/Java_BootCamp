@@ -1,20 +1,24 @@
-package school21.spring.service.repositories;
-
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+package school21.spring.service.repositories.initializerDB;
 
 import javax.sql.DataSource;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Statement;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 
-@RequiredArgsConstructor
+@Component
 public class DataBaseInitializer {
 
-    @NonNull
     private final DataSource ds;
+
+    @Autowired
+    public DataBaseInitializer( @Qualifier("hikariDataSource") DataSource ds) {
+        this.ds = ds;
+    }
 
     public void init() {
         try (Statement statement = ds.getConnection().createStatement()) {

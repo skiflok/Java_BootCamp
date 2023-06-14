@@ -1,10 +1,11 @@
 package school21.spring.service.application;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import school21.spring.service.config.ApplicationConfig;
 import school21.spring.service.models.User;
-import school21.spring.service.repositories.DataBaseInitializer;
+import school21.spring.service.repositories.initializerDB.DataBaseInitializer;
 import school21.spring.service.repositories.UsersRepositoryJdbcImpl;
 import school21.spring.service.repositories.UsersRepositoryJdbcTemplateImpl;
 import org.springframework.beans.BeansException;
@@ -17,9 +18,7 @@ public class Main {
     System.out.println("app");
 
     ApplicationContext ctx = new AnnotationConfigApplicationContext(ApplicationConfig.class);
-    DataSource hikariDataSource = ctx.getBean("hikariDataSource", DataSource.class);
-
-    DataBaseInitializer dbInit = new DataBaseInitializer(hikariDataSource);
+    DataBaseInitializer dbInit = ctx.getBean("dataBaseInitializer", DataBaseInitializer.class);
     dbInit.init();
 
     try {
