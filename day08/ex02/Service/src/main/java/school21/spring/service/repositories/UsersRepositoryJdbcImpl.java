@@ -24,11 +24,6 @@ public class UsersRepositoryJdbcImpl implements UsersRepository {
     this.ds = ds;
   }
 
-//  @Autowired
-//  public UsersRepositoryJdbcImpl(@Qualifier("hikariDataSource") DataSource ds) {
-//    this.ds = ds;
-//  }
-
   @Override
   public Optional<User> findById(Long id) {
     String sql = "select * from chat.users where id = ?";
