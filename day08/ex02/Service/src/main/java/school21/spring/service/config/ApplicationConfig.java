@@ -10,7 +10,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 @Configuration
-@ComponentScan(basePackages = "school21.spring.service.services")
+@ComponentScan(basePackages = "school21.spring.service")
 @PropertySource("classpath:db.properties")
 
 public class ApplicationConfig {
@@ -27,6 +27,7 @@ public class ApplicationConfig {
   @Value("${db.driver.name}")
   private String driverClassName;
 
+  @Bean
   public HikariConfig hikariConfig() {
     HikariConfig hikariConfig = new HikariConfig();
     hikariConfig.setJdbcUrl(url);
@@ -41,13 +42,13 @@ public class ApplicationConfig {
   }
 
 
+  @Bean
   public DriverManagerDataSource driverManagerDataSource() {
     DriverManagerDataSource driverManagerDataSource = new DriverManagerDataSource();
     driverManagerDataSource.setUrl(url);
     driverManagerDataSource.setUsername(username);
     driverManagerDataSource.setPassword(password);
     driverManagerDataSource.setDriverClassName(driverClassName);
-
     return driverManagerDataSource;
   }
 

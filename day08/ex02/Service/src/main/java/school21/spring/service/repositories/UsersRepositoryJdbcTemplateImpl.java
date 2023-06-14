@@ -1,5 +1,8 @@
 package school21.spring.service.repositories;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import school21.spring.service.models.User;
 
 import java.util.Objects;
@@ -12,12 +15,13 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
-
+@Component
 public class UsersRepositoryJdbcTemplateImpl implements UsersRepository {
 
   private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-  public UsersRepositoryJdbcTemplateImpl(DataSource ds) {
+  @Autowired
+  public UsersRepositoryJdbcTemplateImpl( @Qualifier("driverManagerDataSource") DataSource ds) {
     namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(ds);
   }
 

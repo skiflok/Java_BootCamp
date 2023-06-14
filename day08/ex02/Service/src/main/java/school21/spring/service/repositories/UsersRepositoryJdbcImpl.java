@@ -1,10 +1,11 @@
 package school21.spring.service.repositories;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import school21.spring.service.models.User;
 import java.sql.Statement;
 import java.util.ArrayList;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 import javax.sql.DataSource;
 import java.sql.PreparedStatement;
@@ -13,11 +14,20 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
-@RequiredArgsConstructor
+@Component
 public class UsersRepositoryJdbcImpl implements UsersRepository {
 
-  @NonNull
   private final DataSource ds;
+
+  @Autowired
+  public UsersRepositoryJdbcImpl(@Qualifier("hikariDataSource") DataSource ds) {
+    this.ds = ds;
+  }
+
+//  @Autowired
+//  public UsersRepositoryJdbcImpl(@Qualifier("hikariDataSource") DataSource ds) {
+//    this.ds = ds;
+//  }
 
   @Override
   public Optional<User> findById(Long id) {
