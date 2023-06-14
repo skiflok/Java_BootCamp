@@ -34,8 +34,11 @@ public class UsersRepositoryJdbcImpl implements UsersRepository {
       if (!resultSet.next()) {
         return Optional.empty();
       }
-      return Optional.of(new User(resultSet.getLong(1),
-          resultSet.getString(2)));
+      return Optional.of(new User(
+          resultSet.getLong("id"),
+          resultSet.getString("email"),
+          resultSet.getString("password")
+      ));
     } catch (SQLException e) {
       e.printStackTrace();
     }
@@ -53,7 +56,8 @@ public class UsersRepositoryJdbcImpl implements UsersRepository {
       while (resultSet.next()) {
         userList.add(new User(
             resultSet.getLong("id"),
-            resultSet.getString("email")
+            resultSet.getString("email"),
+            resultSet.getString("password")
         ));
       }
 
@@ -128,7 +132,8 @@ public class UsersRepositoryJdbcImpl implements UsersRepository {
       if (resultSet.next()) {
         return Optional.of(new User(
             resultSet.getLong("id"),
-            resultSet.getNString("email")
+            resultSet.getString("email"),
+            resultSet.getString("password")
         ));
       }
     } catch (SQLException e) {

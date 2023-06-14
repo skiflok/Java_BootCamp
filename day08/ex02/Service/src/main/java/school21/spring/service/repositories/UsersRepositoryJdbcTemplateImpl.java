@@ -21,7 +21,7 @@ public class UsersRepositoryJdbcTemplateImpl implements UsersRepository {
   private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
   @Autowired
-  public UsersRepositoryJdbcTemplateImpl( @Qualifier("driverManagerDataSource") DataSource ds) {
+  public UsersRepositoryJdbcTemplateImpl(@Qualifier("driverManagerDataSource") DataSource ds) {
     namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(ds);
   }
 
@@ -33,7 +33,11 @@ public class UsersRepositoryJdbcTemplateImpl implements UsersRepository {
 
     return namedParameterJdbcTemplate.query(sql, params, (rs) -> {
       if (rs.next()) {
-        return Optional.of(new User(rs.getLong("id"), rs.getString("email")));
+        return Optional.of(new User(
+            rs.getLong("id"),
+            rs.getString("email"),
+            rs.getString("password")
+        ));
       }
       return Optional.empty();
     });
@@ -84,8 +88,11 @@ public class UsersRepositoryJdbcTemplateImpl implements UsersRepository {
     MapSqlParameterSource params = new MapSqlParameterSource();
     params.addValue("email", email);
     List<User> users = namedParameterJdbcTemplate.query(sql, params, (rs, rowNum) ->
-        new User(rs.getLong("id"), rs.getString("email"))
-    );
+        new User(
+            rs.getLong("id"),
+            rs.getString("email"),
+            rs.getString("password")
+        ));
 
     if (users.isEmpty()) {
       return Optional.empty();

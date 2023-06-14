@@ -31,7 +31,7 @@ public class Main {
       System.out.println("UsersRepositoryJdbcImpl list users");
       usersRepositoryJdbc.findAll().forEach(System.out::println);
 
-      User testUser = new User(0, "new email");
+      User testUser = new User(0, "new email", null);
       usersRepositoryJdbc.save(testUser);
       System.out.println(usersRepositoryJdbc.findById(11L).orElseThrow(RuntimeException::new));
 
@@ -58,7 +58,7 @@ public class Main {
 
       usersRepositoryJdbcTemplate.findAll().forEach(System.out::println);
 
-      User user2 = new User(0L, "####@mail.ru");
+      User user2 = new User(0L, "####@mail.ru", null);
       usersRepositoryJdbcTemplate.save(user2);
       System.out.println("SAVE " + usersRepositoryJdbcTemplate.findById(user2.getId()).orElse(null));
 
