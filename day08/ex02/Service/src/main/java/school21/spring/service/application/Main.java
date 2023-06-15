@@ -83,7 +83,7 @@ public class Main {
             UsersServiceImpl usersService = ctx.getBean(
                     "usersServiceImpl", UsersServiceImpl.class);
 
-
+//        usersService.signUp("user1@gmail.com");
 
         } catch (BeansException e) {
             e.printStackTrace();
