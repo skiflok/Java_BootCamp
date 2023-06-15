@@ -9,7 +9,6 @@ import school21.spring.service.repositories.UsersRepositoryJdbcImpl;
 import school21.spring.service.repositories.UsersRepositoryJdbcTemplateImpl;
 import org.springframework.beans.BeansException;
 import school21.spring.service.services.UsersServiceImpl;
-import school21.spring.service.utils.passwordGenerator.PasswordGeneratorUtil;
 
 public class Main {
 
@@ -29,7 +28,7 @@ public class Main {
       System.out.println("UsersRepositoryJdbcImpl list users");
       usersRepositoryJdbc.findAll().forEach(System.out::println);
 
-      User testUser = new User(0, "new email", null);
+      User testUser = new User(0L, "new email", null);
       usersRepositoryJdbc.save(testUser);
       System.out.println(usersRepositoryJdbc.findById(11L).orElseThrow(RuntimeException::new));
 
@@ -83,20 +82,23 @@ public class Main {
     }
 
     try {
+
+      UsersRepositoryJdbcTemplateImpl usersRepositoryJdbcTemplate = ctx.getBean(
+          "usersRepositoryJdbcTemplateImpl", UsersRepositoryJdbcTemplateImpl.class);
       System.out.println("####### UserService #######");
       UsersServiceImpl usersService = ctx.getBean(
           "usersServiceImpl", UsersServiceImpl.class);
 
-//        usersService.signUp("user1@gmail.com");
 
-      PasswordGeneratorUtil passwordGeneratorUtil = ctx.getBean("passwordGeneratorUtil", PasswordGeneratorUtil.class);
-
-      String password = passwordGeneratorUtil.generatePassayPassword(10);
+      String password = usersService.signUp("user101@gmail.com");
 
       System.out.println("password = " + password);
 
 
-    } catch (BeansException e) {
+      System.out.println("find all");
+      usersRepositoryJdbcTemplate.findAll().forEach(System.out::println);
+
+    } catch (RuntimeException e) {
       e.printStackTrace();
     }
 

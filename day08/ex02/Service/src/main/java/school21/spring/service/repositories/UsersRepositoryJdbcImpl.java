@@ -70,11 +70,12 @@ public class UsersRepositoryJdbcImpl implements UsersRepository {
 
   @Override
   public void save(User entity) {
-    String sql = "insert into chat.users (email) values (?)";
+    String sql = "insert into chat.users (email, password) values (?, ?)";
 
     try (PreparedStatement p = ds.getConnection()
         .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
       p.setString(1, entity.getEmail());
+      p.setString(2, entity.getPassword());
 
       if (p.executeUpdate() == 0) {
         throw new SQLException("User not save");
@@ -93,12 +94,13 @@ public class UsersRepositoryJdbcImpl implements UsersRepository {
 
   @Override
   public void update(User entity) {
-    String sql = "update chat.users set email = ? where id = ?";
+    String sql = "update chat.users set email = ?, password = ? where id = ?";
 
     try (PreparedStatement p = ds.getConnection().prepareStatement(sql)) {
 
       p.setString(1, entity.getEmail());
-      p.setLong(2, entity.getId());
+      p.setString(2, entity.getPassword());
+      p.setLong(3, entity.getId());
       if (p.executeUpdate() == 0) {
         throw new SQLException("User not update");
       }

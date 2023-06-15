@@ -51,9 +51,11 @@ public class UsersRepositoryJdbcTemplateImpl implements UsersRepository {
 
   @Override
   public void save(User entity) {
-    String sql = "insert into chat.users (email) values (:email)";
+    String sql = "insert into chat.users (email, password) values (:email, :password)";
     MapSqlParameterSource params = new MapSqlParameterSource();
-    params.addValue("email", entity.getEmail());
+    params
+        .addValue("email", entity.getEmail())
+        .addValue("password", entity.getPassword());
 
     KeyHolder keyHolder = new GeneratedKeyHolder();
     namedParameterJdbcTemplate.update(sql, params, keyHolder);
@@ -63,10 +65,12 @@ public class UsersRepositoryJdbcTemplateImpl implements UsersRepository {
 
   @Override
   public void update(User entity) {
-    String sql = "update chat.users set email = :email where id = :id";
+    String sql = "update chat.users set email = :email, password = :password where id = :id";
     MapSqlParameterSource params = new MapSqlParameterSource();
-    params.addValue("id", entity.getId());
-    params.addValue("email", entity.getEmail());
+    params
+        .addValue("id", entity.getId())
+        .addValue("email", entity.getEmail())
+        .addValue("password", entity.getPassword());
     if (namedParameterJdbcTemplate.update(sql, params) == 0) {
       throw new IllegalArgumentException("Failed to update entity");
     }
