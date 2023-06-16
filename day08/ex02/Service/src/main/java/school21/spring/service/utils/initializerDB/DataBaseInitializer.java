@@ -31,10 +31,10 @@ public class DataBaseInitializer {
   public void init() {
     try (Statement statement = ds.getConnection().createStatement()) {
 
-      String sql = Files.lines(Paths.get(schemaPath)).collect(Collectors.joining("\n"));
-      String data = Files.lines(Paths.get(dataPath)).collect(Collectors.joining("\n"));
-      System.out.println(sql);
-      System.out.println(data);
+      String sql = Files.lines(Paths.get(schemaPath).toAbsolutePath().normalize()).collect(Collectors.joining("\n"));
+      String data = Files.lines(Paths.get(dataPath).toAbsolutePath().normalize()).collect(Collectors.joining("\n"));
+//      System.out.println(sql);
+//      System.out.println(data);
       statement.executeUpdate(sql);
       statement.executeUpdate(data);
     } catch (Exception e) {
