@@ -26,7 +26,6 @@ class UsersServiceImplTest {
     }
 
 
-
     @ParameterizedTest
     @ValueSource(strings = {"test1", "test2"})
     public void usersServiceTest (String email) {
@@ -38,13 +37,21 @@ class UsersServiceImplTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"test1", "test2"})
-    public void usersServiceHikariTest (String email) {
-        UsersRepository usersRepository = ctx.getBean("usersRepositoryHikari", UsersRepository.class);
+    @ValueSource(strings = {""})
+    public void usersServiceEmptyEmail (String email) {
+        assertThrows(IllegalArgumentException.class, () -> usersService.signUp(email));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"test1"})
+    public void usersServiceEmailAlreadyExist (String email) {
+        UsersRepository usersRepository = ctx.getBean("usersRepositoryDriverManager", UsersRepository.class);
         Assertions.assertNotNull(usersService.signUp(email));
         User user = usersRepository.findByEmail(email).orElse(null);
         Assertions.assertNotNull(user);
         Assertions.assertEquals(user.getEmail(), email);
+        assertThrows(IllegalArgumentException.class, () -> usersService.signUp(email));
     }
+
 
 }
