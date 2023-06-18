@@ -1,6 +1,8 @@
 package school21.spring.service.config;
 
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,6 +10,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import school21.spring.service.repositories.UsersRepository;
 import school21.spring.service.repositories.UsersRepositoryJdbcImpl;
+import school21.spring.service.repositories.UsersRepositoryJdbcTemplateImpl;
 import school21.spring.service.services.UsersService;
 import school21.spring.service.services.UsersServiceImpl;
 import school21.spring.service.utils.initializerDB.DataBaseInitializer;
@@ -30,8 +33,13 @@ public class TestApplicationConfig {
     private String driverClassName;
 
     @Bean
-    UsersRepository usersRepository () {
+    UsersRepository usersRepositoryDriverManager () {
         return new UsersRepositoryJdbcImpl(driverManagerDataSource());
+    }
+
+    @Bean
+    UsersRepository usersRepositoryHikari () {
+        return new UsersRepositoryJdbcTemplateImpl(hikariDataSource());
     }
 
     @Bean
@@ -40,8 +48,13 @@ public class TestApplicationConfig {
     }
 
     @Bean
-    UsersService usersService () {
-        return new UsersServiceImpl(usersRepository(), passwordGeneratorUtil());
+    UsersService usersServiceDriverManager () {
+        return new UsersServiceImpl(usersRepositoryDriverManager(), passwordGeneratorUtil());
+    }
+
+    @Bean
+    UsersService usersServiceHikari () {
+        return new UsersServiceImpl(usersRepositoryHikari(), passwordGeneratorUtil());
     }
 
     @Bean
@@ -52,6 +65,20 @@ public class TestApplicationConfig {
         driverManagerDataSource.setPassword(password);
         driverManagerDataSource.setDriverClassName(driverClassName);
         return driverManagerDataSource;
+    }
+
+    @Bean
+    public HikariConfig hikariConfig() {
+        HikariConfig hikariConfig = new HikariConfig();
+        hikariConfig.setJdbcUrl(url);
+        hikariConfig.setUsername(username);
+        hikariConfig.setPassword(password);
+        return hikariConfig;
+    }
+
+    @Bean
+    public HikariDataSource hikariDataSource() {
+        return new HikariDataSource(hikariConfig());
     }
 
     @Bean
