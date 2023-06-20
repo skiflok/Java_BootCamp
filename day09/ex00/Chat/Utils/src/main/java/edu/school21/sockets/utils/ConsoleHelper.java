@@ -1,10 +1,15 @@
-package edu.school21.sockets.application_utils;
+package edu.school21.sockets.utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConsoleHelper {
+
+  private static final Logger logger
+      = LoggerFactory.getLogger(ConsoleHelper.class);
 
   static private final BufferedReader bis =
       new BufferedReader(new InputStreamReader(System.in));
@@ -17,11 +22,11 @@ public class ConsoleHelper {
     while (true) {
       try {
         String buf = bis.readLine();
-        if (buf != null)
+        if (buf != null) {
           return buf;
+        }
       } catch (IOException e) {
-//        logger.log(Level.SEVERE, "Произошла ошибка при попытке ввода текста.");
-        writeMessage("Произошла ошибка при попытке ввода текста. Попробуйте еще раз.");
+        logger.warn("Произошла ошибка при попытке ввода текста. Попробуйте еще раз.");
       }
     }
   }
@@ -31,8 +36,7 @@ public class ConsoleHelper {
       try {
         return Integer.parseInt(readString().trim());
       } catch (NumberFormatException e) {
-//        logger.log(Level.SEVERE, "Произошла ошибка при попытке ввода текста {0}.", e.toString());
-        writeMessage("Произошла ошибка при попытке ввода текста. Попробуйте еще раз.");
+        logger.warn("Произошла ошибка при попытке ввода текста. Попробуйте еще раз.");
       }
     }
   }

@@ -1,14 +1,13 @@
 package edu.school21.sockets.app;
 
-
-import edu.school21.sockets.server.Server;
+import edu.school21.sockets.client.Client;
 import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Main {
+public class App {
 
-  private static final Logger logger = LoggerFactory.getLogger(Main.class);
+  private static final Logger logger = LoggerFactory.getLogger(App.class);
 
   public static void main(String[] args) {
 
@@ -28,8 +27,8 @@ public class Main {
 
     try {
       int port = Integer.parseInt(params[1]);
-      Server server = new Server(port);
-      server.start();
+      Client client = new Client(port);
+      client.start();
 
     } catch (NumberFormatException e) {
       logger.error("Введите корректный порт");

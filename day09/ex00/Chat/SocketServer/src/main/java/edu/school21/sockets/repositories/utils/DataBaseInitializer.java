@@ -5,6 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Statement;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -14,6 +16,9 @@ import org.springframework.stereotype.Component;
 @Component
 @PropertySource("classpath:db.properties")
 public class DataBaseInitializer {
+
+  private static final Logger logger
+      = LoggerFactory.getLogger(DataBaseInitializer.class);
 
   private final DataSource ds;
 
@@ -30,13 +35,12 @@ public class DataBaseInitializer {
   public void init() {
 
     try (Statement statement = ds.getConnection().createStatement()) {
-      System.out.println(Paths.get("./").toAbsolutePath().normalize());
-      System.out.println(Paths.get(schemaPath).normalize().toAbsolutePath());
+      logger.debug("Директория запуска {}", Paths.get("./").toAbsolutePath().normalize());
 
       String sql = Files.lines(Paths.get(schemaPath).normalize().toAbsolutePath()).collect(Collectors.joining("\n"));
       String data = Files.lines(Paths.get(dataPath).normalize().toAbsolutePath()).collect(Collectors.joining("\n"));
-      System.out.println(sql);
-      System.out.println(data);
+      logger.debug("sql\n {}", sql);
+      logger.debug("data\n {}", data);
       statement.executeUpdate(sql);
       statement.executeUpdate(data);
     } catch (Exception e) {
