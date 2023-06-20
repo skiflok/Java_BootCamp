@@ -22,7 +22,7 @@ public class UsersRepositoryJdbcTemplateImpl implements UsersRepository {
   private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
   @Autowired
-  public UsersRepositoryJdbcTemplateImpl(@Qualifier("hikariDataSource") DataSource ds) {
+  public UsersRepositoryJdbcTemplateImpl(DataSource ds) {
     namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(ds);
   }
 

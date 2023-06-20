@@ -24,7 +24,7 @@ public class DataBaseInitializer {
   String dataPath;
 
   @Autowired
-  public DataBaseInitializer(@Qualifier("hikariDataSource") DataSource ds) {
+  public DataBaseInitializer(DataSource ds) {
     this.ds = ds;
   }
 
