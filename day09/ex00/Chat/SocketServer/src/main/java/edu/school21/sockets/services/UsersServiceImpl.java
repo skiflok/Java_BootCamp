@@ -16,7 +16,7 @@ public class UsersServiceImpl implements UsersService {
 
   @Autowired
   public UsersServiceImpl(
-      @Qualifier("usersRepositoryJdbcTemplateImpl") UsersRepository usersRepository,
+      UsersRepository usersRepository,
       PasswordGeneratorUtil passwordGeneratorUtil) {
     this.usersRepository = usersRepository;
     this.passwordGeneratorUtil = passwordGeneratorUtil;

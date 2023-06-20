@@ -6,7 +6,6 @@ import java.nio.file.Paths;
 import java.sql.Statement;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
@@ -29,7 +28,10 @@ public class DataBaseInitializer {
   }
 
   public void init() {
+
     try (Statement statement = ds.getConnection().createStatement()) {
+      System.out.println(Paths.get("./").toAbsolutePath().normalize());
+      System.out.println(Paths.get(schemaPath).normalize().toAbsolutePath());
 
       String sql = Files.lines(Paths.get(schemaPath).normalize().toAbsolutePath()).collect(Collectors.joining("\n"));
       String data = Files.lines(Paths.get(dataPath).normalize().toAbsolutePath()).collect(Collectors.joining("\n"));

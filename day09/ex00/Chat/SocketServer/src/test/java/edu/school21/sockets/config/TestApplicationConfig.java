@@ -6,7 +6,6 @@ import com.zaxxer.hikari.HikariDataSource;
 import edu.school21.sockets.application_utils.PasswordGeneratorUtil;
 import edu.school21.sockets.repositories.UsersRepository;
 import edu.school21.sockets.repositories.UsersRepositoryJdbcTemplateImpl;
-import edu.school21.sockets.repositories.utils.DataBaseInitializer;
 import edu.school21.sockets.services.UsersService;
 import edu.school21.sockets.services.UsersServiceImpl;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,7 +33,7 @@ public class TestApplicationConfig {
 
 
     @Bean
-    UsersRepository usersRepositoryHikari () {
+    UsersRepository usersRepository () {
         return new UsersRepositoryJdbcTemplateImpl(hikariDataSource());
     }
 
@@ -45,8 +44,8 @@ public class TestApplicationConfig {
 
 
     @Bean
-    UsersService usersServiceHikari () {
-        return new UsersServiceImpl(usersRepositoryHikari(), passwordGeneratorUtil());
+    UsersService usersService () {
+        return new UsersServiceImpl(usersRepository(), passwordGeneratorUtil());
     }
 
 
