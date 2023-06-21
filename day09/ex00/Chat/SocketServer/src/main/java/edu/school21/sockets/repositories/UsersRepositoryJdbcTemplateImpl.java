@@ -59,7 +59,7 @@ public class UsersRepositoryJdbcTemplateImpl implements UsersRepository {
 
     KeyHolder keyHolder = new GeneratedKeyHolder();
     namedParameterJdbcTemplate.update(sql, params, keyHolder);
-    entity.setId(Objects.requireNonNull(keyHolder.getKey()).longValue());
+    entity.setId((Long) Objects.requireNonNull(keyHolder.getKeys()).get("id"));
 
   }
 
