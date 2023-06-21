@@ -2,13 +2,12 @@ package edu.school21.sockets.server;
 
 import edu.school21.sockets.models.Connection;
 import edu.school21.sockets.models.User;
+import edu.school21.sockets.services.UsersService;
 import java.io.IOException;
 import java.net.Socket;
-import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Data
 public class ServerHandler {
 
   private static final Logger logger = LoggerFactory.getLogger(Server.class);
@@ -16,18 +15,24 @@ public class ServerHandler {
   private final Socket socket;
   private boolean isConnected;
   private Connection connection;
+  private final UsersService usersService;
 
-  public User start() throws IOException, ClassNotFoundException {
+
+  public ServerHandler(Socket socket, UsersService usersService) {
+    this.socket = socket;
+    this.usersService = usersService;
+  }
+
+
+  public void start() throws IOException, ClassNotFoundException {
     connection = new Connection(socket);
     logger.info("Подключение клиента с удаленного адреса {}", connection.getRemoteSocketAddress());
 
-    User user = handShake();
+    handShake();
 
     //todo singUp user
 
     connection.close();
-
-    return user;
 
   }
 
@@ -35,9 +40,11 @@ public class ServerHandler {
     String command;
     String userName = null;
     String password = null;
+    User user = null;
+
     while (!isConnected) {
 
-      logger.info("wile");
+      logger.info("while");
 
       connection.send("Hello from Server!");
       command = connection.receive();
@@ -55,12 +62,16 @@ public class ServerHandler {
       logger.info("password {}", password);
 
       isConnected = true;
+
+      user = new User(null, userName, password);
+
+      usersService.signUp(user);
       connection.send("Successful!");
       logger.info("пользователь {} подключился с IP {}", userName,
           connection.getRemoteSocketAddress());
     }
 
-    return new User(null, userName, password);
+    return user;
   }
 
 }

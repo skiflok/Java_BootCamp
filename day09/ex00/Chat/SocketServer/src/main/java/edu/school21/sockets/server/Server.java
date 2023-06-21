@@ -1,7 +1,6 @@
 package edu.school21.sockets.server;
 
 import edu.school21.sockets.config.SocketsApplicationConfig;
-import edu.school21.sockets.models.User;
 import edu.school21.sockets.repositories.UsersRepository;
 import edu.school21.sockets.repositories.UsersRepositoryJdbcTemplateImpl;
 import edu.school21.sockets.repositories.utils.DataBaseInitializer;
@@ -24,6 +23,7 @@ public class Server {
   private final UsersRepository usersRepository;
   private final UsersService usersService;
 
+
   public Server(int port) {
     this.port = port;
     ApplicationContext ctx = new AnnotationConfigApplicationContext(
@@ -41,14 +41,12 @@ public class Server {
 
       Socket socket = serverSocket.accept();
 
-      User user = new ServerHandler(socket).start();
-
-      usersService.signUp(user);
+      new ServerHandler(socket, usersService).start();
 
       System.out.println("All users");
       usersRepository.findAll().forEach(System.out::println);
 
-      ConsoleHelper.writeMessage("Чат сервер запущен.");
+      ConsoleHelper.writeMessage("Чат сервер остановлен.");
     } catch (Exception e) {
       logger.warn("Произошла ошибка при запуске или работе сервера {}", e.getMessage());
     }
