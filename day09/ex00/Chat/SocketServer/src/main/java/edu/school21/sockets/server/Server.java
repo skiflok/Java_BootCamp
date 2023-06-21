@@ -1,6 +1,7 @@
 package edu.school21.sockets.server;
 
 import edu.school21.sockets.config.SocketsApplicationConfig;
+import edu.school21.sockets.models.User;
 import edu.school21.sockets.repositories.UsersRepository;
 import edu.school21.sockets.repositories.UsersRepositoryJdbcTemplateImpl;
 import edu.school21.sockets.repositories.utils.DataBaseInitializer;
@@ -33,7 +34,9 @@ public class Server {
 
       Socket socket = serverSocket.accept();
 
-      new ServerHandler(socket).start();
+      User user = new ServerHandler(socket).start();
+
+      usersRepository.save(user);
 
       ConsoleHelper.writeMessage("Чат сервер запущен.");
     } catch (Exception e) {

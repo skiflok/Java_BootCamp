@@ -17,7 +17,7 @@ public class ServerHandler {
   private boolean isConnected;
   private Connection connection;
 
-  public void start() throws IOException, ClassNotFoundException {
+  public User start() throws IOException, ClassNotFoundException {
     connection = new Connection(socket);
     logger.info("Подключение клиента с удаленного адреса {}", connection.getRemoteSocketAddress());
 
@@ -26,6 +26,8 @@ public class ServerHandler {
     //todo singUp user
 
     connection.close();
+
+    return user;
 
   }
 
