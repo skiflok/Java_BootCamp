@@ -74,13 +74,3 @@ public class Client {
   }
 
 }
-
-/*
-Hello from Server!
-> signUp
-Enter username:
-> Marsel
-Enter password:
-> qwerty007
-Successful!
-* */

@@ -7,6 +7,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 
 @Configuration
 @ComponentScan(basePackages = "edu.school21.sockets")
@@ -24,6 +27,11 @@ public class SocketsApplicationConfig {
 
     @Value("${db.driver.name}")
     private String driverClassName;
+
+    @Bean
+    public PasswordEncoder encoder() {
+        return new BCryptPasswordEncoder(4);
+    }
 
     @Bean
     public HikariConfig hikariConfig() {

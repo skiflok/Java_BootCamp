@@ -5,29 +5,36 @@ import edu.school21.sockets.models.User;
 import edu.school21.sockets.repositories.UsersRepository;
 import edu.school21.sockets.repositories.UsersRepositoryJdbcTemplateImpl;
 import edu.school21.sockets.repositories.utils.DataBaseInitializer;
+import edu.school21.sockets.services.UsersService;
 import edu.school21.sockets.utils.ConsoleHelper;
 import java.net.ServerSocket;
 import java.net.Socket;
-import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-@AllArgsConstructor
+
 public class Server {
 
   private static final Logger logger = LoggerFactory.getLogger(Server.class);
 
   private final int port;
 
-  public void start() {
+  private final UsersRepository usersRepository;
+  private final UsersService usersService;
 
+  public Server(int port) {
+    this.port = port;
     ApplicationContext ctx = new AnnotationConfigApplicationContext(
         SocketsApplicationConfig.class);
     ctx.getBean("dataBaseInitializer", DataBaseInitializer.class).init();
-    UsersRepository usersRepository = ctx.getBean("usersRepositoryJdbcTemplateImpl",
+    usersRepository = ctx.getBean("usersRepositoryJdbcTemplateImpl",
         UsersRepositoryJdbcTemplateImpl.class);
+    usersService = ctx.getBean("usersServiceImpl", UsersService.class);
+  }
+
+  public void start() {
 
     try (ServerSocket serverSocket = new ServerSocket(port)) {
       ConsoleHelper.writeMessage("Чат сервер запущен.");
@@ -36,7 +43,10 @@ public class Server {
 
       User user = new ServerHandler(socket).start();
 
-      usersRepository.save(user);
+      usersService.signUp(user);
+
+      System.out.println("All users");
+      usersRepository.findAll().forEach(System.out::println);
 
       ConsoleHelper.writeMessage("Чат сервер запущен.");
     } catch (Exception e) {
