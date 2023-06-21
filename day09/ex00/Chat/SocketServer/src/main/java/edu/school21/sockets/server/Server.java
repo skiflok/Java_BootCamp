@@ -49,6 +49,7 @@ public class Server {
       ConsoleHelper.writeMessage("Чат сервер остановлен.");
     } catch (Exception e) {
       logger.warn("Произошла ошибка при запуске или работе сервера {}", e.getMessage());
+      e.printStackTrace();
     }
 
   }

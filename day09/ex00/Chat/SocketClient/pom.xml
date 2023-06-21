@@ -29,8 +29,8 @@
   </dependencies>
 
   <build>
+    <finalName>${artifactId}</finalName>
     <plugins>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
@@ -38,7 +38,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>edu.school21.sockets.app.Main</mainClass>
+              <mainClass>edu.school21.sockets.app.App</mainClass>
             </manifest>
           </archive>
           <descriptorRefs>
