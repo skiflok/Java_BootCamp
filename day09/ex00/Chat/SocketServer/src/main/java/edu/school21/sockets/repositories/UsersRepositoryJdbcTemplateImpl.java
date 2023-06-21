@@ -35,7 +35,7 @@ public class UsersRepositoryJdbcTemplateImpl implements UsersRepository {
       if (rs.next()) {
         return Optional.of(new User(
             rs.getLong("id"),
-            rs.getString("email"),
+            rs.getString("name"),
             rs.getString("password")
         ));
       }
@@ -51,10 +51,10 @@ public class UsersRepositoryJdbcTemplateImpl implements UsersRepository {
 
   @Override
   public void save(User entity) {
-    String sql = "insert into chat.users (email, password) values (:email, :password)";
+    String sql = "insert into chat.users (name, password) values (:name, :password)";
     MapSqlParameterSource params = new MapSqlParameterSource();
     params
-        .addValue("email", entity.getEmail())
+        .addValue("name", entity.getName())
         .addValue("password", entity.getPassword());
 
     KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -69,7 +69,7 @@ public class UsersRepositoryJdbcTemplateImpl implements UsersRepository {
     MapSqlParameterSource params = new MapSqlParameterSource();
     params
         .addValue("id", entity.getId())
-        .addValue("email", entity.getEmail())
+        .addValue("name", entity.getName())
         .addValue("password", entity.getPassword());
     if (namedParameterJdbcTemplate.update(sql, params) == 0) {
       throw new IllegalArgumentException("Failed to update entity");
@@ -87,14 +87,14 @@ public class UsersRepositoryJdbcTemplateImpl implements UsersRepository {
   }
 
   @Override
-  public Optional<User> findByEmail(String email) {
-    String sql = "select * from chat.users where email = :email";
+  public Optional<User> findByName(String name) {
+    String sql = "select * from chat.users where name = :name";
     MapSqlParameterSource params = new MapSqlParameterSource();
-    params.addValue("email", email);
+    params.addValue("name", name);
     List<User> users = namedParameterJdbcTemplate.query(sql, params, (rs, rowNum) ->
         new User(
             rs.getLong("id"),
-            rs.getString("email"),
+            rs.getString("name"),
             rs.getString("password")
         ));
 

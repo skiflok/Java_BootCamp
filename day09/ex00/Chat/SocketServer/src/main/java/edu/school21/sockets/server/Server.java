@@ -33,11 +33,9 @@ public class Server {
 
       Socket socket = serverSocket.accept();
 
-      ConsoleHelper.writeMessage("Чат сервер запущен.");
-
       new ServerHandler(socket).start();
 
-
+      ConsoleHelper.writeMessage("Чат сервер запущен.");
     } catch (Exception e) {
       logger.warn("Произошла ошибка при запуске или работе сервера {}", e.getMessage());
     }

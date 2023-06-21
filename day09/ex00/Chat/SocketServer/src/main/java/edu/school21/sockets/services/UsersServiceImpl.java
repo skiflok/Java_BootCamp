@@ -4,7 +4,6 @@ import edu.school21.sockets.application_utils.PasswordGeneratorUtil;
 import edu.school21.sockets.models.User;
 import edu.school21.sockets.repositories.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 
@@ -23,18 +22,18 @@ public class UsersServiceImpl implements UsersService {
   }
 
   @Override
-  public String signUp(String email) {
+  public String signUp(String name) {
 
-    if (email.isEmpty()) {
-      throw new IllegalArgumentException("Email isEmpty");
+    if (name.isEmpty()) {
+      throw new IllegalArgumentException("Name isEmpty");
     }
 
-    if (usersRepository.findByEmail(email).isPresent()) {
-      throw new IllegalArgumentException("Email " + email +  " is already register");
+    if (usersRepository.findByName(name).isPresent()) {
+      throw new IllegalArgumentException("Name " + name +  " is already register");
     }
 
     String password = passwordGeneratorUtil.generatePassayPassword(10);
-    usersRepository.save(new User(null, email, password));
+    usersRepository.save(new User(null, name, password));
     return password;
   }
 

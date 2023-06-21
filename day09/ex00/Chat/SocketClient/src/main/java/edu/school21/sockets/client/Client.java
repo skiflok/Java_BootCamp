@@ -8,7 +8,6 @@ import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 @Data
 public class Client {
 
@@ -22,7 +21,9 @@ public class Client {
 
     try  {
 
-      Connection connection = new Connection(new Socket("localhost", port));
+      logger.info("Check work");
+
+      connection = new Connection(new Socket("localhost", port));
       handShake();
 
     } catch (Exception e) {
@@ -36,32 +37,50 @@ public class Client {
     String command;
     while (!isConnected) {
 
-      command = connection.receive();
+      logger.info("wile");
 
+      command = connection.receive();
+      ConsoleHelper.writeMessage(command);
+      logger.info("command {}", command);
       if (!"Hello from Server!".equals(command)) {
         continue;
       }
 
+      connection.send(ConsoleHelper.readString());
+
       command = connection.receive();
+      logger.info("command {}", command);
+      ConsoleHelper.writeMessage(command);
       if (!"Enter username:".equals(command)) {
         continue;
       }
       connection.send(ConsoleHelper.readString());
 
       command = connection.receive();
-      command = connection.receive();
+      logger.info("command {}", command);
+      ConsoleHelper.writeMessage(command);
       if (!"Enter password:".equals(command)) {
         continue;
       }
       connection.send(ConsoleHelper.readString());
 
       command = connection.receive();
-      if (!"Successful!".equals(command)) {
-        continue;
-      } else {
+      ConsoleHelper.writeMessage(command);
+      logger.info("command {}", command);
+      if ("Successful!".equals(command)) {
         isConnected = true;
       }
     }
   }
 
 }
+
+/*
+Hello from Server!
+> signUp
+Enter username:
+> Marsel
+Enter password:
+> qwerty007
+Successful!
+* */

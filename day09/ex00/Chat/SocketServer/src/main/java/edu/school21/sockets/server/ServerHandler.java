@@ -35,16 +35,22 @@ public class ServerHandler {
     String password = null;
     while (!isConnected) {
 
+      logger.info("wile");
+
       connection.send("Hello from Server!");
       command = connection.receive();
+      logger.info("command {}", command);
       if (!"signUp".equals(command)) {
         continue;
       }
 
       connection.send("Enter username:");
       userName = connection.receive();
+      logger.info("userName {}", userName);
+
       connection.send("Enter password:");
       password = connection.receive();
+      logger.info("password {}", password);
 
       isConnected = true;
       connection.send("Successful!");

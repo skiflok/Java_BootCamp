@@ -11,6 +11,8 @@ public class App {
 
   public static void main(String[] args) {
 
+    logger.info("Check work");
+
     if (args.length != 1) {
       logger.error("Неверное количество параметров для запуска сервера");
       System.exit(-1);
@@ -24,6 +26,8 @@ public class App {
       logger.error("Неверные параметры запуска");
       System.exit(-1);
     }
+
+
 
     try {
       int port = Integer.parseInt(params[1]);
