@@ -3,7 +3,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <artifactId>Chat</artifactId>
-    <groupId>edu.school21.sockets</groupId>
+    <groupId>ex01.edu.school21.sockets</groupId>
     <version>1.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -21,7 +21,7 @@
   <dependencies>
 
     <dependency>
-      <groupId>edu.school21.sockets</groupId>
+      <groupId>ex01.edu.school21.sockets</groupId>
       <artifactId>Utils</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
@@ -38,7 +38,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>edu.school21.sockets.app.App</mainClass>
+              <mainClass>ex01.edu.school21.sockets.app.App</mainClass>
             </manifest>
           </archive>
           <descriptorRefs>
