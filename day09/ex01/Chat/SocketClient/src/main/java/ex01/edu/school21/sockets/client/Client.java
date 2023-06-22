@@ -54,12 +54,13 @@ public class Client {
     }
   }
 
-  private void menuRequest() throws IOException {
+  private void menuRequest() throws IOException, ClassNotFoundException {
     ConsoleHelper.writeMessage("Выберите пункт меню");
     String input = ConsoleHelper.readString();
     switch (input.toLowerCase().trim()) {
       case "signup":
         connection.send(new Message(SIGNUP));
+        signUp();
         break;
       case "login":
         connection.send(new Message(LOGIN));
@@ -74,42 +75,30 @@ public class Client {
 
   private void signUp() throws IOException, ClassNotFoundException {
 
-    String command;
+    Message incomeMsg;
+
     while (!isConnected) {
 
-      System.out.println(connection.receive().getMessage());
+      incomeMsg = connection.receive();
+      if (incomeMsg.getMessageType() != NAME_REQUEST) {
+        continue;
+      }
+      ConsoleHelper.writeMessage(incomeMsg.getMessage());
+      connection.send(new Message(USER_NAME, ConsoleHelper.readString()));
 
-//      command = connection.receive();
-//      ConsoleHelper.writeMessage(command);
-//      logger.info("command {}", command);
-//      if (!"Hello from Server!".equals(command)) {
-//        continue;
-//      }
-//
-//      connection.send(ConsoleHelper.readString());
-//
-//      command = connection.receive();
-//      logger.info("command {}", command);
-//      ConsoleHelper.writeMessage(command);
-//      if (!"Enter username:".equals(command)) {
-//        continue;
-//      }
-//      connection.send(ConsoleHelper.readString());
-//
-//      command = connection.receive();
-//      logger.info("command {}", command);
-//      ConsoleHelper.writeMessage(command);
-//      if (!"Enter password:".equals(command)) {
-//        continue;
-//      }
-//      connection.send(ConsoleHelper.readString());
-//
-//      command = connection.receive();
-//      ConsoleHelper.writeMessage(command);
-//      logger.info("command {}", command);
-//      if ("Successful!".equals(command)) {
-//        isConnected = true;
-//      }
+      incomeMsg = connection.receive();
+      if (incomeMsg.getMessageType() != PASSWORD_REQUEST) {
+        continue;
+      }
+      ConsoleHelper.writeMessage(incomeMsg.getMessage());
+      connection.send(new Message(PASSWORD, ConsoleHelper.readString()));
+
+      incomeMsg = connection.receive();
+      if (incomeMsg.getMessageType() != SIGN_UP_SUCCESS) {
+        continue;
+      }
+      ConsoleHelper.writeMessage(incomeMsg.getMessage());
+      isConnected = true;
 
     }
   }

@@ -38,7 +38,6 @@ public class ServerHandler implements Runnable {
 
       printMenu();
       selectHandler();
-//      handShake();
       connection.close();
       break;
     }
@@ -63,6 +62,7 @@ public class ServerHandler implements Runnable {
       switch (msg.getMessageType()) {
         case SIGNUP:
           connection.send(new Message(MENU, "Сервер " + "SIGNUP"));
+          signUp();
           logger.info(msg.getMessageType().toString());
           break;
         case LOGIN:
@@ -80,40 +80,39 @@ public class ServerHandler implements Runnable {
   }
 
 
-  private void handShake() throws IOException, ClassNotFoundException {
-    String command;
-    String userName;
-    String password;
+  private void signUp() throws IOException, ClassNotFoundException {
+    String userName = null;
+    String password = null;
+    Message incomeMsg;
     User user;
 
-//    while (!isConnected) {
-//
-//      logger.info("while");
-//
-//      connection.send("Hello from Server!");
-//      command = connection.receive();
-//      logger.info("command {}", command);
-//      if (!"signUp".equals(command)) {
-//        continue;
-//      }
-//
-//      connection.send("Enter username:");
-//      userName = connection.receive();
-//      logger.info("userName {}", userName);
-//
-//      connection.send("Enter password:");
-//      password = connection.receive();
-//      logger.info("password {}", password);
-//
-//      isConnected = true;
-//
-//      user = new User(null, userName, password);
-//
-//      usersService.signUp(user);
-//      connection.send("Successful!");
-//      logger.info("пользователь {} подключился с IP {}", userName,
-//          connection.getRemoteSocketAddress());
-//    }
+    while (!isConnected) {
+
+      connection.send(new Message(NAME_REQUEST, "Enter username:"));
+      incomeMsg = connection.receive();
+      if (incomeMsg.getMessageType() != USER_NAME) {
+        continue;
+      }
+      userName = incomeMsg.getMessage();
+      logger.info("userName {}", userName);
+
+      connection.send(new Message(PASSWORD_REQUEST, "Enter password:"));
+      incomeMsg = connection.receive();
+
+      if (incomeMsg.getMessageType() != PASSWORD) {
+        continue;
+      }
+      password = incomeMsg.getMessage();
+      logger.info("password {}", password);
+
+      isConnected = true;
+
+      user = new User(null, userName, password);
+      usersService.signUp(user);
+      connection.send(new Message(SIGN_UP_SUCCESS, "Successful!"));
+      logger.info("пользователь {} подключился с IP {}", userName,
+          connection.getRemoteSocketAddress());
+    }
 
   }
 

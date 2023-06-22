@@ -2,7 +2,10 @@ package ex01.edu.school21.sockets.models;
 
 public enum MessageType {
   NAME_REQUEST, // запрос имени
+  PASSWORD_REQUEST, // запрос пароля
   USER_NAME, // имя пользователя
+  PASSWORD, // пароль
+  SIGN_UP_SUCCESS, // пользователь зарегистрирован
   NAME_ACCEPTED, // имя принято
   TEXT, // текстовое сообщение
   USER_ADDED, // пользователь добавлен
