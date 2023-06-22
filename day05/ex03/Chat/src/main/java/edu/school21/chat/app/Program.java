@@ -3,6 +3,7 @@ package edu.school21.chat.app;
 import edu.school21.chat.models.ChatRoom;
 import edu.school21.chat.models.Message;
 import edu.school21.chat.models.User;
+import edu.school21.chat.repositories.HikariCPDataSource;
 import edu.school21.chat.repositories.JdbcTemplate;
 import edu.school21.chat.repositories.MessagesRepository;
 import edu.school21.chat.repositories.MessagesRepositoryJdbcImpl;
@@ -18,47 +19,51 @@ import java.util.stream.Collectors;
 
 
 public class Program {
-    public static void main(String[] args) {
-        System.out.println("Hello Chat!");
 
-        MessagesRepository msgRep = new MessagesRepositoryJdbcImpl();
+  public static void main(String[] args) {
+    System.out.println("Hello Chat!");
 
-        try {
-//            reloadDataBaseToDefault();
-            Optional<Message> messageOptional = msgRep.findById(11L);
-            if (messageOptional.isPresent()) {
-                System.out.println(messageOptional);
-                Message message = messageOptional.get();
-                message.setText("Bye Bye");
-                message.setAuthor(new User(1L));
-                message.setRoom(new ChatRoom(2));
+    JdbcTemplate jdbcTemplate = new JdbcTemplate(HikariCPDataSource.getDs());
+    MessagesRepository msgRep = new MessagesRepositoryJdbcImpl(jdbcTemplate);
 
-                message.setDateTime(null);
-                msgRep.update(message);
-            }
-            messageOptional = msgRep.findById(11L);
-            if (messageOptional.isPresent()) {
-                System.out.println(messageOptional);
-            }
+    try {
+      reloadDataBaseToDefault(jdbcTemplate);
+      Optional<Message> messageOptional = msgRep.findById(1L);
+      if (messageOptional.isPresent()) {
+        System.out.println(messageOptional);
+        Message message = messageOptional.get();
+        message.setText("Bye Bye");
+        message.setAuthor(new User(1L));
+        message.setRoom(new ChatRoom(5));
 
-        } catch (NotSavedSubEntityException | SQLException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
+        message.setDateTime(null);
+        msgRep.update(message);
+      }
+      messageOptional = msgRep.findById(1L);
+      messageOptional.ifPresent(System.out::println);
+
+    } catch (NotSavedSubEntityException | SQLException | IOException e) {
+      System.out.println(e.getMessage());
+      e.printStackTrace();
     }
+  }
 
-    public static void reloadDataBaseToDefault() throws IOException, SQLException {
+  public static void reloadDataBaseToDefault(JdbcTemplate jdbcTemplate)
+      throws SQLException, IOException {
 //        System.out.println(System.getProperty("user.dir"));
-        Path schema = Paths.get("day05/ex02/Chat/src/main/resources/schema.sql").normalize().toAbsolutePath();
-        Path data = Paths.get("day05/ex02/Chat/src/main/resources/data.sql").normalize().toAbsolutePath();
-//        System.out.println(schema);
-        String schemaSQL = Files.lines(schema).collect(Collectors.joining("\n"));
-        String dataSQL = Files.lines(data).collect(Collectors.joining("\n"));
+    Path schema = Paths.get("src/ex03/Chat/src/main/resources/schema.sql").normalize()
+        .toAbsolutePath();
+    Path data = Paths.get("src/ex03/Chat/src/main/resources/data.sql").normalize()
+        .toAbsolutePath();
+//    Path schema = Paths.get("src/main/resources/schema.sql").normalize().toAbsolutePath();
+//    Path data = Paths.get("src/main/resources/data.sql").normalize().toAbsolutePath();
+    String schemaSQL = Files.lines(schema).collect(Collectors.joining("\n"));
+    String dataSQL = Files.lines(data).collect(Collectors.joining("\n"));
 
-        JdbcTemplate.statement((stmt) -> {
-            stmt.executeUpdate(schemaSQL);
-            stmt.executeUpdate(dataSQL);
-        });
+    jdbcTemplate.statement((stmt) -> {
+      stmt.executeUpdate(schemaSQL);
+      stmt.executeUpdate(dataSQL);
+    });
 
-    }
+  }
 }

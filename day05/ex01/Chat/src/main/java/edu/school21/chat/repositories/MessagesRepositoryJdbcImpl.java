@@ -9,11 +9,17 @@ import java.util.Optional;
 
 public class MessagesRepositoryJdbcImpl implements MessagesRepository {
 
+    private final JdbcTemplate jdbcTemplate;
+
+    public MessagesRepositoryJdbcImpl(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
     @Override
     public Optional<Message> findById(Long id) {
         String sql = "select * from chat.message where id = ?";
         try {
-            return JdbcTemplate.preparedStatement(sql, (stmt) -> {
+            return jdbcTemplate.preparedStatement(sql, (stmt) -> {
                 stmt.setLong(1, id);
                 ResultSet results = stmt.executeQuery();
                 if (!results.next()) {
@@ -36,7 +42,7 @@ public class MessagesRepositoryJdbcImpl implements MessagesRepository {
     public Optional<User> findUserById(Long id) {
         String sql = "select * from chat.user where id = ?";
         try {
-            return JdbcTemplate.preparedStatement(sql, (stmt) -> {
+            return jdbcTemplate.preparedStatement(sql, (stmt) -> {
                 stmt.setLong(1, id);
                 ResultSet results = stmt.executeQuery();
                 if (!results.next()) {
@@ -61,7 +67,7 @@ public class MessagesRepositoryJdbcImpl implements MessagesRepository {
         String sql = "select * from chat.chat_room where id = ?";
 
         try {
-            return JdbcTemplate.preparedStatement(sql, (stmt) -> {
+            return jdbcTemplate.preparedStatement(sql, (stmt) -> {
                 stmt.setLong(1, id);
                 ResultSet results = stmt.executeQuery();
                 if (!results.next()) {
