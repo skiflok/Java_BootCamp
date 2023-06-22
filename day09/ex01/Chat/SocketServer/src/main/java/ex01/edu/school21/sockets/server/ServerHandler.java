@@ -1,6 +1,10 @@
 package ex01.edu.school21.sockets.server;
 
+import static ex01.edu.school21.sockets.models.MessageType.*;
+
 import ex01.edu.school21.sockets.models.Connection;
+import ex01.edu.school21.sockets.models.Message;
+import ex01.edu.school21.sockets.models.MessageType;
 import ex01.edu.school21.sockets.models.User;
 import ex01.edu.school21.sockets.services.UsersService;
 import java.io.IOException;
@@ -9,7 +13,7 @@ import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ServerHandler implements Runnable{
+public class ServerHandler implements Runnable {
 
   private static final Logger logger = LoggerFactory.getLogger(Server.class);
 
@@ -33,21 +37,46 @@ public class ServerHandler implements Runnable{
     while (true) {
 
       printMenu();
-      handShake();
+      selectHandler();
+//      handShake();
       connection.close();
       break;
     }
 
 
-
   }
 
   private void printMenu() throws IOException {
-    connection.send("Hello from Server!");
-    connection.send("Available commands:");
-    connection.send("signUp");
-    connection.send("logIn");
-    connection.send("exit");
+    connection.send(new Message(MENU, "Hello from Server!"));
+    connection.send(new Message(MENU, "Available commands:"));
+    connection.send(new Message(MENU, "signUp"));
+    connection.send(new Message(MENU, "logIn"));
+    connection.send(new Message(MENU, "exit"));
+    connection.send(new Message(MENU_REQUEST));
+  }
+
+  private void selectHandler() throws IOException, ClassNotFoundException {
+
+    while (true) {
+
+      Message msg = connection.receive();
+      switch (msg.getMessageType()) {
+        case SIGNUP:
+          connection.send(new Message(MENU, "Сервер " + "SIGNUP"));
+          logger.info(msg.getMessageType().toString());
+          break;
+        case LOGIN:
+          connection.send(new Message(MENU, "Сервер " + "LOGIN"));
+          break;
+        case EXIT:
+          connection.send(new Message(MENU, "Сервер " + "EXIT"));
+          break;
+        default:
+          connection.send(new Message(MENU_REQUEST, "Неверная команда"));
+          printMenu();
+          break;
+      }
+    }
   }
 
 
@@ -57,34 +86,34 @@ public class ServerHandler implements Runnable{
     String password;
     User user;
 
-    while (!isConnected) {
-
-      logger.info("while");
-
-      connection.send("Hello from Server!");
-      command = connection.receive();
-      logger.info("command {}", command);
-      if (!"signUp".equals(command)) {
-        continue;
-      }
-
-      connection.send("Enter username:");
-      userName = connection.receive();
-      logger.info("userName {}", userName);
-
-      connection.send("Enter password:");
-      password = connection.receive();
-      logger.info("password {}", password);
-
-      isConnected = true;
-
-      user = new User(null, userName, password);
-
-      usersService.signUp(user);
-      connection.send("Successful!");
-      logger.info("пользователь {} подключился с IP {}", userName,
-          connection.getRemoteSocketAddress());
-    }
+//    while (!isConnected) {
+//
+//      logger.info("while");
+//
+//      connection.send("Hello from Server!");
+//      command = connection.receive();
+//      logger.info("command {}", command);
+//      if (!"signUp".equals(command)) {
+//        continue;
+//      }
+//
+//      connection.send("Enter username:");
+//      userName = connection.receive();
+//      logger.info("userName {}", userName);
+//
+//      connection.send("Enter password:");
+//      password = connection.receive();
+//      logger.info("password {}", password);
+//
+//      isConnected = true;
+//
+//      user = new User(null, userName, password);
+//
+//      usersService.signUp(user);
+//      connection.send("Successful!");
+//      logger.info("пользователь {} подключился с IP {}", userName,
+//          connection.getRemoteSocketAddress());
+//    }
 
   }
 

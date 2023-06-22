@@ -7,4 +7,10 @@ public enum MessageType {
   TEXT, // текстовое сообщение
   USER_ADDED, // пользователь добавлен
   USER_REMOVED, // пользователь удален
+  SIGNUP, // регистрация
+  LOGIN, // вход
+  EXIT, // выход
+  MENU, // сообщение меню
+  MENU_REQUEST, // запрос действия пользователя
+  MENU_RESPONSE // ответ пользователя
 }

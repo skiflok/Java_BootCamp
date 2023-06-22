@@ -19,15 +19,15 @@ public class Connection implements Closeable {
     this.in = new ObjectInputStream(socket.getInputStream());
   }
 
-  public void send(String message) throws IOException {
+  public void send(Message message) throws IOException {
     synchronized (out) {
       out.writeObject(message);
     }
   }
 
-  public String receive () throws IOException, ClassNotFoundException {
+  public Message receive () throws IOException, ClassNotFoundException {
     synchronized (in) {
-      return (String) in.readObject();
+      return (Message) in.readObject();
     }
   }
 
