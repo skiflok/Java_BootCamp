@@ -7,3 +7,10 @@ create table if not exists chat.users (
     name     varchar(255) unique not null,
     password  varchar(255)
 );
+
+create table if not exists chat.message (
+    id          bigserial primary key,
+    author      bigint not null references chat.users (id),
+    text        text not null,
+    date_time   timestamp default CURRENT_TIMESTAMP
+);

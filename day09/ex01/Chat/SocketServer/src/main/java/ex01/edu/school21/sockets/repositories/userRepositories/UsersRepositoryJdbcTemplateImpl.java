@@ -1,4 +1,4 @@
-package ex01.edu.school21.sockets.repositories;
+package ex01.edu.school21.sockets.repositories.userRepositories;
 
 import ex01.edu.school21.sockets.models.User;
 import org.springframework.beans.factory.annotation.Autowired;

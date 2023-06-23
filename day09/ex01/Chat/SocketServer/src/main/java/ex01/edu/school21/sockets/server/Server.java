@@ -1,8 +1,8 @@
 package ex01.edu.school21.sockets.server;
 
 import ex01.edu.school21.sockets.config.SocketsApplicationConfig;
-import ex01.edu.school21.sockets.repositories.UsersRepository;
-import ex01.edu.school21.sockets.repositories.UsersRepositoryJdbcTemplateImpl;
+import ex01.edu.school21.sockets.repositories.userRepositories.UsersRepository;
+import ex01.edu.school21.sockets.repositories.userRepositories.UsersRepositoryJdbcTemplateImpl;
 import ex01.edu.school21.sockets.repositories.utils.DataBaseInitializer;
 import ex01.edu.school21.sockets.services.ActiveConnectionStorage;
 import ex01.edu.school21.sockets.services.UsersService;
