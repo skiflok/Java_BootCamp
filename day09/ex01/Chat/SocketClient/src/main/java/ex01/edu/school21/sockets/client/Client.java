@@ -37,9 +37,8 @@ public class Client {
   }
 
   private void startSession() throws IOException, ClassNotFoundException {
-
+    logger.info("");
     while (true) {
-//      logger.info("startSession while");
       Message msg = connection.receive();
       switch (msg.getMessageType()) {
         case MENU:
@@ -55,6 +54,7 @@ public class Client {
   }
 
   private void menuRequest() throws IOException, ClassNotFoundException {
+    logger.info("menuRequest");
     ConsoleHelper.writeMessage("Выберите пункт меню");
     String input = ConsoleHelper.readString();
     switch (input.toLowerCase().trim()) {
@@ -74,7 +74,7 @@ public class Client {
   }
 
   private void signUp() throws IOException, ClassNotFoundException {
-
+    logger.info("signUp");
     Message incomeMsg;
 
     while (!isConnected) {
@@ -97,9 +97,9 @@ public class Client {
       if (incomeMsg.getMessageType() != SIGN_UP_SUCCESS) {
         continue;
       }
-      ConsoleHelper.writeMessage(incomeMsg.getMessage());
       isConnected = true;
-
+      logger.info("isConnected = true");
+      ConsoleHelper.writeMessage(incomeMsg.getMessage());
     }
   }
 

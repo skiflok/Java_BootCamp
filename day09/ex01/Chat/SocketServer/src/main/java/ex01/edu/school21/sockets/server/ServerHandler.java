@@ -4,7 +4,6 @@ import static ex01.edu.school21.sockets.models.MessageType.*;
 
 import ex01.edu.school21.sockets.models.Connection;
 import ex01.edu.school21.sockets.models.Message;
-import ex01.edu.school21.sockets.models.MessageType;
 import ex01.edu.school21.sockets.models.User;
 import ex01.edu.school21.sockets.services.UsersService;
 import java.io.IOException;
@@ -36,16 +35,18 @@ public class ServerHandler implements Runnable {
 
     while (true) {
 
+      logger.info("");
       printMenu();
       selectHandler();
-      connection.close();
-      break;
+//      connection.close();
+//      break;
     }
 
 
   }
 
   private void printMenu() throws IOException {
+    logger.info("");
     connection.send(new Message(MENU, "Hello from Server!"));
     connection.send(new Message(MENU, "Available commands:"));
     connection.send(new Message(MENU, "signUp"));
@@ -56,22 +57,25 @@ public class ServerHandler implements Runnable {
 
   private void selectHandler() throws IOException, ClassNotFoundException {
 
+    logger.info("func selectHandler");
     while (true) {
 
       Message msg = connection.receive();
       switch (msg.getMessageType()) {
         case SIGNUP:
+          logger.info(msg.getMessageType().toString());
           connection.send(new Message(MENU, "Сервер " + "SIGNUP"));
           signUp();
-          logger.info(msg.getMessageType().toString());
-          break;
+          return;
         case LOGIN:
+          logger.info(msg.getMessageType().toString());
           connection.send(new Message(MENU, "Сервер " + "LOGIN"));
           break;
         case EXIT:
           connection.send(new Message(MENU, "Сервер " + "EXIT"));
           break;
         default:
+          logger.info(msg.getMessageType().toString());
           connection.send(new Message(MENU_REQUEST, "Неверная команда"));
           printMenu();
           break;
@@ -81,6 +85,7 @@ public class ServerHandler implements Runnable {
 
 
   private void signUp() throws IOException, ClassNotFoundException {
+    logger.info("");
     String userName = null;
     String password = null;
     Message incomeMsg;
@@ -110,7 +115,7 @@ public class ServerHandler implements Runnable {
       user = new User(null, userName, password);
       usersService.signUp(user);
       connection.send(new Message(SIGN_UP_SUCCESS, "Successful!"));
-      logger.info("пользователь {} подключился с IP {}", userName,
+      logger.info("пользователь {} зарегистрировался с IP {}", userName,
           connection.getRemoteSocketAddress());
     }
 
