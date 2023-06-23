@@ -11,6 +11,7 @@ import ex01.edu.school21.sockets.services.UsersService;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Optional;
+import javax.jws.soap.SOAPBinding.Use;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,8 @@ public class ServerHandler implements Runnable {
   private final UsersRepository usersRepository;
   private final PasswordEncoder passwordEncoder;
   private final ActiveConnectionStorage activeConnectionStorage;
+
+  private User user;
 
   public ServerHandler(
       Socket socket,
@@ -57,6 +60,7 @@ public class ServerHandler implements Runnable {
 
     }
 
+    activeConnectionStorage.removeUser(user.getName());
     connection.close();
 
   }
@@ -110,7 +114,7 @@ public class ServerHandler implements Runnable {
   public void sendBroadcastMessage(Message message) {
     for (Connection connection : activeConnectionStorage.getConnectionList()) {
       try {
-        connection.send(message);
+        connection.send(new Message(TEXT, user.getName() + ": " + message.getMessage()));
       } catch (IOException e) {
         logger.info("Не смогли отправить сообщение {}", e.getMessage());
       }
@@ -124,6 +128,7 @@ public class ServerHandler implements Runnable {
 
       msg = connection.receive();
       if (msg.getMessageType() == EXIT) {
+        logger.info("Пользователь {} c IP {} отключился", user.getName(), connection.getRemoteSocketAddress());
         break;
       }
       if (msg.getMessageType() == TEXT) {
@@ -141,7 +146,7 @@ public class ServerHandler implements Runnable {
     String password;
     Message incomeMsg;
     User user;
-    boolean passCorrect = false;
+    boolean passCorrect;
 
     while (true) {
 
@@ -162,8 +167,6 @@ public class ServerHandler implements Runnable {
       password = incomeMsg.getMessage();
       logger.info("password {}", password);
 
-      // todo
-
       user = new User(null, userName, password);
 
       Optional<User> optionalUserFromDB = usersRepository.findByName(userName);
@@ -181,6 +184,7 @@ public class ServerHandler implements Runnable {
 
       if (passCorrect) {
         connection.send(new Message(SIGN_IN_SUCCESS, "Log in Successful!"));
+        this.user = user;
         activeConnectionStorage.addUser(userName, connection);
         logger.info("пользователь {} подключился к чату с IP {}", userName,
             connection.getRemoteSocketAddress());

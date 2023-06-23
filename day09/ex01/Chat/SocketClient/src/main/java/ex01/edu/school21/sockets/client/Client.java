@@ -75,22 +75,35 @@ public class Client {
     }
   }
 
-  private void startChat () throws IOException, ClassNotFoundException {
+  private void startChat() throws IOException, ClassNotFoundException {
     logger.info("");
 
     new Thread(() -> {
+      String msg;
       while (true) {
+        msg = ConsoleHelper.readString();
+        if ("exit".equals(msg)) {
+          break;
+        }
         try {
-          connection.send(new Message(TEXT, ConsoleHelper.readString()));
+          connection.send(new Message(TEXT, msg));
         } catch (IOException e) {
           throw new RuntimeException(e);
         }
       }
+      try {
+        connection.send(new Message(EXIT));
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+
     }).start();
 
-    while (true) {
-        ConsoleHelper.writeMessage(connection.receive().getMessage());
-    }
+    Message msg;
+    do {
+      msg = connection.receive();
+      ConsoleHelper.writeMessage(msg.getMessage());
+    } while (msg.getMessageType() != EXIT);
 
   }
 
@@ -146,7 +159,7 @@ public class Client {
 
       incomeMsg = connection.receive();
       logger.info(incomeMsg.getMessageType().toString());
-      if (incomeMsg.getMessageType() != SIGN_IN_SUCCESS && incomeMsg.getMessageType() != EXIT){
+      if (incomeMsg.getMessageType() != SIGN_IN_SUCCESS && incomeMsg.getMessageType() != EXIT) {
         logger.debug("continue");
         continue;
       }
