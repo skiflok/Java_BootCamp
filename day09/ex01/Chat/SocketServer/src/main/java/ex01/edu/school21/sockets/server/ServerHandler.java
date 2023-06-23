@@ -5,12 +5,17 @@ import static ex01.edu.school21.sockets.models.MessageType.*;
 import ex01.edu.school21.sockets.models.Connection;
 import ex01.edu.school21.sockets.models.Message;
 import ex01.edu.school21.sockets.models.User;
+import ex01.edu.school21.sockets.repositories.UsersRepository;
 import ex01.edu.school21.sockets.services.UsersService;
+import ex01.edu.school21.sockets.utils.ConsoleHelper;
+import java.io.Console;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Optional;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class ServerHandler implements Runnable {
 
@@ -21,10 +26,19 @@ public class ServerHandler implements Runnable {
   private boolean isExit;
   private Connection connection;
   private final UsersService usersService;
+  private final UsersRepository usersRepository;
 
-  public ServerHandler(Socket socket, UsersService usersService) {
+  private final PasswordEncoder passwordEncoder;
+
+  public ServerHandler(
+      Socket socket,
+      UsersService usersService,
+      UsersRepository usersRepository,
+      PasswordEncoder passwordEncoder) {
     this.socket = socket;
     this.usersService = usersService;
+    this.usersRepository = usersRepository;
+    this.passwordEncoder = passwordEncoder;
   }
 
 
@@ -39,10 +53,9 @@ public class ServerHandler implements Runnable {
       logger.info("");
       printMenu();
       selectHandler();
-//      connection.close();
-//      break;
     }
 
+    connection.close();
 
   }
 
@@ -70,8 +83,8 @@ public class ServerHandler implements Runnable {
           return;
         case LOGIN:
           logger.info(msg.getMessageType().toString());
-          connection.send(new Message(MENU, "Сервер " + "LOGIN"));
-          break;
+          isExit = !signIn();
+          return;
         case EXIT:
           connection.send(new Message(MENU, "Сервер " + "EXIT"));
           logger.info("Клиент {} отключился", connection.getRemoteSocketAddress());
@@ -87,11 +100,69 @@ public class ServerHandler implements Runnable {
     }
   }
 
+  private boolean signIn() throws IOException, ClassNotFoundException {
+
+    logger.info("");
+    String userName;
+    String password;
+    Message incomeMsg;
+    User user;
+    boolean passCorrect = false;
+
+    while (true) {
+
+      connection.send(new Message(NAME_REQUEST, "Enter username:"));
+      incomeMsg = connection.receive();
+      if (incomeMsg.getMessageType() != USER_NAME) {
+        continue;
+      }
+      userName = incomeMsg.getMessage();
+      logger.info("userName {}", userName);
+
+      connection.send(new Message(PASSWORD_REQUEST, "Enter password:"));
+      incomeMsg = connection.receive();
+
+      if (incomeMsg.getMessageType() != PASSWORD) {
+        continue;
+      }
+      password = incomeMsg.getMessage();
+      logger.info("password {}", password);
+
+      // todo
+
+      user = new User(null, userName, password);
+
+      Optional<User> optionalUserFromDB = usersRepository.findByName(userName);
+
+      if (!optionalUserFromDB.isPresent()) {
+        logger.info("Неккоректный ввод userName");
+        connection.send(new Message(EXIT, "Юзер не существует"));
+        return false;
+      }
+
+      passCorrect = passwordEncoder.matches(password, optionalUserFromDB.get().getPassword());
+      logger.info("Password match = " + passCorrect);
+      logger.info("User income {}", user);
+      logger.info("User DB {}", optionalUserFromDB.get());
+
+      if (passCorrect) {
+        connection.send(new Message(SIGN_IN_SUCCESS, "Log in Successful!"));
+        logger.info("пользователь {} подключился к чату с IP {}", userName,
+            connection.getRemoteSocketAddress());
+        return true;
+      }
+
+      logger.info("Неверный пароль");
+      connection.send(new Message(EXIT, "Неверный пароль"));
+
+      return false;
+    }
+  }
 
   private void signUp() throws IOException, ClassNotFoundException {
     logger.info("");
-    String userName = null;
-    String password = null;
+    String userName;
+    String password;
     Message incomeMsg;
     User user;
 

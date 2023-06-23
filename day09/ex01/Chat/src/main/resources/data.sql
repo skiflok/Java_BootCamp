@@ -8,4 +8,5 @@ insert into chat.users(name, password) values
 ('Florentina', 'dexter'),
 ('Eliseo', 'athena'),
 ('Martha', 'cookie'),
-('Shayna', 'fluffy');
+('Shayna', 'fluffy'),
+('qwe', '123');

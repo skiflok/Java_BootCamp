@@ -6,6 +6,7 @@ public enum MessageType {
   USER_NAME, // имя пользователя
   PASSWORD, // пароль
   SIGN_UP_SUCCESS, // пользователь зарегистрирован
+  SIGN_IN_SUCCESS, // пользователь залогинился
   NAME_ACCEPTED, // имя принято
   TEXT, // текстовое сообщение
   USER_ADDED, // пользователь добавлен

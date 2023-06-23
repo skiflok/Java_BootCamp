@@ -64,6 +64,8 @@ public class Client {
         break;
       case "login":
         connection.send(new Message(LOGIN));
+        signIn();
+        startChat();
         break;
       case "exit":
         connection.send(new Message(EXIT));
@@ -71,6 +73,10 @@ public class Client {
       default:
         break;
     }
+  }
+
+  private void startChat () {
+    logger.info("");
   }
 
   private void signUp() throws IOException, ClassNotFoundException {
@@ -100,6 +106,38 @@ public class Client {
       isConnected = true;
       logger.info("isConnected = true");
       ConsoleHelper.writeMessage(incomeMsg.getMessage());
+    }
+  }
+
+  private void signIn() throws IOException, ClassNotFoundException {
+    logger.info("LogIn");
+    Message incomeMsg;
+
+    while (true) {
+
+      incomeMsg = connection.receive();
+      if (incomeMsg.getMessageType() != NAME_REQUEST) {
+        continue;
+      }
+      ConsoleHelper.writeMessage(incomeMsg.getMessage());
+      connection.send(new Message(USER_NAME, ConsoleHelper.readString()));
+
+      incomeMsg = connection.receive();
+      if (incomeMsg.getMessageType() != PASSWORD_REQUEST) {
+        continue;
+      }
+      ConsoleHelper.writeMessage(incomeMsg.getMessage());
+      connection.send(new Message(PASSWORD, ConsoleHelper.readString()));
+
+      incomeMsg = connection.receive();
+      logger.info(incomeMsg.getMessageType().toString());
+      if (incomeMsg.getMessageType() != SIGN_IN_SUCCESS && incomeMsg.getMessageType() != EXIT){
+        logger.debug("continue");
+        continue;
+      }
+
+      ConsoleHelper.writeMessage(incomeMsg.getMessage());
+      break;
     }
   }
 

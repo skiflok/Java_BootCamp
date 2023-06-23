@@ -27,7 +27,7 @@ public class UsersServiceImpl implements UsersService {
   }
 
   @Override
-  public String signUp(User user) {
+  public synchronized String signUp(User user) {
 
     if (user.getName().isEmpty()) {
       throw new IllegalArgumentException("Name isEmpty");
