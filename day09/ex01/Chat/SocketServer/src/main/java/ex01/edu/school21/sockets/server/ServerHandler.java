@@ -18,6 +18,7 @@ public class ServerHandler implements Runnable {
 
   private final Socket socket;
   private boolean isConnected;
+  private boolean isExit;
   private Connection connection;
   private final UsersService usersService;
 
@@ -33,7 +34,7 @@ public class ServerHandler implements Runnable {
     connection = new Connection(socket);
     logger.info("Подключение клиента с удаленного адреса {}", connection.getRemoteSocketAddress());
 
-    while (true) {
+    while (!isExit) {
 
       logger.info("");
       printMenu();
@@ -73,7 +74,10 @@ public class ServerHandler implements Runnable {
           break;
         case EXIT:
           connection.send(new Message(MENU, "Сервер " + "EXIT"));
-          break;
+          logger.info("Клиент {} отключился", connection.getRemoteSocketAddress());
+          connection.close();
+          isExit = true;
+          return;
         default:
           logger.info(msg.getMessageType().toString());
           connection.send(new Message(MENU_REQUEST, "Неверная команда"));
