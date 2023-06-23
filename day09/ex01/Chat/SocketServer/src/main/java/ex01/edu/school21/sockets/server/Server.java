@@ -4,8 +4,8 @@ import ex01.edu.school21.sockets.config.SocketsApplicationConfig;
 import ex01.edu.school21.sockets.repositories.UsersRepository;
 import ex01.edu.school21.sockets.repositories.UsersRepositoryJdbcTemplateImpl;
 import ex01.edu.school21.sockets.repositories.utils.DataBaseInitializer;
+import ex01.edu.school21.sockets.services.ActiveConnectionStorage;
 import ex01.edu.school21.sockets.services.UsersService;
-import ex01.edu.school21.sockets.utils.ConsoleHelper;
 import java.net.ServerSocket;
 import java.net.Socket;
 import org.slf4j.Logger;
@@ -22,8 +22,8 @@ public class Server {
 
   private final UsersService usersService;
   private final UsersRepository usersRepository;
-
   private final PasswordEncoder passwordEncoder;
+  private final ActiveConnectionStorage activeConnectionStorage;
 
   public Server(int port) {
     this.port = port;
@@ -34,10 +34,10 @@ public class Server {
         UsersRepositoryJdbcTemplateImpl.class);
     usersService = ctx.getBean("usersServiceImpl", UsersService.class);
     passwordEncoder = ctx.getBean("encoder", PasswordEncoder.class);
+    activeConnectionStorage = ctx.getBean("activeConnectionStorage", ActiveConnectionStorage.class);
   }
 
   public void start() {
-
 
     try (ServerSocket serverSocket = new ServerSocket(port)) {
       logger.info("Сервер запущен на порту {}", port);
@@ -47,7 +47,8 @@ public class Server {
         ServerHandler serverHandler = new ServerHandler(socket,
             usersService,
             usersRepository,
-            passwordEncoder);
+            passwordEncoder,
+            activeConnectionStorage);
         new Thread(serverHandler).start();
       }
 

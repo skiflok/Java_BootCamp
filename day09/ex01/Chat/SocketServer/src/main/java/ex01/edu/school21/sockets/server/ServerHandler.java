@@ -6,9 +6,8 @@ import ex01.edu.school21.sockets.models.Connection;
 import ex01.edu.school21.sockets.models.Message;
 import ex01.edu.school21.sockets.models.User;
 import ex01.edu.school21.sockets.repositories.UsersRepository;
+import ex01.edu.school21.sockets.services.ActiveConnectionStorage;
 import ex01.edu.school21.sockets.services.UsersService;
-import ex01.edu.school21.sockets.utils.ConsoleHelper;
-import java.io.Console;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Optional;
@@ -24,21 +23,23 @@ public class ServerHandler implements Runnable {
   private final Socket socket;
   private boolean isConnected;
   private boolean isExit;
+  private boolean isChatting;
   private Connection connection;
   private final UsersService usersService;
   private final UsersRepository usersRepository;
-
   private final PasswordEncoder passwordEncoder;
+  private final ActiveConnectionStorage activeConnectionStorage;
 
   public ServerHandler(
       Socket socket,
       UsersService usersService,
       UsersRepository usersRepository,
-      PasswordEncoder passwordEncoder) {
+      PasswordEncoder passwordEncoder, ActiveConnectionStorage activeConnectionStorage) {
     this.socket = socket;
     this.usersService = usersService;
     this.usersRepository = usersRepository;
     this.passwordEncoder = passwordEncoder;
+    this.activeConnectionStorage = activeConnectionStorage;
   }
 
 
@@ -53,6 +54,7 @@ public class ServerHandler implements Runnable {
       logger.info("");
       printMenu();
       selectHandler();
+
     }
 
     connection.close();
@@ -83,7 +85,12 @@ public class ServerHandler implements Runnable {
           return;
         case LOGIN:
           logger.info(msg.getMessageType().toString());
-          isExit = !signIn();
+          isChatting = signIn();
+
+          if (isChatting) {
+            startChatting();
+          }
+          isExit = true;
           return;
         case EXIT:
           connection.send(new Message(MENU, "Сервер " + "EXIT"));
@@ -98,6 +105,33 @@ public class ServerHandler implements Runnable {
           break;
       }
     }
+  }
+
+  public void sendBroadcastMessage(Message message) {
+    for (Connection connection : activeConnectionStorage.getConnectionList()) {
+      try {
+        connection.send(message);
+      } catch (IOException e) {
+        logger.info("Не смогли отправить сообщение {}", e.getMessage());
+      }
+    }
+  }
+
+  private void startChatting() throws IOException, ClassNotFoundException {
+    Message msg;
+    while (true) {
+      logger.info("");
+
+      msg = connection.receive();
+      if (msg.getMessageType() == EXIT) {
+        break;
+      }
+      if (msg.getMessageType() == TEXT) {
+        sendBroadcastMessage(msg);
+      }
+
+    }
+
   }
 
   private boolean signIn() throws IOException, ClassNotFoundException {
@@ -147,6 +181,7 @@ public class ServerHandler implements Runnable {
 
       if (passCorrect) {
         connection.send(new Message(SIGN_IN_SUCCESS, "Log in Successful!"));
+        activeConnectionStorage.addUser(userName, connection);
         logger.info("пользователь {} подключился к чату с IP {}", userName,
             connection.getRemoteSocketAddress());
         return true;

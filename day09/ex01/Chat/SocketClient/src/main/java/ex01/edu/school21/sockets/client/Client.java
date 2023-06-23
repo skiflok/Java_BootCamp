@@ -75,8 +75,23 @@ public class Client {
     }
   }
 
-  private void startChat () {
+  private void startChat () throws IOException, ClassNotFoundException {
     logger.info("");
+
+    new Thread(() -> {
+      while (true) {
+        try {
+          connection.send(new Message(TEXT, ConsoleHelper.readString()));
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        }
+      }
+    }).start();
+
+    while (true) {
+        ConsoleHelper.writeMessage(connection.receive().getMessage());
+    }
+
   }
 
   private void signUp() throws IOException, ClassNotFoundException {
