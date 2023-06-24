@@ -1,12 +1,16 @@
 package ex01.edu.school21.sockets.repositories.messageRepositories;
 
 import ex01.edu.school21.sockets.models.Message;
-import ex01.edu.school21.sockets.models.User;
 import ex01.edu.school21.sockets.repositories.userRepositories.UsersRepository;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import javax.sql.DataSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,9 +19,11 @@ public class MessageRepositoryImpl implements MessageRepository {
   private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
   private final UsersRepository usersRepository;
 
-  public MessageRepositoryImpl(NamedParameterJdbcTemplate namedParameterJdbcTemplate,
+  @Autowired
+  public MessageRepositoryImpl(
+      DataSource ds,
       UsersRepository usersRepository) {
-    this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+    this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(ds);
     this.usersRepository = usersRepository;
   }
 
@@ -31,9 +37,10 @@ public class MessageRepositoryImpl implements MessageRepository {
     return namedParameterJdbcTemplate.query(sql, params, (rs) -> {
       if (rs.next()) {
         return Optional.of(new Message(
+            rs.getLong("id"),
             usersRepository.findById(rs.getLong("id")).orElseThrow(IllegalArgumentException::new),
             rs.getString("text"),
-            rs.getString("password")
+            rs.getTimestamp("date_time").toLocalDateTime()
         ));
       }
       return Optional.empty();
@@ -47,7 +54,16 @@ public class MessageRepositoryImpl implements MessageRepository {
 
   @Override
   public void save(Message entity) {
+    String sql = "insert into chat.message (author, text, date_time) values (:author, :text, :date_time)";
+    MapSqlParameterSource params = new MapSqlParameterSource();
+    params
+        .addValue("author", entity.getUser().getId())
+        .addValue("text", entity.getMessage())
+        .addValue("date_time", entity.getLocalDateTime());
 
+    KeyHolder keyHolder = new GeneratedKeyHolder();
+    namedParameterJdbcTemplate.update(sql, params, keyHolder);
+    entity.setId((Long) Objects.requireNonNull(keyHolder.getKeys()).get("id"));
   }
 
   @Override

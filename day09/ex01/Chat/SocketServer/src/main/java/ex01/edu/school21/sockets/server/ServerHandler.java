@@ -5,11 +5,13 @@ import static ex01.edu.school21.sockets.models.MessageType.*;
 import ex01.edu.school21.sockets.models.Connection;
 import ex01.edu.school21.sockets.models.Message;
 import ex01.edu.school21.sockets.models.User;
+import ex01.edu.school21.sockets.repositories.messageRepositories.MessageRepository;
 import ex01.edu.school21.sockets.repositories.userRepositories.UsersRepository;
 import ex01.edu.school21.sockets.services.ActiveConnectionStorage;
 import ex01.edu.school21.sockets.services.UsersService;
 import java.io.IOException;
 import java.net.Socket;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
@@ -27,6 +29,8 @@ public class ServerHandler implements Runnable {
   private Connection connection;
   private final UsersService usersService;
   private final UsersRepository usersRepository;
+
+  private final MessageRepository messageRepository;
   private final PasswordEncoder passwordEncoder;
   private final ActiveConnectionStorage activeConnectionStorage;
 
@@ -36,10 +40,13 @@ public class ServerHandler implements Runnable {
       Socket socket,
       UsersService usersService,
       UsersRepository usersRepository,
-      PasswordEncoder passwordEncoder, ActiveConnectionStorage activeConnectionStorage) {
+      MessageRepository messageRepository,
+      PasswordEncoder passwordEncoder,
+      ActiveConnectionStorage activeConnectionStorage) {
     this.socket = socket;
     this.usersService = usersService;
     this.usersRepository = usersRepository;
+    this.messageRepository = messageRepository;
     this.passwordEncoder = passwordEncoder;
     this.activeConnectionStorage = activeConnectionStorage;
   }
@@ -113,7 +120,7 @@ public class ServerHandler implements Runnable {
   public void sendBroadcastMessage(Message message) {
     for (Connection connection : activeConnectionStorage.getConnectionList()) {
       try {
-        connection.send(new Message(TEXT, user.getName() + ": " + message.getMessage()));
+        connection.send(message);
       } catch (IOException e) {
         logger.info("Не смогли отправить сообщение {}", e.getMessage());
       }
@@ -131,7 +138,13 @@ public class ServerHandler implements Runnable {
         break;
       }
       if (msg.getMessageType() == TEXT) {
+        msg.setUser(this.user);
+        msg.setLocalDateTime(LocalDateTime.now());
         sendBroadcastMessage(msg);
+        logger.info("this.user = {}", user);
+        logger.info("LocalDateTime.now() = {}", LocalDateTime.now());
+        logger.info("msg.getUser.getId = {}", msg.getUser().getId());
+        messageRepository.save(msg);
       }
 
     }
@@ -184,6 +197,7 @@ public class ServerHandler implements Runnable {
       if (passCorrect) {
         connection.send(new Message(SIGN_IN_SUCCESS, "Log in Successful!"));
         this.user = user;
+        this.user.setId(optionalUserFromDB.get().getId());
         activeConnectionStorage.addUser(userName, connection);
         logger.info("пользователь {} подключился к чату с IP {}", userName,
             connection.getRemoteSocketAddress());
@@ -226,7 +240,15 @@ public class ServerHandler implements Runnable {
       isConnected = true;
 
       user = new User(null, userName, password);
-      usersService.signUp(user);
+
+      try {
+        usersService.signUp(user);
+      } catch (IllegalArgumentException e) {
+        logger.info(e.getMessage());
+        connection.send(new Message(EXIT, "is already register!"));
+        return;
+      }
+
       connection.send(new Message(SIGN_UP_SUCCESS, "Successful!"));
       logger.info("пользователь {} зарегистрировался с IP {}", userName,
           connection.getRemoteSocketAddress());

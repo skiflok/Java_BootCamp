@@ -102,7 +102,7 @@ public class Client {
     Message msg;
     do {
       msg = connection.receive();
-      ConsoleHelper.writeMessage(msg.getMessage());
+      ConsoleHelper.writeMessage(msg.getUser().getName() + ": " + msg.getMessage());
     } while (msg.getMessageType() != EXIT);
 
   }

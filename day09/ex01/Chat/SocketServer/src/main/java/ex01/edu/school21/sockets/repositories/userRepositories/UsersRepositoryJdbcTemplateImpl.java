@@ -1,13 +1,14 @@
 package ex01.edu.school21.sockets.repositories.userRepositories;
 
+
 import ex01.edu.school21.sockets.models.User;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 
 import java.util.Objects;
 import javax.sql.DataSource;
-import java.util.List;
 import java.util.Optional;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;

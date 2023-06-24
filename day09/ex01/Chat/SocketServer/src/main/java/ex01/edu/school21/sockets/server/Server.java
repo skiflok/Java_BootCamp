@@ -1,6 +1,7 @@
 package ex01.edu.school21.sockets.server;
 
 import ex01.edu.school21.sockets.config.SocketsApplicationConfig;
+import ex01.edu.school21.sockets.repositories.messageRepositories.MessageRepository;
 import ex01.edu.school21.sockets.repositories.userRepositories.UsersRepository;
 import ex01.edu.school21.sockets.repositories.userRepositories.UsersRepositoryJdbcTemplateImpl;
 import ex01.edu.school21.sockets.repositories.utils.DataBaseInitializer;
@@ -22,6 +23,7 @@ public class Server {
 
   private final UsersService usersService;
   private final UsersRepository usersRepository;
+  private final MessageRepository messageRepository;
   private final PasswordEncoder passwordEncoder;
   private final ActiveConnectionStorage activeConnectionStorage;
 
@@ -33,6 +35,7 @@ public class Server {
     usersRepository = ctx.getBean("usersRepositoryJdbcTemplateImpl",
         UsersRepositoryJdbcTemplateImpl.class);
     usersService = ctx.getBean("usersServiceImpl", UsersService.class);
+    messageRepository = ctx.getBean("messageRepositoryImpl", MessageRepository.class);
     passwordEncoder = ctx.getBean("encoder", PasswordEncoder.class);
     activeConnectionStorage = ctx.getBean("activeConnectionStorage", ActiveConnectionStorage.class);
   }
@@ -47,6 +50,7 @@ public class Server {
         ServerHandler serverHandler = new ServerHandler(socket,
             usersService,
             usersRepository,
+            messageRepository,
             passwordEncoder,
             activeConnectionStorage);
         new Thread(serverHandler).start();
