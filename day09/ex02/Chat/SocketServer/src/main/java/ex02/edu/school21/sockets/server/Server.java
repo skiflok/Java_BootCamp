@@ -31,7 +31,7 @@ public class Server {
     this.port = port;
     ApplicationContext ctx = new AnnotationConfigApplicationContext(
         SocketsApplicationConfig.class);
-    ctx.getBean("dataBaseInitializer", DataBaseInitializer.class).init();
+//    ctx.getBean("dataBaseInitializer", DataBaseInitializer.class).init();
     usersRepository = ctx.getBean("usersRepositoryJdbcTemplateImpl",
         UsersRepositoryJdbcTemplateImpl.class);
     usersService = ctx.getBean("usersServiceImpl", UsersService.class);
