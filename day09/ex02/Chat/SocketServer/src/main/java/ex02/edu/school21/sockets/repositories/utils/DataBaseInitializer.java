@@ -38,11 +38,8 @@ public class DataBaseInitializer {
       logger.debug("Директория запуска {}", Paths.get("./").toAbsolutePath().normalize());
 
       String sql = Files.lines(Paths.get(schemaPath).normalize().toAbsolutePath()).collect(Collectors.joining("\n"));
-      String data = Files.lines(Paths.get(dataPath).normalize().toAbsolutePath()).collect(Collectors.joining("\n"));
       logger.debug("sql\n {}", sql);
-      logger.debug("data\n {}", data);
       statement.executeUpdate(sql);
-      statement.executeUpdate(data);
     } catch (Exception e) {
       e.printStackTrace();
     }

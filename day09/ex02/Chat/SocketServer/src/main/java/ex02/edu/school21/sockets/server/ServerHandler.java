@@ -261,9 +261,21 @@ public class ServerHandler implements Runnable {
 }
 
 /*
-    1. Регистрация
-    2. Вход (в случае, если пользователь не обнаружен - обрывать соединение).
-    3. Отправка сообщения (каждый пользователь, подключенный к серверу, должен
-    получить данное сообщение)
-    4. Выход
+Hello from Server! 1. signIn
+2. SignUp
+3. Exit >1
+Enter username:
+> Marsel
+Enter password:
+> qwerty007
+1. Create room 2. Choose room 3. Exit
+>2 Rooms:
+1. First Room 2. SimpleRoom 3. JavaRoom 4. Exit
+>3
+Java Room ---
+JavaMan: Hello!
+> Hello!
+Marsel: Hello!
+> Exit
+You have left the chat.
 */
