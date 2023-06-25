@@ -1,5 +1,6 @@
 package ex02.edu.school21.sockets.utils.comand;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 public class CommandExecutor {
@@ -10,7 +11,7 @@ public class CommandExecutor {
     commandMap.put(commandName, command);
   }
 
-  public void exec(String commandName)  {
+  public void exec(String commandName) throws IOException {
     Command command = commandMap.get(commandName);
     if (command == null) {
       throw new IllegalStateException("не зарегистрирована команда для " + commandName);

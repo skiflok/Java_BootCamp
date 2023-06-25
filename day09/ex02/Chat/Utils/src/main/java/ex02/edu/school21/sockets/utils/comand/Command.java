@@ -1,6 +1,8 @@
 package ex02.edu.school21.sockets.utils.comand;
 
+import java.io.IOException;
+
 @FunctionalInterface
 public interface Command {
-    void exec();
+    void exec() throws IOException;
 }
