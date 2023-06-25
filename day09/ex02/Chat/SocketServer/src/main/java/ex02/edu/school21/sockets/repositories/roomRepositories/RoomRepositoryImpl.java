@@ -5,6 +5,7 @@ import ex02.edu.school21.sockets.repositories.userRepositories.UsersRepository;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -16,13 +17,10 @@ import org.springframework.stereotype.Component;
 public class RoomRepositoryImpl implements RoomRepository {
 
   private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-  private final UsersRepository usersRepository;
 
   @Autowired
-  public RoomRepositoryImpl(NamedParameterJdbcTemplate namedParameterJdbcTemplate,
-      UsersRepository usersRepository) {
-    this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
-    this.usersRepository = usersRepository;
+  public RoomRepositoryImpl(DataSource ds) {
+    namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(ds);
   }
 
   @Override
@@ -45,7 +43,7 @@ public class RoomRepositoryImpl implements RoomRepository {
 
   @Override
   public List<Room> findAll() {
-    return namedParameterJdbcTemplate.query("select * from chat_rooms order by id",
+    return namedParameterJdbcTemplate.query("select * from chat.chat_rooms order by id",
         (rs, rowNum) -> {
           return new Room(rs.getLong("id"), rs.getString("name"), null);
         });

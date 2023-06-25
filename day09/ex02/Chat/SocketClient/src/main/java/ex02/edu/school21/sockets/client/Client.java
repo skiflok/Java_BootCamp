@@ -28,7 +28,6 @@ public class Client {
 
       connection = new Connection(new Socket("localhost", port));
       startSession();
-//      signUp();
 
     } catch (Exception e) {
       logger.warn("Произошла ошибка при запуске или работе клиента {}", e.getMessage());
@@ -65,6 +64,7 @@ public class Client {
       case "login":
         connection.send(new Message(LOGIN));
         signIn();
+        roomMenu();
         startChat();
         break;
       case "exit":
@@ -72,6 +72,19 @@ public class Client {
         break;
       default:
         break;
+    }
+  }
+
+  private void roomMenu() throws IOException, ClassNotFoundException {
+    logger.info("");
+    Message msg;
+    while (true) {
+      msg = connection.receive();
+      if (msg.getMessageType() == SUCCESS) {
+        break;
+      }
+      ConsoleHelper.writeMessage(msg.getMessage());
+      connection.send(new Message(TEXT, ConsoleHelper.readString()));
     }
   }
 

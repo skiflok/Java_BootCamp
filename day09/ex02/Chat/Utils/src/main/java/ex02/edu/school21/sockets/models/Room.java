@@ -1,14 +1,14 @@
 package ex02.edu.school21.sockets.models;
 
+import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Room {
+public class Room implements Serializable {
 
   private Long id;
   private String name;

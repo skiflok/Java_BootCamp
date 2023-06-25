@@ -11,14 +11,22 @@ public class Message implements Serializable {
 
   private Long id;
   private User user;
+
+  private Room room;
   private String message;
   private LocalDateTime localDateTime;
-  private transient final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm");
+  private transient final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(
+      "dd/MM/yy HH:mm");
   private MessageType messageType;
 
-  public Message(Long id, User user, String message, LocalDateTime localDateTime) {
+  public Message(Long id,
+      User user,
+      Room room,
+      String message,
+      LocalDateTime localDateTime) {
     this.id = id;
     this.user = user;
+    this.room = room;
     this.message = message;
     this.localDateTime = localDateTime;
   }

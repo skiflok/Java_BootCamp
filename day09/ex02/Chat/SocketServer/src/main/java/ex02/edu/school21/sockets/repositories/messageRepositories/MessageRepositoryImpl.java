@@ -39,6 +39,7 @@ public class MessageRepositoryImpl implements MessageRepository {
         return Optional.of(new Message(
             rs.getLong("id"),
             usersRepository.findById(rs.getLong("id")).orElseThrow(IllegalArgumentException::new),
+            null,
             rs.getString("text"),
             rs.getTimestamp("date_time").toLocalDateTime()
         ));
@@ -54,10 +55,11 @@ public class MessageRepositoryImpl implements MessageRepository {
 
   @Override
   public void save(Message entity) {
-    String sql = "insert into chat.message (author, text, date_time) values (:author, :text, :date_time)";
+    String sql = "insert into chat.message (author, room, text, date_time) values (:author, :room,:text, :date_time)";
     MapSqlParameterSource params = new MapSqlParameterSource();
     params
         .addValue("author", entity.getUser().getId())
+        .addValue("room", entity.getRoom().getId())
         .addValue("text", entity.getMessage())
         .addValue("date_time", entity.getLocalDateTime());
 

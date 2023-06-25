@@ -4,15 +4,19 @@ import static ex02.edu.school21.sockets.models.MessageType.*;
 
 import ex02.edu.school21.sockets.models.Connection;
 import ex02.edu.school21.sockets.models.Message;
+import ex02.edu.school21.sockets.models.Room;
 import ex02.edu.school21.sockets.models.User;
 import ex02.edu.school21.sockets.repositories.messageRepositories.MessageRepository;
+import ex02.edu.school21.sockets.repositories.roomRepositories.RoomRepository;
 import ex02.edu.school21.sockets.repositories.userRepositories.UsersRepository;
 import ex02.edu.school21.sockets.services.ActiveConnectionStorage;
 import ex02.edu.school21.sockets.services.UsersService;
 import java.io.IOException;
 import java.net.Socket;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,22 +35,26 @@ public class ServerHandler implements Runnable {
   private final UsersRepository usersRepository;
 
   private final MessageRepository messageRepository;
+
+  private final RoomRepository roomRepository;
   private final PasswordEncoder passwordEncoder;
   private final ActiveConnectionStorage activeConnectionStorage;
 
   private User user;
+  private Room room;
 
   public ServerHandler(
       Socket socket,
       UsersService usersService,
       UsersRepository usersRepository,
       MessageRepository messageRepository,
-      PasswordEncoder passwordEncoder,
+      RoomRepository roomRepository, PasswordEncoder passwordEncoder,
       ActiveConnectionStorage activeConnectionStorage) {
     this.socket = socket;
     this.usersService = usersService;
     this.usersRepository = usersRepository;
     this.messageRepository = messageRepository;
+    this.roomRepository = roomRepository;
     this.passwordEncoder = passwordEncoder;
     this.activeConnectionStorage = activeConnectionStorage;
   }
@@ -98,6 +106,7 @@ public class ServerHandler implements Runnable {
           isChatting = signIn();
 
           if (isChatting) {
+            roomMenu();
             startChatting();
           }
           isExit = true;
@@ -117,6 +126,69 @@ public class ServerHandler implements Runnable {
     }
   }
 
+  private void roomMenu() throws IOException, ClassNotFoundException {
+    logger.info("");
+    Message msg;
+    while (true) {
+      connection.send(new Message(TEXT, "Room menu"
+          + "\n 1. Create room"
+          + "\n 2. Choose room"
+          + "\n 3. Exit"));
+      msg = connection.receive();
+
+      switch (msg.getMessage()) {
+        case "1":
+          createRoom();
+          break;
+        case "2":
+          chooseRoom();
+          break;
+        case "3":
+          exit();
+          return;
+        default:
+          break;
+      }
+    }
+
+
+  }
+
+  private void createRoom() throws IOException, ClassNotFoundException {
+    Message msg;
+    logger.info("");
+    connection.send(new Message(TEXT, "введите название комнаты"));
+    msg = connection.receive();
+    roomRepository.save(new Room(null, msg.getMessage(), user));
+
+    // todo проверки
+  }
+
+  private void chooseRoom() throws IOException, ClassNotFoundException {
+    logger.info("");
+    Message msg;
+    logger.info("");
+    List<Room> rooms = roomRepository.findAll();
+    connection.send(new Message(TEXT, rooms.stream()
+        .map(room -> room.getId() + ". " + room.getName())
+        .collect(Collectors.joining("\n"))));
+    msg = connection.receive();
+    Optional<Room> room = rooms.stream()
+        .filter(r -> r.getName().equals(msg.getMessage()))
+        .findFirst();
+    if (room.isPresent()) {
+      this.room = room.get();
+      connection.send(new Message(SUCCESS));
+      startChatting();
+    }
+
+    // todo проверки
+  }
+
+  private void exit() {
+    logger.info("");
+  }
+
   public void sendBroadcastMessage(Message message) {
     for (Connection connection : activeConnectionStorage.getConnectionList()) {
       try {
@@ -134,11 +206,13 @@ public class ServerHandler implements Runnable {
 
       msg = connection.receive();
       if (msg.getMessageType() == EXIT) {
-        logger.info("Пользователь {} c IP {} отключился", user.getName(), connection.getRemoteSocketAddress());
+        logger.info("Пользователь {} c IP {} отключился", user.getName(),
+            connection.getRemoteSocketAddress());
         break;
       }
       if (msg.getMessageType() == TEXT) {
         msg.setUser(this.user);
+        msg.setRoom(this.room);
         msg.setLocalDateTime(LocalDateTime.now());
         sendBroadcastMessage(msg);
         logger.info("this.user = {}", user);
@@ -261,16 +335,22 @@ public class ServerHandler implements Runnable {
 }
 
 /*
-Hello from Server! 1. signIn
+Hello from Server!
+1. signIn
 2. SignUp
 3. Exit >1
 Enter username:
 > Marsel
 Enter password:
 > qwerty007
-1. Create room 2. Choose room 3. Exit
+1. Create room
+2. Choose room
+3. Exit
 >2 Rooms:
-1. First Room 2. SimpleRoom 3. JavaRoom 4. Exit
+1. First Room
+2. SimpleRoom
+3. JavaRoom
+4. Exit
 >3
 Java Room ---
 JavaMan: Hello!

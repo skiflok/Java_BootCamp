@@ -2,9 +2,9 @@ package ex02.edu.school21.sockets.server;
 
 import ex02.edu.school21.sockets.config.SocketsApplicationConfig;
 import ex02.edu.school21.sockets.repositories.messageRepositories.MessageRepository;
+import ex02.edu.school21.sockets.repositories.roomRepositories.RoomRepository;
 import ex02.edu.school21.sockets.repositories.userRepositories.UsersRepository;
 import ex02.edu.school21.sockets.repositories.userRepositories.UsersRepositoryJdbcTemplateImpl;
-import ex02.edu.school21.sockets.repositories.utils.DataBaseInitializer;
 import ex02.edu.school21.sockets.services.ActiveConnectionStorage;
 import ex02.edu.school21.sockets.services.UsersService;
 import java.net.ServerSocket;
@@ -24,6 +24,7 @@ public class Server {
   private final UsersService usersService;
   private final UsersRepository usersRepository;
   private final MessageRepository messageRepository;
+  private final RoomRepository roomRepository;
   private final PasswordEncoder passwordEncoder;
   private final ActiveConnectionStorage activeConnectionStorage;
 
@@ -36,6 +37,7 @@ public class Server {
         UsersRepositoryJdbcTemplateImpl.class);
     usersService = ctx.getBean("usersServiceImpl", UsersService.class);
     messageRepository = ctx.getBean("messageRepositoryImpl", MessageRepository.class);
+    roomRepository = ctx.getBean("roomRepositoryImpl", RoomRepository.class);
     passwordEncoder = ctx.getBean("encoder", PasswordEncoder.class);
     activeConnectionStorage = ctx.getBean("activeConnectionStorage", ActiveConnectionStorage.class);
   }
@@ -51,6 +53,7 @@ public class Server {
             usersService,
             usersRepository,
             messageRepository,
+            roomRepository,
             passwordEncoder,
             activeConnectionStorage);
         new Thread(serverHandler).start();
