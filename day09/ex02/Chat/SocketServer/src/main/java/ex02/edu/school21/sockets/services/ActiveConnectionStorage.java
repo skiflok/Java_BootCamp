@@ -19,10 +19,6 @@ public class ActiveConnectionStorage {
 
   private final Map<String, Connection> connectionMap = new ConcurrentHashMap<>();
 
-//  public Map<String, Connection> getConnectionMap() {
-//    return connectionMap;
-//  }
-
   public Collection<Connection> getConnectionList () {
     return connectionMap.values();
   }
@@ -30,6 +26,9 @@ public class ActiveConnectionStorage {
   private ActiveConnectionStorage() {
   }
 
+  public boolean contains(String userName) {
+    return connectionMap.containsKey(userName);
+  }
 
   public static ActiveConnectionStorage getInstance() {
     if (instance == null) {
