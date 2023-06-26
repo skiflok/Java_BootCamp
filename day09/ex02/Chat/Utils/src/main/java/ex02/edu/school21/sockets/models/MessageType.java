@@ -3,6 +3,7 @@ package ex02.edu.school21.sockets.models;
 public enum MessageType {
 
   SUCCESS,
+  ERROR,
   NAME_REQUEST, // запрос имени
   PASSWORD_REQUEST, // запрос пароля
   USER_NAME, // имя пользователя

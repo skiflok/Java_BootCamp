@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.SneakyThrows;
@@ -27,9 +28,6 @@ public class ServerHandler implements Runnable {
   private static final Logger logger = LoggerFactory.getLogger(Server.class);
 
   private final Socket socket;
-  private boolean isConnected;
-  private boolean isExit;
-  private boolean isChatting;
   private Connection connection;
   private final UsersService usersService;
   private final UsersRepository usersRepository;
@@ -65,65 +63,143 @@ public class ServerHandler implements Runnable {
   public void run() {
     connection = new Connection(socket);
     logger.info("Подключение клиента с удаленного адреса {}", connection.getRemoteSocketAddress());
-
-    while (!isExit) {
-
-      logger.info("");
-      printMenu();
-      selectHandler();
-
-    }
-
-    activeConnectionStorage.removeUser(user.getName());
-    connection.close();
-
+    menu();
+    exit();
   }
 
-  private void printMenu() throws IOException {
+
+  private void menu() throws IOException, ClassNotFoundException {
     logger.info("");
-    connection.send(new Message(MENU, "Hello from Server!"));
-    connection.send(new Message(MENU, "Available commands:"));
-    connection.send(new Message(MENU, "signUp"));
-    connection.send(new Message(MENU, "logIn"));
-    connection.send(new Message(MENU, "exit"));
-    connection.send(new Message(MENU_REQUEST));
-  }
-
-  private void selectHandler() throws IOException, ClassNotFoundException {
-
-    logger.info("func selectHandler");
+    Message msg;
     while (true) {
+      connection.send(new Message(MENU, "Hello from Server!"
+          + "\nAvailable commands:"
+          + "\n1. signIn"
+          + "\n2. signUp"
+          + "\n3. exit"));
+      msg = connection.receive();
 
-      Message msg = connection.receive();
-      switch (msg.getMessageType()) {
-        case SIGNUP:
-          logger.info(msg.getMessageType().toString());
-          connection.send(new Message(MENU, "Сервер " + "SIGNUP"));
-          signUp();
-          return;
-        case LOGIN:
-          logger.info(msg.getMessageType().toString());
-          isChatting = signIn();
-
-          if (isChatting) {
+      switch (msg.getMessage()) {
+        case "1":
+          if (newSignIn()) {
             roomMenu();
-            startChatting();
+          } else {
+            exit();
           }
-          isExit = true;
-          return;
-        case EXIT:
-          connection.send(new Message(MENU, "Сервер " + "EXIT"));
-          logger.info("Клиент {} отключился", connection.getRemoteSocketAddress());
-          connection.close();
-          isExit = true;
+          break;
+        case "2":
+          newSignUp();
+          break;
+        case "3":
+          exit();
           return;
         default:
-          logger.info(msg.getMessageType().toString());
-          connection.send(new Message(MENU_REQUEST, "Неверная команда"));
-          printMenu();
           break;
       }
     }
+  }
+
+  private void exit() throws IOException {
+    logger.info("");
+    if (Objects.nonNull(user)) {
+      activeConnectionStorage.removeUser(user.getName());
+    }
+    connection.close();
+  }
+
+  private boolean newSignIn() throws IOException, ClassNotFoundException {
+    logger.info("");
+    String userName;
+    String password;
+    Message incomeMsg;
+    User user;
+    boolean passCorrect;
+
+    connection.send(new Message(NAME_REQUEST, "Enter username:"));
+    incomeMsg = connection.receive();
+    userName = incomeMsg.getMessage();
+    logger.info("userName {}", userName);
+
+    connection.send(new Message(PASSWORD_REQUEST, "Enter password:"));
+    incomeMsg = connection.receive();
+    password = incomeMsg.getMessage();
+    logger.info("password {}", password);
+
+    if (userName == null || userName.isEmpty() || password == null || password.isEmpty()) {
+      connection.send(new Message(ERROR, "Incorrect input"));
+      logger.info("null or empty");
+      exit();
+      return false;
+    }
+
+    user = new User(null, userName, password);
+    Optional<User> optionalUserFromDB = usersRepository.findByName(userName);
+
+    if (!optionalUserFromDB.isPresent()) {
+      logger.info("Неккоректный ввод userName");
+      connection.send(new Message(EXIT, "Юзер не существует"));
+      exit();
+      return false;
+    }
+
+    passCorrect = passwordEncoder.matches(password, optionalUserFromDB.get().getPassword());
+    logger.info("Password match = " + passCorrect);
+    logger.info("User income {}", user);
+    logger.info("User DB {}", optionalUserFromDB.get());
+
+    if (passCorrect) {
+      connection.send(new Message(SIGN_IN_SUCCESS, "Log in Successful!"));
+      this.user = user;
+      this.user.setId(optionalUserFromDB.get().getId());
+      activeConnectionStorage.addUser(userName, connection);
+      logger.info("пользователь {} подключился к чату с IP {}", userName,
+          connection.getRemoteSocketAddress());
+      return true;
+    }
+    logger.info("Неверный пароль");
+    connection.send(new Message(EXIT, "Неверный пароль"));
+    exit();
+    return false;
+  }
+
+  private void newSignUp() throws IOException, ClassNotFoundException {
+    logger.info("");
+    String userName;
+    String password;
+    Message incomeMsg;
+    User user;
+
+    connection.send(new Message(NAME_REQUEST, "Enter username:"));
+    incomeMsg = connection.receive();
+    userName = incomeMsg.getMessage();
+    logger.info("userName {}", userName);
+
+    connection.send(new Message(PASSWORD_REQUEST, "Enter password:"));
+    incomeMsg = connection.receive();
+    password = incomeMsg.getMessage();
+    logger.info("password {}", password);
+
+    if (userName == null || userName.isEmpty() || password == null || password.isEmpty()) {
+      logger.info("null or empty");
+      connection.send(new Message(ERROR, "Incorrect input"));
+      return;
+    }
+
+    user = new User(null, userName, password);
+
+    try {
+      logger.info(user.toString());
+      logger.info(usersService.toString());
+      usersService.signUp(user);
+    } catch (IllegalArgumentException e) {
+      logger.info(e.getMessage());
+      connection.send(new Message(ERROR, "is already register!"));
+      return;
+    }
+
+    connection.send(new Message(SIGN_UP_SUCCESS, "Successful!"));
+    logger.info("пользователь {} зарегистрировался с IP {}", userName,
+        connection.getRemoteSocketAddress());
   }
 
   private void roomMenu() throws IOException, ClassNotFoundException {
@@ -185,9 +261,6 @@ public class ServerHandler implements Runnable {
     // todo проверки
   }
 
-  private void exit() {
-    logger.info("");
-  }
 
   public void sendBroadcastMessage(Message message) {
     for (Connection connection : activeConnectionStorage.getConnectionList()) {
@@ -224,138 +297,4 @@ public class ServerHandler implements Runnable {
     }
 
   }
-
-  private boolean signIn() throws IOException, ClassNotFoundException {
-
-    logger.info("");
-    String userName;
-    String password;
-    Message incomeMsg;
-    User user;
-    boolean passCorrect;
-
-    while (true) {
-
-      connection.send(new Message(NAME_REQUEST, "Enter username:"));
-      incomeMsg = connection.receive();
-      if (incomeMsg.getMessageType() != USER_NAME) {
-        continue;
-      }
-      userName = incomeMsg.getMessage();
-      logger.info("userName {}", userName);
-
-      connection.send(new Message(PASSWORD_REQUEST, "Enter password:"));
-      incomeMsg = connection.receive();
-
-      if (incomeMsg.getMessageType() != PASSWORD) {
-        continue;
-      }
-      password = incomeMsg.getMessage();
-      logger.info("password {}", password);
-
-      user = new User(null, userName, password);
-
-      Optional<User> optionalUserFromDB = usersRepository.findByName(userName);
-
-      if (!optionalUserFromDB.isPresent()) {
-        logger.info("Неккоректный ввод userName");
-        connection.send(new Message(EXIT, "Юзер не существует"));
-        return false;
-      }
-
-      passCorrect = passwordEncoder.matches(password, optionalUserFromDB.get().getPassword());
-      logger.info("Password match = " + passCorrect);
-      logger.info("User income {}", user);
-      logger.info("User DB {}", optionalUserFromDB.get());
-
-      if (passCorrect) {
-        connection.send(new Message(SIGN_IN_SUCCESS, "Log in Successful!"));
-        this.user = user;
-        this.user.setId(optionalUserFromDB.get().getId());
-        activeConnectionStorage.addUser(userName, connection);
-        logger.info("пользователь {} подключился к чату с IP {}", userName,
-            connection.getRemoteSocketAddress());
-        return true;
-      }
-
-      logger.info("Неверный пароль");
-      connection.send(new Message(EXIT, "Неверный пароль"));
-
-      return false;
-    }
-  }
-
-  private void signUp() throws IOException, ClassNotFoundException {
-    logger.info("");
-    String userName;
-    String password;
-    Message incomeMsg;
-    User user;
-
-    while (!isConnected) {
-
-      connection.send(new Message(NAME_REQUEST, "Enter username:"));
-      incomeMsg = connection.receive();
-      if (incomeMsg.getMessageType() != USER_NAME) {
-        continue;
-      }
-      userName = incomeMsg.getMessage();
-      logger.info("userName {}", userName);
-
-      connection.send(new Message(PASSWORD_REQUEST, "Enter password:"));
-      incomeMsg = connection.receive();
-
-      if (incomeMsg.getMessageType() != PASSWORD) {
-        continue;
-      }
-      password = incomeMsg.getMessage();
-      logger.info("password {}", password);
-
-      isConnected = true;
-
-      user = new User(null, userName, password);
-
-      try {
-        logger.info(user.toString());
-        logger.info(usersService.toString());
-        usersService.signUp(user);
-      } catch (IllegalArgumentException e) {
-        logger.info(e.getMessage());
-        connection.send(new Message(EXIT, "is already register!"));
-        return;
-      }
-
-      connection.send(new Message(SIGN_UP_SUCCESS, "Successful!"));
-      logger.info("пользователь {} зарегистрировался с IP {}", userName,
-          connection.getRemoteSocketAddress());
-    }
-
-  }
-
 }
-
-/*
-Hello from Server!
-1. signIn
-2. SignUp
-3. Exit >1
-Enter username:
-> Marsel
-Enter password:
-> qwerty007
-1. Create room
-2. Choose room
-3. Exit
->2 Rooms:
-1. First Room
-2. SimpleRoom
-3. JavaRoom
-4. Exit
->3
-Java Room ---
-JavaMan: Hello!
-> Hello!
-Marsel: Hello!
-> Exit
-You have left the chat.
-*/

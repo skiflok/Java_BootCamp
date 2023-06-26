@@ -23,57 +23,48 @@ public class Client {
   public void start() {
 
     try {
-
       logger.info("Check work");
-
       connection = new Connection(new Socket("localhost", port));
-      startSession();
-
+      menu();
     } catch (Exception e) {
       logger.warn("Произошла ошибка при запуске или работе клиента {}", e.getMessage());
     }
 
   }
 
-  private void startSession() throws IOException, ClassNotFoundException {
+  private void menu() throws IOException, ClassNotFoundException {
     logger.info("");
+    Message msg;
     while (true) {
-      Message msg = connection.receive();
-      switch (msg.getMessageType()) {
-        case MENU:
-          ConsoleHelper.writeMessage(msg.getMessage());
-          break;
-        case MENU_REQUEST:
-//          logger.info("MENU_REQUEST");
-          menuRequest();
-        default:
-          break;
+      msg = connection.receive();
+      if (msg.getMessageType() == SUCCESS) {
+        break;
       }
+
+      ConsoleHelper.writeMessage(msg.getMessage());
+
+      if (msg.getMessageType() == ERROR) {
+        continue;
+      }
+
+      if (msg.getMessageType() == EXIT) {
+        exit();
+      }
+
+      if (msg.getMessageType() == SIGN_IN_SUCCESS) {
+        roomMenu();
+        startChat();
+      }
+
+      connection.send(new Message(TEXT, ConsoleHelper.readString()));
     }
   }
 
-  private void menuRequest() throws IOException, ClassNotFoundException {
-    logger.info("menuRequest");
-    ConsoleHelper.writeMessage("Выберите пункт меню");
-    String input = ConsoleHelper.readString();
-    switch (input.toLowerCase().trim()) {
-      case "signup":
-        connection.send(new Message(SIGNUP));
-        signUp();
-        break;
-      case "login":
-        connection.send(new Message(LOGIN));
-        signIn();
-        roomMenu();
-        startChat();
-        break;
-      case "exit":
-        connection.send(new Message(EXIT));
-        break;
-      default:
-        break;
-    }
+  private void exit() throws IOException {
+    connection.close();
   }
+
+
 
   private void roomMenu() throws IOException, ClassNotFoundException {
     logger.info("");
@@ -119,67 +110,4 @@ public class Client {
     } while (msg.getMessageType() != EXIT);
 
   }
-
-  private void signUp() throws IOException, ClassNotFoundException {
-    logger.info("signUp");
-    Message incomeMsg;
-
-    while (!isConnected) {
-
-      incomeMsg = connection.receive();
-      if (incomeMsg.getMessageType() != NAME_REQUEST) {
-        continue;
-      }
-      ConsoleHelper.writeMessage(incomeMsg.getMessage());
-      connection.send(new Message(USER_NAME, ConsoleHelper.readString()));
-
-      incomeMsg = connection.receive();
-      if (incomeMsg.getMessageType() != PASSWORD_REQUEST) {
-        continue;
-      }
-      ConsoleHelper.writeMessage(incomeMsg.getMessage());
-      connection.send(new Message(PASSWORD, ConsoleHelper.readString()));
-
-      incomeMsg = connection.receive();
-      if (incomeMsg.getMessageType() != SIGN_UP_SUCCESS) {
-        continue;
-      }
-      isConnected = true;
-      logger.info("isConnected = true");
-      ConsoleHelper.writeMessage(incomeMsg.getMessage());
-    }
-  }
-
-  private void signIn() throws IOException, ClassNotFoundException {
-    logger.info("LogIn");
-    Message incomeMsg;
-
-    while (true) {
-
-      incomeMsg = connection.receive();
-      if (incomeMsg.getMessageType() != NAME_REQUEST) {
-        continue;
-      }
-      ConsoleHelper.writeMessage(incomeMsg.getMessage());
-      connection.send(new Message(USER_NAME, ConsoleHelper.readString()));
-
-      incomeMsg = connection.receive();
-      if (incomeMsg.getMessageType() != PASSWORD_REQUEST) {
-        continue;
-      }
-      ConsoleHelper.writeMessage(incomeMsg.getMessage());
-      connection.send(new Message(PASSWORD, ConsoleHelper.readString()));
-
-      incomeMsg = connection.receive();
-      logger.info(incomeMsg.getMessageType().toString());
-      if (incomeMsg.getMessageType() != SIGN_IN_SUCCESS && incomeMsg.getMessageType() != EXIT) {
-        logger.debug("continue");
-        continue;
-      }
-
-      ConsoleHelper.writeMessage(incomeMsg.getMessage());
-      break;
-    }
-  }
-
 }
