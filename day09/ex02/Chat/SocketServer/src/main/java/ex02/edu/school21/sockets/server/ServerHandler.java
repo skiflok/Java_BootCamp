@@ -226,8 +226,6 @@ public class ServerHandler implements Runnable {
           break;
       }
     }
-
-
   }
 
   private void createRoom() throws IOException, ClassNotFoundException {
@@ -250,7 +248,7 @@ public class ServerHandler implements Runnable {
         .collect(Collectors.joining("\n"))));
     msg = connection.receive();
     Optional<Room> room = rooms.stream()
-        .filter(r -> r.getName().equals(msg.getMessage()))
+        .filter(r -> r.getId().toString().equals(msg.getMessage()))
         .findFirst();
     if (room.isPresent()) {
       this.room = room.get();
