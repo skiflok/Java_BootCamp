@@ -6,10 +6,14 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketAddress;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class Connection implements Closeable {
-
   private final Socket socket;
+  private Room room;
   private final ObjectOutputStream out;
   private final ObjectInputStream in;
 

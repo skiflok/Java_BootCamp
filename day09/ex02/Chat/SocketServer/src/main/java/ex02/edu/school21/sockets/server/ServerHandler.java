@@ -254,6 +254,7 @@ public class ServerHandler implements Runnable {
         .findFirst();
     if (room.isPresent()) {
       this.room = room.get();
+      connection.setRoom(this.room);
       connection.send(new Message(SUCCESS));
       startChatting();
     }
@@ -261,11 +262,14 @@ public class ServerHandler implements Runnable {
     // todo проверки
   }
 
-
   public void sendBroadcastMessage(Message message) {
     for (Connection connection : activeConnectionStorage.getConnectionList()) {
       try {
-        connection.send(message);
+        logger.info("this.room {} name {}", room, room.getName());
+        logger.info("connection.room {} name {}", connection.getRoom(), connection.getRoom().getName());
+        if (this.room.getName().equals(connection.getRoom().getName())) {
+          connection.send(message);
+        }
       } catch (IOException e) {
         logger.info("Не смогли отправить сообщение {}", e.getMessage());
       }
