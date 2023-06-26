@@ -35,20 +35,18 @@ public class Connection implements Closeable {
 
   public void send(Message message) throws IOException {
     synchronized (out) {
-      logger.info("user = {}", message.getUser());
-      logger.info("room = {}", message.getRoom());
-      logger.info(new ObjectMapper().writeValueAsString(message));
+      logger.debug("user = {}", message.getUser());
+      logger.debug("room = {}", message.getRoom());
+      logger.debug(new ObjectMapper().writeValueAsString(message));
       out.writeObject(objectMapper.writeValueAsString(message));
-//      out.writeObject(message);
     }
   }
 
   public Message receive () throws IOException, ClassNotFoundException {
     synchronized (in) {
       String jsonMessage = (String) in.readObject();
-      logger.info(jsonMessage);
+      logger.debug(jsonMessage);
       return objectMapper.readValue(jsonMessage, Message.class);
-//      return (Message) in.readObject();
     }
   }
 

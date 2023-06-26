@@ -234,7 +234,6 @@ public class ServerHandler implements Runnable {
     connection.send(new Message(TEXT, "введите название комнаты"));
     msg = connection.receive();
     roomRepository.save(new Room(null, msg.getMessage(), user));
-
     // todo проверки
   }
 

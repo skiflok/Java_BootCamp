@@ -23,7 +23,7 @@ public class Client {
   public void start() {
 
     try {
-      logger.info("Check work");
+      logger.debug("Check work");
       connection = new Connection(new Socket("localhost", port));
       menu();
     } catch (Exception e) {
@@ -33,7 +33,7 @@ public class Client {
   }
 
   private void menu() throws IOException, ClassNotFoundException {
-    logger.info("");
+    logger.debug("");
     Message msg;
     while (true) {
       msg = connection.receive();
@@ -67,7 +67,7 @@ public class Client {
 
 
   private void roomMenu() throws IOException, ClassNotFoundException {
-    logger.info("");
+    logger.debug("");
     Message msg;
     while (true) {
       msg = connection.receive();
@@ -80,7 +80,7 @@ public class Client {
   }
 
   private void startChat() throws IOException, ClassNotFoundException {
-    logger.info("");
+    logger.debug("");
 
     new Thread(() -> {
       String msg;
