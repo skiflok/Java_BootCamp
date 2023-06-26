@@ -63,6 +63,7 @@ public class ServerHandler implements Runnable {
   public void run() {
     connection = new Connection(socket);
     logger.info("Подключение клиента с удаленного адреса {}", connection.getRemoteSocketAddress());
+    logger.info("size = {}", messageRepository.findLast30(1L));
     menu();
     exit();
   }
@@ -274,10 +275,17 @@ public class ServerHandler implements Runnable {
   }
 
   private void startChatting() throws IOException, ClassNotFoundException {
+    messageRepository.findLast30(room.getId())
+        .forEach(message -> {
+          try {
+            connection.send(message);
+          } catch (IOException e) {
+            throw new RuntimeException(e);
+          }
+        });
     Message msg;
     while (true) {
       logger.info("");
-
       msg = connection.receive();
       if (msg.getMessageType() == EXIT) {
         logger.info("Пользователь {} c IP {} отключился", user.getName(),

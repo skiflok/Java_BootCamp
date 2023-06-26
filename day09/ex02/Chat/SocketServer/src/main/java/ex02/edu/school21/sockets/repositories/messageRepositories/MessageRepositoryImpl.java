@@ -1,12 +1,15 @@
 package ex02.edu.school21.sockets.repositories.messageRepositories;
 
 import ex02.edu.school21.sockets.models.Message;
+import ex02.edu.school21.sockets.models.Room;
+import ex02.edu.school21.sockets.models.User;
 import ex02.edu.school21.sockets.repositories.userRepositories.UsersRepository;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -50,6 +53,8 @@ public class MessageRepositoryImpl implements MessageRepository {
 
   @Override
   public List<Message> findAll() {
+//    String sql = "select * from chat.message";
+//    return namedParameterJdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Message.class));
     return null;
   }
 
@@ -76,5 +81,27 @@ public class MessageRepositoryImpl implements MessageRepository {
   @Override
   public void delete(Long id) {
 
+  }
+
+  @Override
+  public List<Message> findLast30(Long chatId) {
+    String sql = "SELECT\n"
+        + "m.id id,\n"
+        + "u.name name,\n"
+        + "m.text text\n"
+        + "FROM chat.message as m\n"
+        + "join chat.users as u on u.id = m.author\n"
+        + "join chat.chat_rooms as r on r.id = m.room\n"
+        + "where m.room = 1\n"
+        + "ORDER BY date_time ASC\n"
+        + "limit 30";
+    MapSqlParameterSource params = new MapSqlParameterSource();
+    params.addValue("id", chatId);
+    return namedParameterJdbcTemplate.query(sql, params, (rs, rowNum) -> new Message(
+        rs.getLong("id"),
+        new User(null, rs.getString("name"), null),
+        null,
+        rs.getString("text"),
+        null));
   }
 }
