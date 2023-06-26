@@ -1,5 +1,6 @@
 package ex02.edu.school21.sockets.models;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.Closeable;
 import java.io.IOException;
@@ -20,6 +21,8 @@ public class Connection implements Closeable {
   private final ObjectOutputStream out;
   private final ObjectInputStream in;
 
+  private final ObjectMapper objectMapper;
+
   private static final Logger logger = LoggerFactory.getLogger(Connection.class);
 
 
@@ -27,6 +30,7 @@ public class Connection implements Closeable {
     this.socket = socket;
     this.out = new ObjectOutputStream(socket.getOutputStream());
     this.in = new ObjectInputStream(socket.getInputStream());
+    this.objectMapper = new ObjectMapper();
   }
 
   public void send(Message message) throws IOException {
@@ -34,13 +38,17 @@ public class Connection implements Closeable {
       logger.info("user = {}", message.getUser());
       logger.info("room = {}", message.getRoom());
       logger.info(new ObjectMapper().writeValueAsString(message));
-      out.writeObject(message);
+      out.writeObject(objectMapper.writeValueAsString(message));
+//      out.writeObject(message);
     }
   }
 
   public Message receive () throws IOException, ClassNotFoundException {
     synchronized (in) {
-      return (Message) in.readObject();
+      String jsonMessage = (String) in.readObject();
+      logger.info(jsonMessage);
+      return objectMapper.readValue(jsonMessage, Message.class);
+//      return (Message) in.readObject();
     }
   }
 
