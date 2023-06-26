@@ -47,13 +47,13 @@ public class ActiveConnectionStorage {
     connectionMap.remove(userName);
   }
 
-  @Override
-  public String toString() {
-    StringBuilder res = new StringBuilder();
-    for (var entry: connectionMap.entrySet()) {
-      res.append(entry);
-      res.append("\n");
-    }
-    return res.toString();
-  }
+//  @Override
+//  public String toString() {
+//    StringBuilder res = new StringBuilder();
+//    for (var entry: connectionMap.entrySet()) {
+//      res.append(entry);
+//      res.append("\n");
+//    }
+//    return res.toString();
+//  }
 }
