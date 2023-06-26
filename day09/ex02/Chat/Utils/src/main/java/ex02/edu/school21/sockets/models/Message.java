@@ -1,5 +1,6 @@
 package ex02.edu.school21.sockets.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -14,7 +15,9 @@ public class Message implements Serializable {
 
   private Room room;
   private String message;
+  @JsonIgnore
   private LocalDateTime localDateTime;
+  @JsonIgnore
   private transient final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(
       "dd/MM/yy HH:mm");
   private MessageType messageType;
