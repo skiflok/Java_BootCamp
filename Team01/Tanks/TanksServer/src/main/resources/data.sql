@@ -1,0 +1,2 @@
+--insert into game.statistics (playerId, playerShotsCount, playerHitCount, playerBoboCount, enemyId, enemyShotsCount, enemyHitCount, enemyBoboCount) values
+--(1, 10, 15, 20, 2, 10, 1, 10);

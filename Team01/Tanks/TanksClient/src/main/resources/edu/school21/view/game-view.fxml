@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+  minWidth="-Infinity" prefHeight="750.0" prefWidth="750.0"
+  xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
+  fx:controller="edu.school21.controllers.MotionHandlerController">
+  <children>
+    <ImageView fitHeight="750.0" fitWidth="750.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="@../../../images/field.png"/>
+      </image>
+    </ImageView>
+    <ImageView fx:id="enemyLife" fitHeight="28.0" fitWidth="155.0" pickOnBounds="true" preserveRatio="true"
+      AnchorPane.leftAnchor="587.0" AnchorPane.topAnchor="10.0">
+      <image>
+        <Image url="@../../../life.png"/>
+      </image>
+    </ImageView>
+    <ImageView fitHeight="28.0" fitWidth="162.0" pickOnBounds="true" preserveRatio="true"
+      AnchorPane.leftAnchor="585.0" AnchorPane.topAnchor="7.0">
+      <image>
+        <Image url="@../../../images/border.png"/>
+      </image>
+    </ImageView>
+    <ImageView fx:id="playerLife" fitHeight="28.0" fitWidth="155.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true"
+      preserveRatio="true" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="587.0">
+      <image>
+        <Image url="@../../../life.png"/>
+      </image>
+    </ImageView>
+    <ImageView fitHeight="28.0" fitWidth="162.0" pickOnBounds="true" preserveRatio="true"
+      AnchorPane.bottomAnchor="7.0" AnchorPane.rightAnchor="585.0">
+      <image>
+        <Image url="@../../../images/border.png"/>
+      </image>
+    </ImageView>
+    <ImageView fx:id="enemy" fitHeight="75.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true"
+      AnchorPane.leftAnchor="335.0" AnchorPane.topAnchor="54.0">
+      <image>
+        <Image url="@../../../images/enemy.png"/>
+      </image>
+    </ImageView>
+    <ImageView fx:id="player" fitHeight="75.0" fitWidth="60.0" pickOnBounds="true"
+      preserveRatio="true" x="375.0" AnchorPane.bottomAnchor="54.0" AnchorPane.leftAnchor="335.0">
+      <image>
+        <Image url="@../../../images/player.png"/>
+      </image>
+    </ImageView>
+
+  </children>
+</AnchorPane>
